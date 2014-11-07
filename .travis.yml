@@ -5,6 +5,6 @@ jdk:
   - oraclejdk7
 
 install:
-  - ant deps
+  - true
 
 script: ant test
