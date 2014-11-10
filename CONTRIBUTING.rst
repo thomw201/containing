@@ -148,7 +148,8 @@ This looks a little like this::
 
     nothing added to commit but untracked files present (use "git add" to track)
 
-    # Stage the files that you wish to include in your commit.
+    # Stage the files that you wish to include in your commit. NEVER ADD
+    # USER-SPECIFIC FILES OR BINARY FILES.
     $ git add $FILE_THAT_NEEDS_TO_BE_STAGED
 
     # Make sure that all files that had to be staged have actually been staged.
