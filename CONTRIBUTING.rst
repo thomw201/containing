@@ -41,9 +41,9 @@ Some oft-used git terms:
   Merging can be done in a multitude of fashions.
 - Upstream: The reference repository. Best explained by comparing to Linux.
   Linus Torvalds (the creator of Linux) is the upstream maintainer of the Linux
-  kernel. Canonical (creatory of Ubuntu) has their own version of Linux.
+  kernel. Canonical (creator of Ubuntu) has their own version of Linux.
   Canonical's version of Linux is *downstream*, because everybody recognises
-  Linus Torvalds' repository as "the one true Linux", not Canonical.
+  Linus Torvalds' repository as "the one true Linux", not Canonical's.
 - Origin: Your own remote repository.
 - Maintainer: The "admin" of a repository who has read/write access.
 - Pull: Fetching changes hosted on a remote repository and merging them into
