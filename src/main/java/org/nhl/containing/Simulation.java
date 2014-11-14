@@ -14,11 +14,6 @@ import com.jme3.scene.shape.Box;
  */
 public class Simulation extends SimpleApplication {
 
-    public static void main(String[] args) {
-        Simulation app = new Simulation();
-        app.start();
-    }
-
     @Override
     public void simpleInitApp() {
         Box b = new Box(1, 1, 1);
