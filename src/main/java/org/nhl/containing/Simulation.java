@@ -12,10 +12,10 @@ import com.jme3.scene.shape.Box;
  * test
  * @author normenhansen
  */
-public class Main extends SimpleApplication {
+public class Simulation extends SimpleApplication {
 
     public static void main(String[] args) {
-        Main app = new Main();
+        Simulation app = new Simulation();
         app.start();
     }
 
@@ -39,5 +39,14 @@ public class Main extends SimpleApplication {
     @Override
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
+    }
+    
+    public void getData(){
+    }
+    
+    public void userInput(){
+    }
+    
+    public void readyCheck(){
     }
 }
