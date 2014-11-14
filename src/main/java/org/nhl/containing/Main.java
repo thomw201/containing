@@ -1,4 +1,4 @@
-package org.nhl.containing.simulator;
+package org.nhl.containing;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.material.Material;
