@@ -1,0 +1,20 @@
+<scene export_time="1416223026.978873" previous_export_time="0" exported_by="Jeroen" formatVersion="1.0.1" >
+  <nodes >
+    <node name="Shipping_container_Low-Red" >
+      <position y="0.000000" z="-0.000000" x="0.000000" />
+      <rotation qw="1.000000" qy="0.000000" qz="-0.000000" qx="0.000000" />
+      <scale y="1.000000" z="1.000000" x="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity lock_trans_y="False" friction_y="1.0" meshFile="Cube.002.mesh" velocity_min="0.0" actor="False" lock_rot_x="False" damping_rot="0.10000000149011612" velocity_max="0.0" friction_x="1.0" mass_radius="1.0" physics_type="STATIC" lock_trans_z="False" mass="1.0" inertia_tensor="0.4000000059604645" lock_rot_y="False" lock_rot_z="False" anisotropic_friction="False" friction_z="1.0" damping_trans="0.03999999910593033" ghost="False" name="Cube.002" lock_trans_x="False" />
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="C:\Users\Jeroen\Desktop\container\Textures\Shipping_Container-Red.material" />
+    </item>
+  </externals>
+  <environment />
+</scene>
