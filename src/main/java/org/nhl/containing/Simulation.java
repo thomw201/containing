@@ -1,6 +1,7 @@
 package org.nhl.containing;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.light.AmbientLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -10,20 +11,42 @@ import com.jme3.scene.shape.Box;
 
 /**
  * test
+ *
  * @author normenhansen
  */
 public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        Box b = new Box(1, 1, 1);
-        Geometry geom = new Geometry("Box", b);
+        
+        cam();
 
+        AmbientLight ambient = new AmbientLight();
+        ambient.setColor(ColorRGBA.White);
+        rootNode.addLight(ambient);
+
+        Container container = new Container(assetManager);
+        rootNode.attachChild(container);
+        
+        // Platform for our scene.
+        Box platform = new Box(50, 0.3f, 50);
+        Geometry platformGeom = new Geometry("Platform", platform);
+        platformGeom.setLocalTranslation(0, -15, 0);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", ColorRGBA.Blue);
-        geom.setMaterial(mat);
+        mat.setColor("Color", ColorRGBA.Gray);
+        platformGeom.setMaterial(mat);
 
-        rootNode.attachChild(geom);
+        rootNode.attachChild(platformGeom);
+    }
+
+    
+    /**
+     * Camera settings of the scene.
+     */
+    public void cam() {
+        viewPort.setBackgroundColor(ColorRGBA.Blue);
+        cam.setLocation(new Vector3f(0, 5, 0));
+        flyCam.setMoveSpeed(50);
     }
 
     @Override
@@ -35,13 +58,13 @@ public class Simulation extends SimpleApplication {
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
-    
-    public void getData(){
+
+    public void getData() {
     }
-    
-    public void userInput(){
+
+    public void userInput() {
     }
-    
-    public void readyCheck(){
+
+    public void readyCheck() {
     }
 }
