@@ -62,7 +62,7 @@ public class Simulation extends SimpleApplication {
 
         // Platform for the scene.        
         Spatial platform = assetManager.loadModel("Models/platform/platform.j3o");
-        platform.scale(20);
+        platform.scale(20, 1, 20);
         rootNode.attachChild(platform);
     }
 
