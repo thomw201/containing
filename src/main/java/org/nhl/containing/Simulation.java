@@ -1,7 +1,7 @@
 package org.nhl.containing;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.light.AmbientLight;
+import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -18,18 +18,20 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleInitApp() {
-        
+
         cam();
 
-        AmbientLight ambient = new AmbientLight();
-        ambient.setColor(ColorRGBA.White);
-        rootNode.addLight(ambient);
+        // A Directional Light.
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        rootNode.addLight(sun);
 
+        // Add an object to the scene.
         Container container = new Container(assetManager);
         rootNode.attachChild(container);
-        
-        // Platform for our scene.
-        Box platform = new Box(50, 0.3f, 50);
+
+        // Platform for the scene.
+        Box platform = new Box(500, 0.3f, 500);
         Geometry platformGeom = new Geometry("Platform", platform);
         platformGeom.setLocalTranslation(0, -15, 0);
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -39,7 +41,6 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(platformGeom);
     }
 
-    
     /**
      * Camera settings of the scene.
      */
