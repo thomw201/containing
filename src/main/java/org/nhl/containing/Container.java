@@ -1,7 +1,6 @@
 package org.nhl.containing;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.material.Material;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
@@ -18,18 +17,13 @@ public class Container extends Node {
         initContainer();
     }
 
-    
     /**
      * Initialize a container.
      */
     public void initContainer() {
 
-        /**
-         * Load a model and give it a material. 
-         */
+        // Load a model.
         Spatial container = assetManager.loadModel("Models/medium/container/container.j3o");
-        Material defaultMat = new Material(assetManager, "Common/MatDefs/Misc/ShowNormals.j3md");
-        container.setMaterial(defaultMat);
         this.attachChild(container);
     }
 }
