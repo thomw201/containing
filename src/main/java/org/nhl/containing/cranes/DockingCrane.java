@@ -7,22 +7,22 @@ import com.jme3.scene.Spatial;
  *
  * @author Jeroen
  */
-public class MoveableCrane extends Crane {
+public class DockingCrane extends Crane {
 
     private AssetManager assetManager;
 
-    public MoveableCrane(AssetManager assetManager) {
+    public DockingCrane(AssetManager assetManager) {
         this.assetManager = assetManager;
-        initMoveableCrane();
+        initDockingCrane();
     }
 
     /**
-     * Initialize a moveable crane.
+     * Initialize a docking crane.
      */
-    public void initMoveableCrane() {
+    public void initDockingCrane() {
 
         // Load a model.
-        Spatial moveableCrane = assetManager.loadModel("Models/medium/crane/dockingcrane.j3o");
+        Spatial moveableCrane = assetManager.loadModel("Models/high/crane/dockingcrane/crane.j3o");
         this.attachChild(moveableCrane);
     }
 }
