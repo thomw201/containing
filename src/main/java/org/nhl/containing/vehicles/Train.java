@@ -1,6 +1,10 @@
 package org.nhl.containing.vehicles;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.cinematic.MotionPath;
+import com.jme3.cinematic.events.MotionEvent;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 
 /**
@@ -12,6 +16,7 @@ public class Train extends Transporter {
     private AssetManager assetManager;
     private int numberOfWagons;
     private int wagonZAxis = -11;
+    private float speed = 0.5f;
 
     public Train(AssetManager assetManager, int numberOfWagons) {
         this.assetManager = assetManager;
@@ -38,4 +43,29 @@ public class Train extends Transporter {
             wagonZAxis -= 15;
         }
     }
+    /**
+     * creates waypoints and lets the train drive over them
+     * direction TRUE = the train arrives
+     * direction FALSE = the train departs
+     */
+    public void move(boolean direction){
+        MotionPath path = new MotionPath();
+        MotionEvent motionControl= new MotionEvent(this, path);
+        //train arrives
+        if (direction) {
+            path.addWayPoint(new Vector3f(250, 0, -180));
+            path.addWayPoint(new Vector3f(-200, 0, -180));
+            motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        }
+        //train leaves
+        else{
+            path.addWayPoint(new Vector3f(-200, 0, -180));
+            path.addWayPoint(new Vector3f(250, 0, -180));
+        }
+        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
+        motionControl.setInitialDuration(10f);
+        motionControl.setSpeed(speed);
+        motionControl.play();
+    }
+    
 }

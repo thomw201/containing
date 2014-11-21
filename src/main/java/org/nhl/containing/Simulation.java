@@ -9,13 +9,13 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.cranes.DockingCrane;
-import org.nhl.containing.vehicles.Train;
-import org.nhl.containing.vehicles.Agv;
+import org.nhl.containing.vehicles.*;
 
 /**
  * test
@@ -24,11 +24,11 @@ import org.nhl.containing.vehicles.Agv;
  */
 public class Simulation extends SimpleApplication {
     private Agv avg;
-    private MotionPath avgPath;
-    private MotionEvent motionControl;
-    private DirectionalLight sun;
+    private Train train;
+    private Boat boat;
+    //private DirectionalLight sun;
     private boolean debug;
-    
+    public static final Quaternion YAW180   = new Quaternion().fromAngleAxis(FastMath.PI  ,   new Vector3f(0,1,0));
     @Override
     public void simpleInitApp() {
         cam();
@@ -71,11 +71,10 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(secondDockingCrane);
 
         // Add a train to the scene.
-        Train train = new Train(assetManager, 10);
-        train.setLocalTranslation(30, 0, 30);
-        
+        train = new Train(assetManager, 10);
         rootNode.attachChild(train);
-        
+        //call method that makes the train arrive
+        train.move(true);
         // Add a container to the scene.
         Container container = new Container(assetManager);
         container.setLocalTranslation(100, 0, 0);
@@ -84,17 +83,26 @@ public class Simulation extends SimpleApplication {
         avg = new Agv(assetManager);
         avg.setLocalTranslation(-230, 0, -180);
         rootNode.attachChild(avg);
-        createPath();
-        motionControl.setLoopMode(LoopMode.Loop);
-        motionControl.play();
+        createAVGPath();
 
+        //Add a boat
+        boat = new Boat(assetManager);
+        rootNode.attachChild(boat);
+        boat.scale(1, 1, 0.5f);
+        boat.move(true);
+        
         // Platform for the scene.        
         Spatial platform = assetManager.loadModel("Models/platform/platform.j3o");
         platform.scale(20, 1, 20);
         rootNode.attachChild(platform);
     }
-    void createPath() {
-        avgPath = new MotionPath();
+    /**
+     * This method creates waypoints on the AVG roads and lets an AVG drive over them
+     */
+    void createAVGPath() {
+        MotionPath avgPath = new MotionPath();
+        MotionEvent avgmotionControl = new MotionEvent(avg, avgPath);
+        //Create the AVG waypoints
         avgPath.addWayPoint(new Vector3f(-230, 0, -180));
         avgPath.addWayPoint(new Vector3f(-230, 0, -80));
         avgPath.addWayPoint(new Vector3f(-230, 0, 20));
@@ -112,12 +120,18 @@ public class Simulation extends SimpleApplication {
         avgPath.addWayPoint(new Vector3f(0, 0, -140));
         avgPath.addWayPoint(new Vector3f(-90, 0, -140));
         avgPath.addWayPoint(new Vector3f(-190, 0, -140));
-        motionControl = new MotionEvent(avg, avgPath);
-        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        motionControl.setInitialDuration(10f);
-        motionControl.setSpeed(0.2f);
+        // set the speed and direction of the AVG using motioncontrol
+        avgmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        avgmotionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
+        avgmotionControl.setInitialDuration(10f);
+        avgmotionControl.setSpeed(0.2f);
+        //make the vehicles start moving
+        avgmotionControl.setLoopMode(LoopMode.Loop);
+        avgmotionControl.play();
+        //make waypoints visible
+        //avgPath.disableDebugShape();
     }
+    
     @Override
     public void simpleUpdate(float tpf) {
         //TODO: add update code
@@ -138,10 +152,14 @@ public class Simulation extends SimpleApplication {
                 if (name.equals("debugmode") && keyPressed) {
                     if (debug) {
                         debug = false;
-                        avgPath.disableDebugShape();
+                        //testing train code
+                        train.move(!debug);
+                        boat.move(!debug);
                     } else {
                         debug = true;
-                        avgPath.enableDebugShape(assetManager, rootNode);
+                        //testing train code
+                        train.move(!debug);
+                        boat.move(!debug);
                     }
                 }
             }
