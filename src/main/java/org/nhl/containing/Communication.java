@@ -5,18 +5,24 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
-/*
- * Commands;
- * 
- * OK + [OBJECT] + [OBJECTID] + /OK
- * 
- */
+import javax.xml.parsers.*;
+import org.xml.sax.InputSource;
+import org.w3c.dom.*;
+import java.io.*;
 
 /**
- * @author TRJMM Used to communicate with the Backend system
+ * @author TRJMM Used to communicate with the Backend system. See wiki for all
+ * the commands
  */
 public class Communication {
+
+    private String containerIso;
+    private String containerOwner;
+    private String transportType;
+    private int maxValueContainers = 0;
+
     private enum Status {
+
         LISTEN, SENDING, INITIALIZE, DISPOSE
     };
     private Status status;
@@ -26,20 +32,20 @@ public class Communication {
     private final int PORT = 6666;
     private final String serverName = "localhost";
     private Thread operation;
-    private String command = "";
+    private String Output = "";
 
     public Communication() {
         status = Status.INITIALIZE;
     }
 
     public String getCommand() {
-        return command;
+        return Output;
     }
 
     /**
      * Starts the client
      */
-    public void startClient() {
+    private void startClient() {
         try {
 
             System.out.println("Connecting to " + serverName
@@ -56,7 +62,7 @@ public class Communication {
     /**
      * Listens for input from the backend system
      */
-    public void listen() {
+    private void listen() {
         try {
             if (client == null) {
                 client = new Socket(serverName, PORT);
@@ -67,16 +73,91 @@ public class Communication {
             inFromServer = client.getInputStream();
             DataInputStream input =
                     new DataInputStream(inFromServer);
-            command = input.readUTF();
-            if (command.equals("")) {
+            Output = input.readUTF();
+            if (Output.equals("")) {
                 input.reset();
-                command = "";
+                Output = "";
             } else {
-                System.out.println("Received string " + command + " from backend system!");
+                System.out.println("Received string " + Output + " from backend system. Now decoding...");
+                decodeXMLMessage(Output);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Tries to decode the incoming XML message and splits it within attributes
+     * of this class.
+     *
+     * @param xmlMessage The xml message you're willing to decode
+     */
+    private void decodeXMLMessage(String xmlMessage) {
+        try {
+            DocumentBuilderFactory dbf =
+                    DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            InputSource is = new InputSource();
+            is.setCharacterStream(new StringReader(xmlMessage));
+
+            Document doc = db.parse(is);
+
+            NodeList nodes = doc.getElementsByTagName("LastMessage");
+            if (nodes.getLength() > 0) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+
+                    NodeList numberOfContainers = element.getElementsByTagName("numberOfContainers");
+                    Element line = (Element) numberOfContainers.item(0);
+                    maxValueContainers = Integer.parseInt(getCharacterDataFromElement(line));
+                    System.out.println("numberOfContainers: " + maxValueContainers);
+                }
+            }
+
+            nodes = doc.getElementsByTagName("Create");
+            if (nodes.getLength() > 0) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+
+                    NodeList iso = element.getElementsByTagName("iso");
+                    Element line = (Element) iso.item(0);
+                    containerIso = getCharacterDataFromElement(line);
+                    System.out.println("ISO: " + containerIso);
+
+
+                    NodeList owner = element.getElementsByTagName("owner");
+                    line = (Element) owner.item(0);
+                    containerOwner = getCharacterDataFromElement(line);
+                    System.out.println("Owner: " + containerOwner);
+
+                    NodeList arrivalType = element.getElementsByTagName("arrivalTransportType");
+                    line = (Element) arrivalType.item(0);
+                    transportType = getCharacterDataFromElement(line);
+                    System.out.println("arrivalTransportType: " + transportType);
+                }
+            }
+
+            nodes = doc.getElementsByTagName("Move");
+            if (nodes.getLength() > 0) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Gets the characterdata from the specified element
+     */
+    private static String getCharacterDataFromElement(Element e) {
+        Node child = e.getFirstChild();
+        if (child instanceof CharacterData) {
+            CharacterData cd = (CharacterData) child;
+            return cd.getData();
+        }
+        return "?";
     }
 
     /**
@@ -157,7 +238,7 @@ public class Communication {
      *
      * @param milliseconds How long are we waiting in milliseconds?
      */
-    public void sleep(int milliseconds) {
+    private void sleep(int milliseconds) {
         try {
             operation.currentThread().sleep(milliseconds); //1000 milliseconds is one second.
         } catch (InterruptedException ex) {
