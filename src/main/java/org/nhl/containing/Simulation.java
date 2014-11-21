@@ -7,6 +7,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.cranes.DockingCrane;
+import org.nhl.containing.vehicles.Train;
 
 /**
  * test
@@ -55,6 +56,12 @@ public class Simulation extends SimpleApplication {
         secondDockingCrane.setLocalTranslation(10, 0, 30);
         rootNode.attachChild(secondDockingCrane);
 
+        // Add a train to the scene.
+        Train train = new Train(assetManager, 10);
+        train.setLocalTranslation(30, 0, 30);
+        
+        rootNode.attachChild(train);
+        
         // Add a container to the scene.
         Container container = new Container(assetManager);
         container.setLocalTranslation(0, 0, 0);

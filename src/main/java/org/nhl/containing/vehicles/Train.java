@@ -10,9 +10,12 @@ import com.jme3.scene.Spatial;
 public class Train extends Transporter {
 
     private AssetManager assetManager;
+    private int numberOfWagons;
+    private int wagonZAxis = -11;
 
-    public Train(AssetManager assetManager) {
+    public Train(AssetManager assetManager, int numberOfWagons) {
         this.assetManager = assetManager;
+        this.numberOfWagons = numberOfWagons;
         initTrain();
     }
 
@@ -21,10 +24,18 @@ public class Train extends Transporter {
      */
     public void initTrain() {
 
-        // Load a model and give it a material.
+        // Load a model.
         Spatial train = assetManager.loadModel("Models/medium/train/train.j3o");
         this.attachChild(train);
 
-        //TODO: Add wagons.
+        //Load wagons.
+        Spatial wagon = assetManager.loadModel("Models/medium/train/wagon.j3o");
+
+        for (int i = 0; i < numberOfWagons; i++) {
+            Spatial nextWagon = wagon.clone();
+            nextWagon.setLocalTranslation(0, 0, wagonZAxis);
+            this.attachChild(nextWagon);
+            wagonZAxis -= 15;
+        }
     }
 }

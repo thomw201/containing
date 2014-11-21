@@ -22,7 +22,7 @@ public class Lorry extends Transporter {
     public void initLorry() {
 
 
-        // Load a model and give it a material.
+        // Load a model.
         Spatial lorry = assetManager.loadModel("Models/medium/truck.j3o");
         this.attachChild(lorry);
     }

@@ -21,7 +21,7 @@ public class Boat extends Transporter {
      */
     public void initBoat() {
 
-        // Load a model and give it a material.
+        // Load a model.
         Spatial boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
         this.attachChild(boat);
     }
