@@ -16,9 +16,7 @@ import java.net.Socket;
  * @author TRJMM Used to communicate with the Backend system
  */
 public class Communication {
-
     private enum Status {
-
         LISTEN, SENDING, INITIALIZE, DISPOSE
     };
     private Status status;
@@ -28,14 +26,14 @@ public class Communication {
     private final int PORT = 6666;
     private final String serverName = "localhost";
     private Thread operation;
-    private String commando = "";
+    private String command = "";
 
     public Communication() {
         status = Status.INITIALIZE;
     }
 
-    public String getCommando() {
-        return commando;
+    public String getCommand() {
+        return command;
     }
 
     /**
@@ -50,6 +48,7 @@ public class Communication {
             System.out.println(" Just connected to "
                     + client.getRemoteSocketAddress());
         } catch (IOException e) {
+            e.printStackTrace();
         }
         sleep(1000);
     }
@@ -68,14 +67,15 @@ public class Communication {
             inFromServer = client.getInputStream();
             DataInputStream input =
                     new DataInputStream(inFromServer);
-            commando = input.readUTF();
-            if (commando.equals("")) {
+            command = input.readUTF();
+            if (command.equals("")) {
                 input.reset();
-                commando = "";
+                command = "";
             } else {
-                System.out.println("Recieved string " + commando + " from backend system!");
+                System.out.println("Received string " + command + " from backend system!");
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -98,6 +98,7 @@ public class Communication {
             System.out.println("Sent message " + message + " to the Backend system!");
 
         } catch (Exception e) {
+            e.printStackTrace();
         }
         status = Status.LISTEN;
     }
@@ -110,6 +111,7 @@ public class Communication {
             client.close();
             status = Status.DISPOSE;
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -141,6 +143,7 @@ public class Communication {
                         }
 
                     } catch (Throwable e) {
+                        e.printStackTrace();
                     }
                 }
             }
