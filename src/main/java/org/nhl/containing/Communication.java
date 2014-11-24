@@ -19,12 +19,21 @@ public class Communication {
     private String containerIso;
     private String containerOwner;
     private String transportType;
+    private String objectName;
+    private String destinationName;
+    private String speed;
     private int maxValueContainers = 0;
 
     private enum Status {
 
         LISTEN, SENDING, INITIALIZE, DISPOSE
     };
+
+    private enum Commando {
+
+        Create, Move, Dispose, LastMessage
+    };
+    private Commando commando;
     private Status status;
     private Socket client;
     private InputStream inFromServer;
@@ -38,8 +47,12 @@ public class Communication {
         status = Status.INITIALIZE;
     }
 
-    public String getCommand() {
+    public String getOutput() {
         return Output;
+    }
+
+    public Commando getCommando() {
+        return commando;
     }
 
     /**
@@ -112,6 +125,13 @@ public class Communication {
                     maxValueContainers = Integer.parseInt(getCharacterDataFromElement(line));
                     System.out.println("numberOfContainers: " + maxValueContainers);
                 }
+                containerIso = null;
+                containerOwner = null;
+                transportType = null;
+                objectName = null;
+                destinationName = null;
+                speed = null;
+                commando = Commando.LastMessage;
             }
 
             nodes = doc.getElementsByTagName("Create");
@@ -119,29 +139,71 @@ public class Communication {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Element element = (Element) nodes.item(i);
 
-                    NodeList iso = element.getElementsByTagName("iso");
-                    Element line = (Element) iso.item(0);
+                    NodeList nodeList = element.getElementsByTagName("iso");
+                    Element line = (Element) nodeList.item(0);
                     containerIso = getCharacterDataFromElement(line);
                     System.out.println("ISO: " + containerIso);
 
 
-                    NodeList owner = element.getElementsByTagName("owner");
-                    line = (Element) owner.item(0);
+                    nodeList = element.getElementsByTagName("owner");
+                    line = (Element) nodeList.item(0);
                     containerOwner = getCharacterDataFromElement(line);
                     System.out.println("Owner: " + containerOwner);
 
-                    NodeList arrivalType = element.getElementsByTagName("arrivalTransportType");
-                    line = (Element) arrivalType.item(0);
+                    nodeList = element.getElementsByTagName("arrivalTransportType");
+                    line = (Element) nodeList.item(0);
                     transportType = getCharacterDataFromElement(line);
                     System.out.println("arrivalTransportType: " + transportType);
                 }
+                objectName = null;
+                destinationName = null;
+                speed = null;
+                commando = Commando.Create;
             }
 
             nodes = doc.getElementsByTagName("Move");
             if (nodes.getLength() > 0) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Element element = (Element) nodes.item(i);
+
+                    NodeList nodeList = element.getElementsByTagName("objectName");
+                    Element line = (Element) nodeList.item(0);
+                    objectName = getCharacterDataFromElement(line);
+                    System.out.println("objectName: " + objectName);
+
+                    nodeList = element.getElementsByTagName("destinationName");
+                    line = (Element) nodeList.item(0);
+                    destinationName = getCharacterDataFromElement(line);
+                    System.out.println("destinationName: " + destinationName);
+
+                    nodeList = element.getElementsByTagName("speed");
+                    line = (Element) nodeList.item(0);
+                    speed = getCharacterDataFromElement(line);
+                    System.out.println("speed: " + speed);
                 }
+                containerIso = null;
+                containerOwner = null;
+                transportType = null;
+                commando = Commando.Move;
+            }
+
+            nodes = doc.getElementsByTagName("Dispose");
+            if (nodes.getLength() > 0) {
+                for (int i = 0; i < nodes.getLength(); i++) {
+                    Element element = (Element) nodes.item(i);
+
+                    NodeList nodeList = element.getElementsByTagName("objectName");
+                    Element line = (Element) nodeList.item(0);
+                    objectName = getCharacterDataFromElement(line);
+                    System.out.println("objectName: " + objectName);
+                }
+                containerIso = null;
+                containerOwner = null;
+                transportType = null;
+                objectName = null;
+                destinationName = null;
+                speed = null;
+                commando = Commando.Dispose;
             }
         } catch (Exception e) {
             e.printStackTrace();

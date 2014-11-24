@@ -28,7 +28,6 @@ public class Simulation extends SimpleApplication {
     private Agv avg;
     private MotionPath avgPath;
     private MotionEvent motionControl;
-    private DirectionalLight sun;
     private boolean debug;
     private Communication communication;
 
