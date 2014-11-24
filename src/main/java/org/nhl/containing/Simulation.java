@@ -16,6 +16,7 @@ import com.jme3.scene.Spatial;
 import org.nhl.containing.cranes.DockingCrane;
 import org.nhl.containing.vehicles.Train;
 import org.nhl.containing.vehicles.Agv;
+import org.nhl.containing.vehicles.Vehicle;
 
 /**
  * test
@@ -23,17 +24,24 @@ import org.nhl.containing.vehicles.Agv;
  * @author normenhansen
  */
 public class Simulation extends SimpleApplication {
+
     private Agv avg;
     private MotionPath avgPath;
     private MotionEvent motionControl;
     private DirectionalLight sun;
     private boolean debug;
-    
+    private Communication communication;
+
+    public Simulation() {
+        communication = new Communication();
+    }
+
     @Override
     public void simpleInitApp() {
         cam();
         scene();
         userInput();
+        communication.Start();
     }
 
     /**
@@ -43,6 +51,18 @@ public class Simulation extends SimpleApplication {
         viewPort.setBackgroundColor(ColorRGBA.Blue);
         cam.setLocation(new Vector3f(0, 5, 0));
         flyCam.setMoveSpeed(50);
+    }
+
+    /**
+     * Sends an OK-type message to the controller of the object that is ready
+     * for a new task -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE
+     * FUTURE!-
+     *
+     * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
+     */
+    public void sendOkMessage(Vehicle veh) {
+        String message = "<OK><OBJECT>" + veh.getName() + "</OBJECT><OBJECTID>" + veh.getId() + "</OBJECTID></OK>";
+        communication.sendMessage(message);
     }
 
     /*
@@ -73,9 +93,9 @@ public class Simulation extends SimpleApplication {
         // Add a train to the scene.
         Train train = new Train(assetManager, 10);
         train.setLocalTranslation(30, 0, 30);
-        
+
         rootNode.attachChild(train);
-        
+
         // Add a container to the scene.
         Container container = new Container(assetManager);
         container.setLocalTranslation(100, 0, 0);
@@ -93,6 +113,7 @@ public class Simulation extends SimpleApplication {
         platform.scale(20, 1, 20);
         rootNode.attachChild(platform);
     }
+
     void createPath() {
         avgPath = new MotionPath();
         avgPath.addWayPoint(new Vector3f(-230, 0, -180));
@@ -118,6 +139,7 @@ public class Simulation extends SimpleApplication {
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(0.2f);
     }
+
     @Override
     public void simpleUpdate(float tpf) {
         //TODO: add update code
