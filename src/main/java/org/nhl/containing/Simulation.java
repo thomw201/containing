@@ -194,6 +194,7 @@ public class Simulation extends SimpleApplication {
         totalContainerList.add(c);
         c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, locationInt += 10, 0));
         totalContainerList.add(c);
+        createObject();
     }
 
     /**
