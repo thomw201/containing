@@ -83,7 +83,8 @@ public class Communication {
             System.out.println(" Just connected to "
                     + client.getRemoteSocketAddress());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("SERVER NOT FOUND! MAKE SURE THE SERVER IS ONLINE! RECONNECTING...");
+            status = Status.INITIALIZE;
         }
         sleep(1000);
     }
@@ -111,7 +112,8 @@ public class Communication {
                 decodeXMLMessage(Output);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("SERVER NOT FOUND! MAKE SURE THE SERVER IS ONLINE! RECONNECTING...");
+            status = Status.INITIALIZE;
         }
     }
  
