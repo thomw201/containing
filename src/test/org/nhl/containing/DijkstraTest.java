@@ -42,7 +42,6 @@ public class DijkstraTest {
      */
     @Test
     public void testComputePaths() {
-        System.out.println("computePaths");
         Vertex source = null;
         Dijkstra.computePaths(source);
         // TODO review the generated test code and remove the default call to fail.
@@ -54,23 +53,10 @@ public class DijkstraTest {
      */
     @Test
     public void testGetShortestPathTo() {
-        System.out.println("getShortestPathTo");
         Vertex target = null;
         List expResult = null;
         List result = Dijkstra.getShortestPathTo(target);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of main method, of class Dijkstra.
-     */
-    @Test
-    public void testMain() {
-        System.out.println("main");
-        String[] args = null;
-        Dijkstra.main(args);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }
