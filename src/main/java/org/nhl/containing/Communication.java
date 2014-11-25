@@ -1,5 +1,5 @@
 package org.nhl.containing;
-
+ 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,13 +9,13 @@ import javax.xml.parsers.*;
 import org.xml.sax.InputSource;
 import org.w3c.dom.*;
 import java.io.*;
-
+ 
 /**
  * @author TRJMM Used to communicate with the Backend system. See wiki for all
  * the commands
  */
 public class Communication {
-
+ 
     private String containerIso;
     private String containerOwner;
     private String transportType;
@@ -23,14 +23,14 @@ public class Communication {
     private String destinationName;
     private String speed;
     private int maxValueContainers = 0;
-
+ 
     private enum Status {
-
+ 
         LISTEN, SENDING, INITIALIZE, DISPOSE
     };
-
+ 
     private enum Command {
-
+ 
         Create, Move, Dispose, LastMessage
     };
     private Command command;
@@ -42,17 +42,33 @@ public class Communication {
     private final String serverName = "localhost";
     private Thread operation;
     private String Output = "";
-
+ 
     public Communication() {
         status = Status.INITIALIZE;
     }
-
+ 
     public String getOutput() {
         return Output;
     }
-
+ 
     public Command getCommand() {
         return command;
+    }
+
+    public String getContainerIso() {
+        return containerIso;
+    }
+
+    public String getContainerOwner() {
+        return containerOwner;
+    }
+
+    public int getMaxValueContainers() {
+        return maxValueContainers;
+    }
+
+    public String getTransportType() {
+        return transportType;
     }
 
     /**
@@ -60,7 +76,7 @@ public class Communication {
      */
     private void startClient() {
         try {
-
+ 
             System.out.println("Connecting to " + serverName
                     + " on port " + PORT);
             client = new Socket(serverName, PORT);
@@ -71,7 +87,7 @@ public class Communication {
         }
         sleep(1000);
     }
-
+ 
     /**
      * Listens for input from the backend system
      */
@@ -98,7 +114,7 @@ public class Communication {
             e.printStackTrace();
         }
     }
-
+ 
     /**
      * Tries to decode the incoming XML message and splits it within attributes
      * of this class.
@@ -112,14 +128,14 @@ public class Communication {
             DocumentBuilder db = dbf.newDocumentBuilder();
             InputSource is = new InputSource();
             is.setCharacterStream(new StringReader(xmlMessage));
-
+ 
             Document doc = db.parse(is);
-
+ 
             NodeList nodes = doc.getElementsByTagName("LastMessage");
             if (nodes.getLength() > 0) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Element element = (Element) nodes.item(i);
-
+ 
                     NodeList numberOfContainers = element.getElementsByTagName("numberOfContainers");
                     Element line = (Element) numberOfContainers.item(0);
                     maxValueContainers = Integer.parseInt(getCharacterDataFromElement(line));
@@ -133,23 +149,23 @@ public class Communication {
                 speed = null;
                 command = Command.LastMessage;
             }
-
+ 
             nodes = doc.getElementsByTagName("Create");
             if (nodes.getLength() > 0) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Element element = (Element) nodes.item(i);
-
+ 
                     NodeList nodeList = element.getElementsByTagName("iso");
                     Element line = (Element) nodeList.item(0);
                     containerIso = getCharacterDataFromElement(line);
                     System.out.println("ISO: " + containerIso);
-
-
+ 
+ 
                     nodeList = element.getElementsByTagName("owner");
                     line = (Element) nodeList.item(0);
                     containerOwner = getCharacterDataFromElement(line);
                     System.out.println("Owner: " + containerOwner);
-
+ 
                     nodeList = element.getElementsByTagName("arrivalTransportType");
                     line = (Element) nodeList.item(0);
                     transportType = getCharacterDataFromElement(line);
@@ -160,22 +176,22 @@ public class Communication {
                 speed = null;
                 command = Command.Create;
             }
-
+ 
             nodes = doc.getElementsByTagName("Move");
             if (nodes.getLength() > 0) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Element element = (Element) nodes.item(i);
-
+ 
                     NodeList nodeList = element.getElementsByTagName("objectName");
                     Element line = (Element) nodeList.item(0);
                     objectName = getCharacterDataFromElement(line);
                     System.out.println("objectName: " + objectName);
-
+ 
                     nodeList = element.getElementsByTagName("destinationName");
                     line = (Element) nodeList.item(0);
                     destinationName = getCharacterDataFromElement(line);
                     System.out.println("destinationName: " + destinationName);
-
+ 
                     nodeList = element.getElementsByTagName("speed");
                     line = (Element) nodeList.item(0);
                     speed = getCharacterDataFromElement(line);
@@ -186,12 +202,12 @@ public class Communication {
                 transportType = null;
                 command = Command.Move;
             }
-
+ 
             nodes = doc.getElementsByTagName("Dispose");
             if (nodes.getLength() > 0) {
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Element element = (Element) nodes.item(i);
-
+ 
                     NodeList nodeList = element.getElementsByTagName("objectName");
                     Element line = (Element) nodeList.item(0);
                     objectName = getCharacterDataFromElement(line);
@@ -209,7 +225,7 @@ public class Communication {
             e.printStackTrace();
         }
     }
-
+ 
     /**
      * Gets the characterdata from the specified element
      */
@@ -221,7 +237,7 @@ public class Communication {
         }
         return "?";
     }
-
+ 
     /**
      * Sends a message to the backend system
      *
@@ -229,7 +245,7 @@ public class Communication {
      */
     public void sendMessage(String message) {
         status = Status.SENDING;
-
+ 
         try {
             if (client == null) {
                 client = new Socket(serverName, PORT);
@@ -239,25 +255,20 @@ public class Communication {
             out = new DataOutputStream(client.getOutputStream());
             out.writeUTF(message);
             System.out.println("Sent message " + message + " to the Backend system!");
-
+ 
         } catch (Exception e) {
             e.printStackTrace();
         }
         status = Status.LISTEN;
     }
-
+ 
     /**
      * Stops the client and stops this thread
      */
     public void stopClient() {
-        try {
-            client.close();
-            status = Status.DISPOSE;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        operation = null;
     }
-
+ 
     /**
      * This method will be called once and loops until the thread stops.
      */
@@ -265,7 +276,8 @@ public class Communication {
         operation = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                Thread thisThread = Thread.currentThread();
+                while (operation == thisThread) {
                     try {
                         switch (status) {
                             case INITIALIZE:
@@ -281,10 +293,9 @@ public class Communication {
                                 status = Status.SENDING;
                                 break;
                             case DISPOSE:
-                                operation.stop();
                                 break;
                         }
-
+ 
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
@@ -294,7 +305,7 @@ public class Communication {
         operation.setName("Simulation Communicator");
         operation.start();
     }
-
+ 
     /**
      * Sleep this thread we are working with for x milliseconds
      *
