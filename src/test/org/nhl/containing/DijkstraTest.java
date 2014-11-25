@@ -17,10 +17,6 @@ import static org.junit.Assert.*;
  * @author Matthijs
  */
 public class DijkstraTest {
-    
-    public DijkstraTest() {
-    }
-    
     @BeforeClass
     public static void setUpClass() {
     }

@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 /**
  * Basic empty test template for unit tests.
  */
-public class TestTemplate {
+public class TemplateTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
