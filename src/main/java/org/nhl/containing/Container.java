@@ -36,7 +36,7 @@ public class Container extends Node {
         // Load a model.
         Spatial container = assetManager.loadModel("Models/medium/container/container.j3o");
         Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("color", ColorRGBA.randomColor());
+        // mat.setColor("color", ColorRGBA.randomColor());
         container.setMaterial(mat);
         this.attachChild(container);
     }
