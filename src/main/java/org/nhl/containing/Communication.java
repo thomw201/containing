@@ -29,11 +29,11 @@ public class Communication {
         LISTEN, SENDING, INITIALIZE, DISPOSE
     };
 
-    private enum Commando {
+    private enum Command {
 
         Create, Move, Dispose, LastMessage
     };
-    private Commando commando;
+    private Command command;
     private Status status;
     private Socket client;
     private InputStream inFromServer;
@@ -51,8 +51,8 @@ public class Communication {
         return Output;
     }
 
-    public Commando getCommando() {
-        return commando;
+    public Command getCommand() {
+        return command;
     }
 
     /**
@@ -131,7 +131,7 @@ public class Communication {
                 objectName = null;
                 destinationName = null;
                 speed = null;
-                commando = Commando.LastMessage;
+                command = Command.LastMessage;
             }
 
             nodes = doc.getElementsByTagName("Create");
@@ -158,7 +158,7 @@ public class Communication {
                 objectName = null;
                 destinationName = null;
                 speed = null;
-                commando = Commando.Create;
+                command = Command.Create;
             }
 
             nodes = doc.getElementsByTagName("Move");
@@ -184,7 +184,7 @@ public class Communication {
                 containerIso = null;
                 containerOwner = null;
                 transportType = null;
-                commando = Commando.Move;
+                command = Command.Move;
             }
 
             nodes = doc.getElementsByTagName("Dispose");
@@ -203,7 +203,7 @@ public class Communication {
                 objectName = null;
                 destinationName = null;
                 speed = null;
-                commando = Commando.Dispose;
+                command = Command.Dispose;
             }
         } catch (Exception e) {
             e.printStackTrace();
