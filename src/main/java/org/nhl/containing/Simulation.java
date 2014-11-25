@@ -26,6 +26,7 @@ public class Simulation extends SimpleApplication {
     private Agv avg;
     private Train train;
     private Boat boat;
+    private Lorry lorry;
     //private DirectionalLight sun;
     private boolean debug;
     public static final Quaternion YAW180   = new Quaternion().fromAngleAxis(FastMath.PI  ,   new Vector3f(0,1,0));
@@ -84,7 +85,10 @@ public class Simulation extends SimpleApplication {
         avg.setLocalTranslation(-230, 0, -180);
         rootNode.attachChild(avg);
         createAVGPath();
-
+        //Add a lorry
+        lorry = new Lorry(assetManager);
+        rootNode.attachChild(lorry);
+        lorry.move(true);
         //Add a boat
         boat = new Boat(assetManager);
         rootNode.attachChild(boat);
@@ -150,16 +154,18 @@ public class Simulation extends SimpleApplication {
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    if (debug) {
+                    if (!debug) {
                         debug = false;
                         //testing train code
-                        train.move(!debug);
-                        boat.move(!debug);
+                        train.move(debug);
+                        boat.move(debug);
+                        lorry.move(debug);
                     } else {
                         debug = true;
                         //testing train code
-                        train.move(!debug);
-                        boat.move(!debug);
+                        train.move(debug);
+                        boat.move(debug);
+                        lorry.move(debug);
                     }
                 }
             }
