@@ -263,4 +263,11 @@ public class Simulation extends SimpleApplication {
 
     public void readyCheck() {
     }
+    
+    @Override
+    public void destroy()
+    {
+        super.destroy();
+        communication.stopClient();
+    }
 }
