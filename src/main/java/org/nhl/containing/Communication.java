@@ -22,7 +22,7 @@ public class Communication {
     private String objectName;
     private String destinationName;
     private String speed;
-    private int maxValueContainers = 0;
+    private int maxValueContainers = 4;
  
     private enum Status {
  

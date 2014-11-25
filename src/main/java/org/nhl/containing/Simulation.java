@@ -59,6 +59,7 @@ public class Simulation extends SimpleApplication {
         cam();
         scene();
         userInput();
+        createContainers();
         communication.Start();
     }
 
@@ -185,10 +186,14 @@ public class Simulation extends SimpleApplication {
     }
 
     private void createContainers() {
-    c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, locationInt += 10, 0));
-    c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, locationInt += 10, 0));
-    c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", new Vector3f(0, locationInt += 10, 0));
-    c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, locationInt += 10, 0));
+        c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, locationInt += 10, 0));
+        totalContainerList.add(c);
+        c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, locationInt += 10, 0));
+        totalContainerList.add(c);
+        c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", new Vector3f(0, locationInt += 10, 0));
+        totalContainerList.add(c);
+        c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, locationInt += 10, 0));
+        totalContainerList.add(c);
     }
 
     /**
