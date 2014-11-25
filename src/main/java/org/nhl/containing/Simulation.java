@@ -9,6 +9,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -17,6 +18,7 @@ import org.nhl.containing.cranes.DockingCrane;
 import org.nhl.containing.vehicles.Train;
 import org.nhl.containing.vehicles.Agv;
 import org.nhl.containing.vehicles.Vehicle;
+import org.nhl.containing.vehicles.*;
 
 /**
  * test
@@ -25,11 +27,15 @@ import org.nhl.containing.vehicles.Vehicle;
  */
 public class Simulation extends SimpleApplication {
 
-    private Agv avg;
-    private MotionPath avgPath;
+    private Agv agv;
+    private MotionPath agvPath;
     private MotionEvent motionControl;
     private boolean debug;
     private Communication communication;
+    private Train train;
+    private Boat boat;
+    private Lorry lorry;
+    public static final Quaternion YAW180   = new Quaternion().fromAngleAxis(FastMath.PI  ,   new Vector3f(0,1,0));
 
     public Simulation() {
         communication = new Communication();
@@ -90,55 +96,70 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(secondDockingCrane);
 
         // Add a train to the scene.
-        Train train = new Train(assetManager, 10);
-        train.setLocalTranslation(30, 0, 30);
-
+        train = new Train(assetManager, 10);
         rootNode.attachChild(train);
-
+        //call method that makes the train arrive
+        train.move(true);
         // Add a container to the scene.
         Container container = new Container(assetManager);
         container.setLocalTranslation(100, 0, 0);
         rootNode.attachChild(container);
-        //Add an AVG and create its path
-        avg = new Agv(assetManager);
-        avg.setLocalTranslation(-230, 0, -180);
-        rootNode.attachChild(avg);
-        createPath();
-        motionControl.setLoopMode(LoopMode.Loop);
-        motionControl.play();
-
+        //Add an AGV and create its path
+        agv = new Agv(assetManager);
+        agv.setLocalTranslation(-230, 0, -180);
+        rootNode.attachChild(agv);
+        createAGVPath();
+        //Add a lorry
+        lorry = new Lorry(assetManager);
+        rootNode.attachChild(lorry);
+        lorry.move(true);
+        //Add a boat
+        boat = new Boat(assetManager);
+        rootNode.attachChild(boat);
+        boat.scale(1, 1, 0.5f);
+        boat.move(true);
+        
         // Platform for the scene.        
         Spatial platform = assetManager.loadModel("Models/platform/platform.j3o");
         platform.scale(20, 1, 20);
         rootNode.attachChild(platform);
     }
-
-    void createPath() {
-        avgPath = new MotionPath();
-        avgPath.addWayPoint(new Vector3f(-230, 0, -180));
-        avgPath.addWayPoint(new Vector3f(-230, 0, -80));
-        avgPath.addWayPoint(new Vector3f(-230, 0, 20));
-        avgPath.addWayPoint(new Vector3f(-230, 0, 125));
-        avgPath.addWayPoint(new Vector3f(-130, 0, 125));
-        avgPath.addWayPoint(new Vector3f(30, 0, 125));
-        avgPath.addWayPoint(new Vector3f(80, 0, 125));
-        avgPath.addWayPoint(new Vector3f(180, 0, 125));
-        avgPath.addWayPoint(new Vector3f(290, 0, 125));
-        avgPath.addWayPoint(new Vector3f(290, 0, 20));
-        avgPath.addWayPoint(new Vector3f(290, 0, -80));
-        avgPath.addWayPoint(new Vector3f(290, 0, -140));
-        avgPath.addWayPoint(new Vector3f(190, 0, -140));
-        avgPath.addWayPoint(new Vector3f(90, 0, -140));
-        avgPath.addWayPoint(new Vector3f(0, 0, -140));
-        avgPath.addWayPoint(new Vector3f(-90, 0, -140));
-        avgPath.addWayPoint(new Vector3f(-190, 0, -140));
-        motionControl = new MotionEvent(avg, avgPath);
-        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        motionControl.setInitialDuration(10f);
-        motionControl.setSpeed(0.2f);
+    /**
+     * This method creates waypoints on the AGV roads and lets an AGV drive over them
+     */
+    void createAGVPath() {
+        MotionPath agvPath = new MotionPath();
+        MotionEvent agvmotionControl = new MotionEvent(agv, agvPath);
+        //Create the AGV waypoints
+        agvPath.addWayPoint(new Vector3f(-230, 0, -180));
+        agvPath.addWayPoint(new Vector3f(-230, 0, -80));
+        agvPath.addWayPoint(new Vector3f(-230, 0, 20));
+        agvPath.addWayPoint(new Vector3f(-230, 0, 125));
+        agvPath.addWayPoint(new Vector3f(-130, 0, 125));
+        agvPath.addWayPoint(new Vector3f(30, 0, 125));
+        agvPath.addWayPoint(new Vector3f(80, 0, 125));
+        agvPath.addWayPoint(new Vector3f(180, 0, 125));
+        agvPath.addWayPoint(new Vector3f(290, 0, 125));
+        agvPath.addWayPoint(new Vector3f(290, 0, 20));
+        agvPath.addWayPoint(new Vector3f(290, 0, -80));
+        agvPath.addWayPoint(new Vector3f(290, 0, -140));
+        agvPath.addWayPoint(new Vector3f(190, 0, -140));
+        agvPath.addWayPoint(new Vector3f(90, 0, -140));
+        agvPath.addWayPoint(new Vector3f(0, 0, -140));
+        agvPath.addWayPoint(new Vector3f(-90, 0, -140));
+        agvPath.addWayPoint(new Vector3f(-190, 0, -140));
+        // set the speed and direction of the AGV using motioncontrol
+        agvmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        agvmotionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
+        agvmotionControl.setInitialDuration(10f);
+        agvmotionControl.setSpeed(0.2f);
+        //make the vehicles start moving
+        agvmotionControl.setLoopMode(LoopMode.Loop);
+        agvmotionControl.play();
+        //make waypoints visible
+        //agvPath.disableDebugShape();
     }
-
+    
     @Override
     public void simpleUpdate(float tpf) {
         //TODO: add update code
@@ -157,12 +178,18 @@ public class Simulation extends SimpleApplication {
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    if (debug) {
+                    if (!debug) {
                         debug = false;
-                        avgPath.disableDebugShape();
+                        //testing train code
+                        train.move(debug);
+                        boat.move(debug);
+                        lorry.move(debug);
                     } else {
                         debug = true;
-                        avgPath.enableDebugShape(assetManager, rootNode);
+                        //testing train code
+                        train.move(debug);
+                        boat.move(debug);
+                        lorry.move(debug);
                     }
                 }
             }
