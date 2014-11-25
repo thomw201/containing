@@ -6,6 +6,7 @@ import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import org.nhl.containing.Container;
 
 /**
  *
@@ -16,11 +17,14 @@ public class Train extends Transporter {
     private AssetManager assetManager;
     private int numberOfWagons;
     private int wagonZAxis = -11;
+    private int containerZAxis = -11;
     private float speed = 0.5f;
+    private Container container;
 
-    public Train(AssetManager assetManager, int numberOfWagons) {
+    public Train(AssetManager assetManager, int numberOfWagons, Container c) {
         this.assetManager = assetManager;
         this.numberOfWagons = numberOfWagons;
+        this.container = c;
         initTrain();
     }
 
@@ -40,6 +44,8 @@ public class Train extends Transporter {
             Spatial nextWagon = wagon.clone();
             nextWagon.setLocalTranslation(0, 0, wagonZAxis);
             this.attachChild(nextWagon);
+            container.setLocalTranslation(0, 1f, containerZAxis);
+            this.attachChild(container);
             wagonZAxis -= 15;
         }
     }

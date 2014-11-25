@@ -139,13 +139,14 @@ public class Simulation extends SimpleApplication {
     }
 
     /**
- * This methode will process all incomming create commands.
- * 
- * Create containers and add them to a list<container>. 
- * When the list<container> == maxValueContainer (so max count of the sended commands)
- * Then take apart the List<Container> and divide them to there TransportList.
- * When the List<container> == empty then create the vehicles.
- */
+     * This methode will process all incomming create commands.
+     *
+     * Create containers and add them to a list<container>. When the
+     * list<container> == maxValueContainer (so max count of the sended
+     * commands) Then take apart the List<Container> and divide them to there
+     * TransportList. When the List<container> == empty then create the
+     * vehicles.
+     */
     private void createObject() {
         if (communication.getMaxValueContainers() != 0) {
             if (communication.getMaxValueContainers() == totalContainerList.size()) {
@@ -162,31 +163,34 @@ public class Simulation extends SimpleApplication {
                     if (c.getTransportType().equals("vrachtauto")) {
                         // Lorry can only contain 1 container, so has to create immediately.
                         Lorry l = new Lorry(assetManager);
-                        //c.setLocation(l.getLocation());
                         c.attachChild(l);
                     }
                 }
-                if (!inlandshipContainerList.isEmpty() && communication.getTransportType().equals("binnenschip")) {
+                for (Container c : inlandshipContainerList) {
                     Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP);
                 }
-                if (!seashipContainerList.isEmpty() && communication.getTransportType().equals("zeeschip")) {
+                for (Container c : seashipContainerList) {
                     Boat b = new Boat(assetManager, Boat.Size.SEASHIP);
                 }
-                if (!trainContainerList.isEmpty() && communication.getTransportType().equals("trein")) {
-                    Train t = new Train(assetManager, trainContainerList.size());
-                    
+                for (Container c : trainContainerList) {
+                    Train t = new Train(assetManager, trainContainerList.size(), c);
+                    rootNode.attachChild(t);
                 }
             }
         } else {
-            //owner, id, arrival-transport-type
             c = new Container(assetManager, communication.getContainerOwner(),
                     communication.getContainerIso(), communication.getTransportType(), new Vector3f(0, locationInt += 10, 0));
             totalContainerList.add(c);
         }
     }
-    
-    
-    
+
+    private void createContainers() {
+    c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, locationInt += 10, 0));
+    c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, locationInt += 10, 0));
+    c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", new Vector3f(0, locationInt += 10, 0));
+    c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, locationInt += 10, 0));
+    }
+
     /**
      * This method creates waypoints on the AGV roads and lets an AGV drive over
      * them
@@ -263,10 +267,9 @@ public class Simulation extends SimpleApplication {
 
     public void readyCheck() {
     }
-    
+
     @Override
-    public void destroy()
-    {
+    public void destroy() {
         super.destroy();
         communication.stopClient();
     }
