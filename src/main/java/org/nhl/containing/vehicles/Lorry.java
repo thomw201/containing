@@ -6,6 +6,7 @@ import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import org.nhl.containing.Container;
 
 /**
  *
@@ -15,8 +16,11 @@ public class Lorry extends Transporter {
 
     private AssetManager assetManager;
     private float speed = 1f;
-    public Lorry(AssetManager assetManager) {
+    private int lorryZAxis = 11;
+    private Container containter;
+    public Lorry(AssetManager assetManager, Container c) {
         this.assetManager = assetManager;
+        this.containter = c;
         initLorry();
     }
 
@@ -28,7 +32,10 @@ public class Lorry extends Transporter {
 
         // Load a model.
         Spatial lorry = assetManager.loadModel("Models/medium/truck.j3o");
+        lorry.setLocalTranslation(0, 0, lorryZAxis);
+        containter.setLocalTranslation(0, 1, lorryZAxis);
         this.attachChild(lorry);
+        this.attachChild(containter);
     }
 
     public void move(boolean direction) {

@@ -114,8 +114,8 @@ public class Simulation extends SimpleApplication {
                 }
                 if (c.getTransportType().equals("vrachtauto")) {
                     // Lorry can only contain 1 container, so has to create immediately.
-                    Lorry l = new Lorry(assetManager);
-                    c.attachChild(l);
+                    Lorry l = new Lorry(assetManager , c);
+                    rootNode.attachChild(l);
                 }
             }
             if (!inlandshipContainerList.isEmpty()) {
