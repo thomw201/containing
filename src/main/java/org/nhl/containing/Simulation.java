@@ -31,13 +31,12 @@ import org.nhl.containing.vehicles.*;
  */
 public class Simulation extends SimpleApplication {
 
-    private List<Container> totalContainerList;
-    private List<Container> trainContainerList;
-    private List<Container> seashipContainerList;
-    private List<Container> inlandshipContainerList;
-
+    private ArrayList<Container> totalContainerList;
+    private ArrayList<Container> trainContainerList;
+    private ArrayList<Container> seashipContainerList;
+    private ArrayList<Container> inlandshipContainerList;
     //TIJDELIJK
-    private int locationInt = 0;
+    private int locationInt = -10;
     private Agv agv;
     private Communication communication;
     private Train train;
@@ -102,34 +101,34 @@ public class Simulation extends SimpleApplication {
      */
     private void createObject() {
         if (communication.getMaxValueContainers() != 0) {
-            if (communication.getMaxValueContainers() == totalContainerList.size()) {
-                for (Container c : totalContainerList) {
-                    if (c.getTransportType().equals("binnenschip")) {
-                        inlandshipContainerList.add(c);
-                    }
-                    if (c.getTransportType().equals("zeeschip")) {
-                        seashipContainerList.add(c);
-                    }
-                    if (c.getTransportType().equals("trein")) {
-                        trainContainerList.add(c);
-                    }
-                    if (c.getTransportType().equals("vrachtauto")) {
-                        // Lorry can only contain 1 container, so has to create immediately.
-                        Lorry l = new Lorry(assetManager);
-                        c.attachChild(l);
-                    }
+            //if (communication.getMaxValueContainers() == totalContainerList.size()) {
+            for (Container c : totalContainerList) {
+                if (c.getTransportType().equals("binnenschip")) {
+                    inlandshipContainerList.add(c);
                 }
-                for (Container c : inlandshipContainerList) {
-                    Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP);
+                if (c.getTransportType().equals("zeeschip")) {
+                    seashipContainerList.add(c);
                 }
-                for (Container c : seashipContainerList) {
-                    Boat b = new Boat(assetManager, Boat.Size.SEASHIP);
+                if (c.getTransportType().equals("trein")) {
+                    trainContainerList.add(c);
                 }
-                for (Container c : trainContainerList) {
-                    Train t = new Train(assetManager, trainContainerList.size(), c);
-                    rootNode.attachChild(t);
+                if (c.getTransportType().equals("vrachtauto")) {
+                    // Lorry can only contain 1 container, so has to create immediately.
+                    Lorry l = new Lorry(assetManager);
+                    c.attachChild(l);
                 }
             }
+            if (!inlandshipContainerList.isEmpty()) {
+                Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP);
+            }
+            if (!seashipContainerList.isEmpty()) {
+                Boat b = new Boat(assetManager, Boat.Size.SEASHIP);
+            }
+            if (!trainContainerList.isEmpty()) {
+                Train t = new Train(assetManager, trainContainerList);
+                rootNode.attachChild(t);
+            }
+            //}
         } else {
             c = new Container(assetManager, communication.getContainerOwner(),
                     communication.getContainerIso(), communication.getTransportType(), new Vector3f(0, locationInt += 10, 0));
@@ -138,7 +137,10 @@ public class Simulation extends SimpleApplication {
     }
 
     private void createContainers() {
-        c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, locationInt += 10, 0));
+        c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, 2, 0));
+        totalContainerList.add(c);
+
+        c = new Container(assetManager, "Coca Cola", "8-99172", "trein", new Vector3f(0, 2, 0));
         totalContainerList.add(c);
         c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, locationInt += 10, 0));
         totalContainerList.add(c);
