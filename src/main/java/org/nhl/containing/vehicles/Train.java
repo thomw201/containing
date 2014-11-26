@@ -5,7 +5,9 @@ import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
 import org.nhl.containing.Container;
 
 /**
@@ -15,16 +17,13 @@ import org.nhl.containing.Container;
 public class Train extends Transporter {
 
     private AssetManager assetManager;
-    private int numberOfWagons;
     private int wagonZAxis = -11;
-    private int containerZAxis = -11;
     private float speed = 0.5f;
-    private Container container;
+    private ArrayList<Container> trainContainerList;
 
-    public Train(AssetManager assetManager, int numberOfWagons, Container c) {
+    public Train(AssetManager assetManager, ArrayList<Container> trainContainerList) {
         this.assetManager = assetManager;
-        this.numberOfWagons = numberOfWagons;
-        this.container = c;
+        this.trainContainerList = trainContainerList;
         initTrain();
     }
 
@@ -32,39 +31,39 @@ public class Train extends Transporter {
      * Initialize a train.
      */
     public void initTrain() {
-
         // Load a model.
         Spatial train = assetManager.loadModel("Models/medium/train/train.j3o");
         this.attachChild(train);
 
         //Load wagons.
-        Spatial wagon = assetManager.loadModel("Models/medium/train/wagon.j3o");
+        Node wagon =(Node) assetManager.loadModel("Models/medium/train/wagon.j3o");
 
-        for (int i = 0; i < numberOfWagons; i++) {
-            Spatial nextWagon = wagon.clone();
+        for (int i = 0; i < trainContainerList.size(); i++) {
+            Node nextWagon = (Node)wagon.clone();
             nextWagon.setLocalTranslation(0, 0, wagonZAxis);
+            trainContainerList.get(i).setLocalTranslation(0, 1, 0);
+            nextWagon.attachChild(trainContainerList.get(i));
+            
             this.attachChild(nextWagon);
-            container.setLocalTranslation(0, 1f, containerZAxis);
-            this.attachChild(container);
+            
             wagonZAxis -= 15;
         }
     }
+
     /**
-     * creates waypoints and lets the train drive over them
-     * direction TRUE = the train arrives
-     * direction FALSE = the train departs
+     * creates waypoints and lets the train drive over them direction TRUE = the
+     * train arrives direction FALSE = the train departs
      */
-    public void move(boolean direction){
+    public void move(boolean direction) {
         MotionPath path = new MotionPath();
-        MotionEvent motionControl= new MotionEvent(this, path);
+        MotionEvent motionControl = new MotionEvent(this, path);
         //train arrives
         if (direction) {
             path.addWayPoint(new Vector3f(250, 0, -180));
             path.addWayPoint(new Vector3f(-200, 0, -180));
             motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        }
-        //train leaves
-        else{
+        } //train leaves
+        else {
             path.addWayPoint(new Vector3f(-200, 0, -180));
             path.addWayPoint(new Vector3f(250, 0, -180));
         }
@@ -73,5 +72,4 @@ public class Train extends Transporter {
         motionControl.setSpeed(speed);
         motionControl.play();
     }
-    
 }
