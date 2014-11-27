@@ -9,13 +9,11 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
-import java.util.List;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.areas.StorageArea;
 import org.nhl.containing.areas.TrainArea;
@@ -56,9 +54,9 @@ public class Simulation extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         initCam();
-        initScene();
         initUserInput();
         createContainers();
+        initScene();
         communication.Start();
     }
 
@@ -225,7 +223,7 @@ public class Simulation extends SimpleApplication {
         initAreas();
         initPlatform();
     }
-
+    
     private void initLighting() {
         // Light pointing diagonal from the top right to the bottom left.
         DirectionalLight light = new DirectionalLight();
@@ -268,7 +266,7 @@ public class Simulation extends SimpleApplication {
         trainStorageArea.setLocalTranslation(-20, 0, -130);
         rootNode.attachChild(trainStorageArea);
 
-        // Add the StorageArea for train containers.
+        // Add the StorageArea for lorry containers.
         StorageArea lorryStorageArea = new StorageArea(assetManager, 4);
         lorryStorageArea.setLocalTranslation(150, 0, -130);
         rootNode.attachChild(lorryStorageArea);

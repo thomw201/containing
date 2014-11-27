@@ -1,6 +1,7 @@
 package org.nhl.containing;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bounding.BoundingVolume;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -17,21 +18,21 @@ public class Container extends Node {
     private String owner;
     private String containerID;
     private String transportType;
-    private Vector3f Location;
+    private Vector3f location;
 
     public Container(AssetManager assetManager, String owner, String containerID, String transportType, Vector3f Location) {
         this.assetManager = assetManager;
         this.owner = owner;
         this.containerID = containerID;
         this.transportType = transportType;
-        this.Location = Location;
+        this.location = Location;
         initContainer();
     }
 
     /**
      * Initialize a container.
      */
-    public void initContainer() {
+    private void initContainer() {
 
         // Load a model.
         Spatial container = assetManager.loadModel("Models/medium/container/container.j3o");
@@ -43,7 +44,7 @@ public class Container extends Node {
     }
 
     public Vector3f getLocation() {
-        return Location;
+        return location;
     }
 
     public String getContainerID() {
@@ -58,7 +59,7 @@ public class Container extends Node {
         return transportType;
     }
 
-    public void setLocation(Vector3f Location) {
-        this.Location = Location;
+    public void setLocation(Vector3f location) {
+        this.location = location;
     }
 }
