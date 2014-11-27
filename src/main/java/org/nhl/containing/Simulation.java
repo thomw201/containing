@@ -1,5 +1,6 @@
 package org.nhl.containing;
 
+import org.nhl.containing.communication.Client;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.cinematic.MotionPath;
@@ -38,7 +39,7 @@ public class Simulation extends SimpleApplication {
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
-    private Communication communication;
+    private Client server;
     private Train train;
     private Boat boat;
     private Lorry lorry;
@@ -46,7 +47,7 @@ public class Simulation extends SimpleApplication {
     private boolean debug;
 
     public Simulation() {
-        communication = new Communication();
+        server = new Client();
         totalContainerList = new ArrayList<Container>();
         trainContainerList = new ArrayList<Container>();
         seashipContainerList = new ArrayList<Container>();
@@ -59,7 +60,9 @@ public class Simulation extends SimpleApplication {
         initScene();
         initUserInput();
         createContainers();
-        communication.Start();
+        Thread serverThread = new Thread(server);
+        serverThread.setName("ServerThread");
+        serverThread.start();
     }
 
     @Override
@@ -74,7 +77,7 @@ public class Simulation extends SimpleApplication {
     @Override
     public void destroy() {
         super.destroy();
-        communication.stopClient();
+        server.stop();
     }
 
     /**
@@ -86,7 +89,7 @@ public class Simulation extends SimpleApplication {
      */
     private void sendOkMessage(Vehicle veh) {
         String message = "<OK><OBJECT>" + veh.getName() + "</OBJECT><OBJECTID>" + veh.getId() + "</OBJECTID></OK>";
-        communication.sendMessage(message);
+        server.writeMessage(message);
     }
 
     /**
@@ -99,7 +102,7 @@ public class Simulation extends SimpleApplication {
      * vehicles.
      */
     private void createObject() {
-        if (communication.getMaxValueContainers() != 0) {
+        /*if (communication.getMaxValueContainers() != 0) {
             //if (communication.getMaxValueContainers() == totalContainerList.size()) {
             for (Container c : totalContainerList) {
                 if (c.getTransportType().equals("binnenschip")) {
@@ -138,7 +141,7 @@ public class Simulation extends SimpleApplication {
             c = new Container(assetManager, communication.getContainerOwner(),
                     communication.getContainerIso(), communication.getTransportType(), new Vector3f(0, locationInt += 10, 0));
             totalContainerList.add(c);
-        }
+        }*/
     }
 
     /**
