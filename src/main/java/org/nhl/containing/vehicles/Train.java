@@ -3,6 +3,7 @@ package org.nhl.containing.vehicles;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -18,13 +19,14 @@ public class Train extends Transporter {
 
     private AssetManager assetManager;
     private int wagonZAxis = -11;
-    private float speed = 0.5f;
+    private float speed = 0.8f;
     private ArrayList<Container> trainContainerList;
-
+    
     public Train(AssetManager assetManager, ArrayList<Container> trainContainerList) {
         this.assetManager = assetManager;
         this.trainContainerList = trainContainerList;
         initTrain();
+        this.rotate(new Quaternion().fromAngleAxis(FastMath.PI*3/2, new Vector3f(0,1,0)));
     }
 
     /**
@@ -61,13 +63,12 @@ public class Train extends Transporter {
         if (direction) {
             path.addWayPoint(new Vector3f(250, 0, -180));
             path.addWayPoint(new Vector3f(-200, 0, -180));
-            motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
         } //train leaves
         else {
             path.addWayPoint(new Vector3f(-200, 0, -180));
             path.addWayPoint(new Vector3f(250, 0, -180));
+            //this.rotate(new Quaternion().fromAngleAxis(FastMath.PI*3/2, new Vector3f(0,1,0)));
         }
-        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();

@@ -9,7 +9,6 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
@@ -19,9 +18,6 @@ import java.util.List;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.areas.StorageArea;
 import org.nhl.containing.areas.TrainArea;
-import org.nhl.containing.vehicles.Train;
-import org.nhl.containing.vehicles.Agv;
-import org.nhl.containing.vehicles.Vehicle;
 import org.nhl.containing.vehicles.*;
 
 /**
@@ -35,12 +31,17 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> trainContainerList;
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
+    private List<Container> totalContainerList;
+    private List<Container> trainContainerList;
+    private List<Container> seashipContainerList;
+    private List<Container> inlandshipContainerList;
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
     private Communication communication;
     private Train train;
-    private Boat boat;
+    private Boat inlandship;
+    private Boat seaship;
     private Lorry lorry;
     private Container c;
     private boolean debug;
@@ -287,17 +288,23 @@ public class Simulation extends SimpleApplication {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
                     if (!debug) {
-                        debug = false;
-                        //testing train code
-                        train.move(debug);
-                        boat.move(debug);
-                        lorry.move(debug);
-                    } else {
                         debug = true;
-                        //testing train code
-                        train.move(debug);
-                        boat.move(debug);
-                        lorry.move(debug);
+                        if (inlandship == null) {
+                            //testing inlandship
+                            inlandship = new Boat(assetManager, Boat.Size.INLANDSHIP);
+                            rootNode.attachChild(inlandship);
+                            //testing seaship
+                            if (seaship == null) {
+                                seaship = new Boat(assetManager, Boat.Size.SEASHIP);
+                                rootNode.attachChild(seaship);
+                            }
+                        }
+                        inlandship.move(true);
+                        seaship.move(true);
+                    } 
+                    else {
+                        inlandship.move(false);
+                        seaship.move(false);
                     }
                 }
             }

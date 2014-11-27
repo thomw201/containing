@@ -3,6 +3,7 @@ package org.nhl.containing.vehicles;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
+import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
@@ -16,7 +17,6 @@ import org.nhl.containing.Container;
 public class Boat extends Transporter {
 
     private AssetManager assetManager;
-    private float speed = 0.5f;
     private ArrayList<Container> inlandshipContainerList;
     private ArrayList<Container> seashipContainerList;
     /**
@@ -31,6 +31,7 @@ public class Boat extends Transporter {
     private int zexAs = -23;
     private int zeyAs = 0;
     private int zezAs = 160;
+    private float speed = 0.5f;
 
     public enum Size {
 
@@ -57,7 +58,8 @@ public class Boat extends Transporter {
                 case INLANDSHIP:
                     // Load a model.
                     boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
-                    boat.scale(0.4f, 1, 0.37f);
+                    boat.scale(0.6f, 1, 0.37f);
+                    this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 1.5f,   new Vector3f(0,1,0)));
                     this.attachChild(boat);
                     for (Container c : inlandshipContainerList) {
                         c.setLocalTranslation(inxAs, 0, inzAs);
@@ -75,8 +77,8 @@ public class Boat extends Transporter {
                     this.attachChild(boat);
                     boat.scale(0.87f, 1, 0.57f);
                     for (Container c : seashipContainerList) {
-                        c.setLocalTranslation(speed, speed, speed);
-                        this.attachChild(c);
+                        //c.setLocalTranslation(speed, speed, speed);
+                        //this.attachChild(c);
                         c.setLocalTranslation(zexAs, zeyAs, zezAs);
                         this.attachChild(c);
                         if (zexAs < 22) {
@@ -95,8 +97,8 @@ public class Boat extends Transporter {
     }
 
     /**
-     * creates the trains waypoints and lets the train drive over them direction
-     * TRUE = the train arrives direction FALSE = the train departs
+     * creates waypoints and moves the ship over them direction TRUE = arrive
+     * direction FALSE = depart
      */
     public void move(boolean direction) {
         MotionPath path = new MotionPath();
@@ -105,30 +107,30 @@ public class Boat extends Transporter {
             case SEASHIP:
                 //seaship arrives
                 if (direction) {
-                    path.addWayPoint(new Vector3f(-700, 0, 500));
-                    path.addWayPoint(new Vector3f(-330, 0, 0));
+                    path.addWayPoint(new Vector3f(-750, 0, 500));
+                    path.addWayPoint(new Vector3f(-330, 0, -20));
                 } //seaship departs
                 else {
-                    path.addWayPoint(new Vector3f(-330, 0, 0));
+                    path.addWayPoint(new Vector3f(-330, 0, -20));
                     path.addWayPoint(new Vector3f(-345, 0, -300));
                 }
                 break;
             case INLANDSHIP:
-                motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
                 if (direction) {
-                    path.addWayPoint(new Vector3f(-400, 0, 200));
-                    path.addWayPoint(new Vector3f(-150, 0, 250));
+                    path.addWayPoint(new Vector3f(-500, 0, 300));
+                    path.addWayPoint(new Vector3f(-200, 0, 220));
+                    path.addWayPoint(new Vector3f(-190, 0, 220));
                 } //seaship leaves
                 else {
-                    path.addWayPoint(new Vector3f(-330, 0, 0));
-                    path.addWayPoint(new Vector3f(-150, 0, 500));
+                    path.addWayPoint(new Vector3f(-200, 0, 220));
+                    path.addWayPoint(new Vector3f(350, 0, 260));
                     break;
                 }
-                path.setCurveTension(0.01f);
         }
+        path.setCurveTension(0.2f);
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis((float) Math.PI, Vector3f.UNIT_Y));
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();
+        }
     }
-}

@@ -37,7 +37,11 @@ public class Lorry extends Transporter {
         this.attachChild(lorry);
         this.attachChild(containter);
     }
-
+     /**
+     * creates waypoints and lets the lorrys drive over them 
+     * direction TRUE = arrive 
+     * direction FALSE = depart
+     */
     public void move(boolean direction) {
         MotionPath path = new MotionPath();
         MotionEvent motionControl = new MotionEvent(this, path);
