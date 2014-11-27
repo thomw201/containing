@@ -64,7 +64,6 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        //TODO: add update code
     }
 
     @Override
@@ -119,13 +118,19 @@ public class Simulation extends SimpleApplication {
                 }
             }
             if (!inlandshipContainerList.isEmpty()) {
-                Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP);
+                Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP, inlandshipContainerList, seashipContainerList);
+                b.move(debug);
+                rootNode.attachChild(b);
             }
             if (!seashipContainerList.isEmpty()) {
-                Boat b = new Boat(assetManager, Boat.Size.SEASHIP);
+                Boat b = new Boat(assetManager, Boat.Size.SEASHIP, inlandshipContainerList, seashipContainerList);
+                b.move(debug);
+                rootNode.attachChild(b);
             }
             if (!trainContainerList.isEmpty()) {
                 Train t = new Train(assetManager, trainContainerList);
+                t.setLocalTranslation(280, 0, -180);
+                t.rotate(0, (float) Math.PI / 2f, 0);
                 rootNode.attachChild(t);
             }
             //}
@@ -136,18 +141,27 @@ public class Simulation extends SimpleApplication {
         }
     }
 
+    /**
+     * Voor het testen.
+     */
     private void createContainers() {
-        c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, 2, 0));
-        totalContainerList.add(c);
+        for (int i = 0; i < 29; i++) {
+            c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, 2, 0));
+            totalContainerList.add(c);
+        }
 
-        c = new Container(assetManager, "Coca Cola", "8-99172", "trein", new Vector3f(0, 2, 0));
+
+        c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, 2, 0));
         totalContainerList.add(c);
-        c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, locationInt += 10, 0));
-        totalContainerList.add(c);
-        c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", new Vector3f(0, locationInt += 10, 0));
-        totalContainerList.add(c);
-        c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, locationInt += 10, 0));
-        totalContainerList.add(c);
+        for (int i = 0; i < 41; i++) {
+            c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", new Vector3f(0, 2, 0));
+            totalContainerList.add(c);
+        }
+        for (int i = 0; i < 17; i++) {
+            c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, 2, 0));
+            totalContainerList.add(c);
+        }
+
         createObject();
     }
 
