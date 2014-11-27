@@ -1,4 +1,4 @@
-package org.nhl.containing;
+package org.nhl.containing.communication;
 
 import java.io.IOException;
 import java.io.PrintWriter;

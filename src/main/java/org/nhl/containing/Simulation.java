@@ -1,5 +1,6 @@
 package org.nhl.containing;
 
+import org.nhl.containing.communication.Client;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.cinematic.MotionPath;

@@ -1,5 +1,7 @@
-package org.nhl.containing;
+package org.nhl.containing.communication;
 
+import org.nhl.containing.communication.SendRunnable;
+import org.nhl.containing.communication.ListenRunnable;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;

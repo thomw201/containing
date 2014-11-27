@@ -1,4 +1,4 @@
-package org.nhl.containing;
+package org.nhl.containing.communication;
 
 import java.io.BufferedReader;
 import java.io.IOException;
