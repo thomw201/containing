@@ -13,7 +13,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- *
  * @author Jeroen
  */
 public class Container extends Node {
@@ -72,6 +71,10 @@ public class Container extends Node {
         return Location;
     }
 
+    public void setLocation(Vector3f Location) {
+        this.Location = Location;
+    }
+
     public String getContainerID() {
         return containerID;
     }
@@ -82,9 +85,5 @@ public class Container extends Node {
 
     public String getTransportType() {
         return transportType;
-    }
-
-    public void setLocation(Vector3f Location) {
-        this.Location = Location;
     }
 }

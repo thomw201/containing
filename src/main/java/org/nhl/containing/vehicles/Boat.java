@@ -16,34 +16,26 @@ import java.util.ArrayList;
  */
 public class Boat extends Transporter {
 
-    public enum Size {
-
-        INLANDSHIP, SEASHIP
-    }
     private AssetManager assetManager;
     private float speed = 0.5f;
     private ArrayList<Container> inlandshipContainerList;
     private ArrayList<Container> seashipContainerList;
-    /**
-     * TIJDELIJK! indoorship Dit is x=0 Y=0 Z=0, links onderin.
-     */
+    // TIJDELIJK! indoorship Dit is x=0 Y=0 Z=0, links onderin.
     private int inxAs = -8;
     private int inyAs = 0;
     private int inzAs = 100;
-    /**
-     * zeeship Dit is x=0 Y=0 Z=0, links onderin.
-     */
+    // zeeship Dit is x=0 Y=0 Z=0, links onderin.
     private int zexAs = -23;
     private int zeyAs = 0;
     private int zezAs = 160;
-    private Boat.Size size;
-    ;
+    private Boat.ShipSize size;
     private Spatial boat;
+    ;
 
-    public Boat(AssetManager assetManager, Size size,
-            ArrayList<Container> inlandshipContainerList, ArrayList<Container> seashipContainerList) {
+    public Boat(AssetManager assetManager, ShipSize shipSize, ArrayList<Container> inlandshipContainerList,
+                ArrayList<Container> seashipContainerList) {
         this.assetManager = assetManager;
-        this.size = size;
+        this.size = shipSize;
         this.inlandshipContainerList = inlandshipContainerList;
         this.seashipContainerList = seashipContainerList;
         initBoat();
@@ -58,7 +50,7 @@ public class Boat extends Transporter {
                 case INLANDSHIP:
                     // Load a model.
                     boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
-                    this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 1.5f,   new Vector3f(0,1,0)));
+                    this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
                     boat.scale(0.6f, 1, 0.37f);
                     this.attachChild(boat);
                     for (Container c : inlandshipContainerList) {
@@ -109,18 +101,21 @@ public class Boat extends Transporter {
                 if (direction) {
                     path.addWayPoint(new Vector3f(-750, 0, 500));
                     path.addWayPoint(new Vector3f(-330, 0, -20));
-                } //seaship departs
+                }
+                //seaship departs
                 else {
                     path.addWayPoint(new Vector3f(-330, 0, -20));
                     path.addWayPoint(new Vector3f(-345, 0, -300));
                 }
                 break;
             case INLANDSHIP:
+                // inlandship arrives
                 if (direction) {
                     path.addWayPoint(new Vector3f(-500, 0, 300));
                     path.addWayPoint(new Vector3f(-200, 0, 220));
                     path.addWayPoint(new Vector3f(-190, 0, 220));
-                } //seaship leaves
+                }
+                // inlandship departs
                 else {
                     path.addWayPoint(new Vector3f(-200, 0, 220));
                     path.addWayPoint(new Vector3f(350, 0, 260));
@@ -132,5 +127,9 @@ public class Boat extends Transporter {
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();
+    }
+
+    public static enum ShipSize {
+        INLANDSHIP, SEASHIP
     }
 }
