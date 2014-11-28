@@ -12,7 +12,7 @@ import java.net.Socket;
 /**
  * Client.
  */
-public class Client implements Runnable {
+class Client implements Runnable {
     private final int portNumber = 6666;
     private final String serverName = "localhost";
     private Socket socket;
@@ -52,17 +52,22 @@ public class Client implements Runnable {
                 // Do nothing.
                 Thread.sleep(1000);
                 // In case the client shut down the listener, shut down everything.
-                if (!listenRunnable.isRunning()) {
-                    this.stop();
-                }
-                System.out.println("Still alive");
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+            if (!listenRunnable.isRunning()) {
+                this.stop();
+            }
         }
+
     }
 
     public void stop() {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try {
             listenRunnable.stop();
         } catch (Throwable e) {

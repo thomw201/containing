@@ -33,7 +33,6 @@ public class ListenRunnable implements Runnable {
                 System.out.println("Received " + inputLine);
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
         running = false;
