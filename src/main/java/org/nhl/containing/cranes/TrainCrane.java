@@ -4,7 +4,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.MotionPathListener;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.cinematic.events.MotionTrack;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -16,14 +15,15 @@ import org.nhl.containing.vehicles.Agv;
  *
  * @author Jeroen
  */
-public class TrainCrane extends Crane implements MotionPathListener{
+public class TrainCrane extends Crane {
 
     private AssetManager assetManager;
     private static final Quaternion YAW090 = new Quaternion().fromAngleAxis(FastMath.PI / 2, new Vector3f(0, 1, 0));
-    Agv agv;
+    private Agv agv;
     private Container container;
-    MotionPath path;
-    TrainCrane tc = this;
+    private MotionPath containerPath;
+    private MotionPath cranePath;
+    private TrainCrane tc = this;
 
     public TrainCrane(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -42,35 +42,69 @@ public class TrainCrane extends Crane implements MotionPathListener{
     }
 
     /**
-     * Move a container to the Agv.
+     * Let the crane move to the container's position. And Put the container on
+     * the Agv.
+     *
+     * @param container Request a container.
+     * @param agv Agv that needs the container.
      */
-    public void moveContainer(Container container, Agv agv) {
+    public void activateCrane(Container container, Agv agv) {
+
         this.container = container;
         this.agv = agv;
-        tc.attachChild(container);
-        container.rotate(0, (float) Math.PI / 2, 0);
-        path = new MotionPath();
-        path.addWayPoint(new Vector3f(0, 1, 0));
-        path.addWayPoint(new Vector3f(0, 5, 0));
-        path.addWayPoint(new Vector3f(0, 5, 6));
-        path.addWayPoint(new Vector3f(0, 1, 6));
-        path.setCurveTension(0.0f);
-        path.enableDebugShape(assetManager, this);
-        path.addListener(this);
-        MotionEvent motionControl = new MotionEvent(tc.getChild(1), path);
+
+        // Crane movement.
+        cranePath = new MotionPath();
+        cranePath.addWayPoint(tc.getLocalTranslation());
+        cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - tc.getWorldTranslation().x) + tc.getLocalTranslation().x, 0, 0));
+        cranePath.setCurveTension(0.0f);
+        cranePath.enableDebugShape(assetManager, this);
+        cranePath.addListener(new MotionPathListener() {
+            public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
+                if (cranePath.getNbWayPoints() == wayPointIndex + 1) {
+                    System.out.println("container.x " + tc.container.getWorldTranslation().x);
+                    System.out.println("crane.x: " + tc.getWorldTranslation().x);
+                    cranePath.clearWayPoints();
+                    moveContainer();
+                }
+            }
+        });
+
+        MotionEvent motionControl = new MotionEvent(this, cranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
         motionControl.play();
-        
+        motionControl.dispose();
     }
 
-    public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
-                if(path.getNbWayPoints() ==  wayPointIndex + 1){
+    /**
+     * Move a container to the Agv.
+     */
+    public void moveContainer() {
+
+        // Container movement.
+
+        tc.attachChild(container);
+        container.rotate(0, (float) Math.PI / 2, 0);
+        containerPath = new MotionPath();
+        containerPath.addWayPoint(new Vector3f(0, 1, 0));
+        containerPath.addWayPoint(new Vector3f(0, 5, 0));
+        containerPath.addWayPoint(new Vector3f(0, 5, 6));
+        containerPath.addWayPoint(new Vector3f(0, 1, 6));
+        containerPath.setCurveTension(0.0f);
+        containerPath.enableDebugShape(assetManager, this);
+        containerPath.addListener(new MotionPathListener() {
+            public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
+                if (containerPath.getNbWayPoints() == wayPointIndex + 1) {
                     tc.detachChild(tc.getChild(1));
                     agv.attachChild(container);
                     container.rotate(0, (float) Math.PI / 2, 0);
-                    container.setLocalTranslation(0,1,0);
-                    agv.setLocalTranslation(30, 0, 0);
+                    container.setLocalTranslation(0, 1, 0);
                 }
             }
+        });
 
+        MotionEvent motionControl = new MotionEvent(tc.getChild(2), containerPath);
+        motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.play();
+    }
 }

@@ -67,4 +67,8 @@ public class TrainArea extends Area {
         }
  
     }
+    
+    public List<TrainCrane> getTrainCranes(){
+        return trainCranes;
+    }
 }

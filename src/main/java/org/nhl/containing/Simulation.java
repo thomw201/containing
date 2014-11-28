@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.areas.StorageArea;
 import org.nhl.containing.areas.TrainArea;
+import org.nhl.containing.cranes.TrainCrane;
 import org.nhl.containing.vehicles.Train;
 import org.nhl.containing.vehicles.Agv;
 import org.nhl.containing.vehicles.Vehicle;
@@ -33,6 +34,15 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> trainContainerList;
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
+    private TrainArea trainArea;
+    private BoatArea boatArea;
+    private BoatArea inlandBoatArea;
+    private StorageArea boatStorageArea;
+    private StorageArea trainStorageArea;
+    private StorageArea lorryStorageArea;
+    
+    
+    
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
@@ -127,8 +137,8 @@ public class Simulation extends SimpleApplication {
             }
             if (!trainContainerList.isEmpty()) {
                 Train t = new Train(assetManager, trainContainerList);
-                t.setLocalTranslation(280, 0, -180);
-                t.rotate(0, (float) Math.PI / 2f, 0);
+                t.setLocalTranslation(-180, 0, -180);
+                t.rotate(0, (float) Math.PI / -2f, 0);
                 rootNode.attachChild(t);
             }
             //}
@@ -240,34 +250,34 @@ public class Simulation extends SimpleApplication {
 
     private void initAreas() {
         // Add the TrainArea.
-        TrainArea trainArea = new TrainArea(assetManager, 4);
+        trainArea = new TrainArea(assetManager, 4);
         trainArea.setLocalTranslation(-160, 0, -180);
         rootNode.attachChild(trainArea);
 
         // Add the BoatArea (Sea).
-        BoatArea boatArea = new BoatArea(assetManager, 10);
+        boatArea = new BoatArea(assetManager, 10);
         boatArea.setLocalTranslation(-325, 0, -100);
         rootNode.attachChild(boatArea);
 
         // Add the inlandBoatArea.
-        BoatArea inlandBoatArea = new BoatArea(assetManager, 8);
+        inlandBoatArea = new BoatArea(assetManager, 8);
         inlandBoatArea.rotate(0, (float) (0.5 * Math.PI), 0);
         inlandBoatArea.scale(0.8f, 0.8f, 0.8f);
         inlandBoatArea.setLocalTranslation(-240, 0, 220);
         rootNode.attachChild(inlandBoatArea);
 
         // Add the StorageArea for boat containers.
-        StorageArea boatStorageArea = new StorageArea(assetManager, 4);
+        boatStorageArea = new StorageArea(assetManager, 4);
         boatStorageArea.setLocalTranslation(-200, 0, -130);
         rootNode.attachChild(boatStorageArea);
 
         // Add the StorageArea for train containers.
-        StorageArea trainStorageArea = new StorageArea(assetManager, 4);
+        trainStorageArea = new StorageArea(assetManager, 4);
         trainStorageArea.setLocalTranslation(-20, 0, -130);
         rootNode.attachChild(trainStorageArea);
 
         // Add the StorageArea for lorry containers.
-        StorageArea lorryStorageArea = new StorageArea(assetManager, 4);
+        lorryStorageArea = new StorageArea(assetManager, 4);
         lorryStorageArea.setLocalTranslation(150, 0, -130);
         rootNode.attachChild(lorryStorageArea);
     }
