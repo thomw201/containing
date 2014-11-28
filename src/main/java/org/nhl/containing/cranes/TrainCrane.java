@@ -42,8 +42,7 @@ public class TrainCrane extends Crane {
     }
 
     /**
-     * Let the crane move to the container's position. And Put the container on
-     * the Agv.
+     * Let the crane move to the container's position. And Put the container on the Agv.
      *
      * @param container Request a container.
      * @param agv Agv that needs the container.
@@ -62,8 +61,6 @@ public class TrainCrane extends Crane {
         cranePath.addListener(new MotionPathListener() {
             public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
                 if (cranePath.getNbWayPoints() == wayPointIndex + 1) {
-                    System.out.println("container.x " + tc.container.getWorldTranslation().x);
-                    System.out.println("crane.x: " + tc.getWorldTranslation().x);
                     cranePath.clearWayPoints();
                     moveContainer();
                 }
@@ -79,7 +76,7 @@ public class TrainCrane extends Crane {
     /**
      * Move a container to the Agv.
      */
-    public void moveContainer() {
+    private void moveContainer() {
 
         // Container movement.
 
