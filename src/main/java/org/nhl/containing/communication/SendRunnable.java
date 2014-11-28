@@ -1,17 +1,15 @@
 package org.nhl.containing.communication;
 
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.Buffer;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  *
  */
 public class SendRunnable implements Runnable {
+
     PrintWriter out;
     ConcurrentLinkedQueue<String> queue;
-
     private boolean running;
 
     public SendRunnable(PrintWriter out) {

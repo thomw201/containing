@@ -1,21 +1,21 @@
 package org.nhl.containing.communication;
 
-import org.nhl.containing.communication.SendRunnable;
 import org.nhl.containing.communication.ListenRunnable;
-import java.io.*;
-import java.net.ServerSocket;
+import org.nhl.containing.communication.SendRunnable;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 /**
  * Client.
  */
 public class Client implements Runnable {
-    private Socket socket;
     private final int portNumber = 6666;
     private final String serverName = "localhost";
-
-    
-
+    private Socket socket;
     private ListenRunnable listenRunnable;
     private SendRunnable sendRunnable;
 

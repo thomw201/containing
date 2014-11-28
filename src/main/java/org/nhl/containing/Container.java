@@ -8,7 +8,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
 /**
- *
  * @author Jeroen
  */
 public class Container extends Node {
@@ -36,7 +35,7 @@ public class Container extends Node {
         // Load a model.
         Spatial container = assetManager.loadModel("Models/medium/container/container.j3o");
         Material mat = new Material(assetManager,
-          "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
+                "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
         mat.setColor("Color", ColorRGBA.White);   // set color of material to blue
         container.setMaterial(mat);
         this.attachChild(container);
@@ -44,6 +43,10 @@ public class Container extends Node {
 
     public Vector3f getLocation() {
         return Location;
+    }
+
+    public void setLocation(Vector3f Location) {
+        this.Location = Location;
     }
 
     public String getContainerID() {
@@ -56,9 +59,5 @@ public class Container extends Node {
 
     public String getTransportType() {
         return transportType;
-    }
-
-    public void setLocation(Vector3f Location) {
-        this.Location = Location;
     }
 }

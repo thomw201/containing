@@ -1,6 +1,5 @@
 package org.nhl.containing;
 
-import org.nhl.containing.communication.Client;
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.cinematic.MotionPath;
@@ -10,20 +9,20 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
-import java.util.ArrayList;
-import java.util.List;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.areas.StorageArea;
 import org.nhl.containing.areas.TrainArea;
-import org.nhl.containing.vehicles.Train;
-import org.nhl.containing.vehicles.Agv;
-import org.nhl.containing.vehicles.Vehicle;
+import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
+import org.nhl.containing.vehicles.Agv;
+import org.nhl.containing.vehicles.Train;
+import org.nhl.containing.vehicles.Vehicle;
+
+import java.util.ArrayList;
 
 /**
  * test
@@ -94,7 +93,7 @@ public class Simulation extends SimpleApplication {
 
     /**
      * This method will process all incomming create commands.
-     *
+     * <p/>
      * Create containers and add them to a list<container>. When the
      * list<container> == maxValueContainer (so max count of the sended
      * commands) Then take apart the List<Container> and divide them to there

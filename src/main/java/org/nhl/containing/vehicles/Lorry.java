@@ -9,7 +9,6 @@ import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 
 /**
- *
  * @author Jeroen
  */
 public class Lorry extends Transporter {
@@ -18,6 +17,7 @@ public class Lorry extends Transporter {
     private float speed = 1f;
     private int lorryZAxis = 11;
     private Container containter;
+
     public Lorry(AssetManager assetManager, Container c) {
         this.assetManager = assetManager;
         this.containter = c;

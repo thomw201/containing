@@ -1,34 +1,34 @@
 package org.nhl.containing.areas;
- 
+
 import com.jme3.asset.AssetManager;
 import com.jme3.scene.Spatial;
+import org.nhl.containing.cranes.DockingCrane;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.nhl.containing.cranes.DockingCrane;
- 
+
 /**
- *
  * @author Jeroen
  */
 public class BoatArea extends Area {
- 
+
+    public List<DockingCrane> dockingCranes = new ArrayList();
     private AssetManager assetManager;
     private int craneZAxis = 0;
     private int craneRailsZAxis = -30;
     private int cranes;
-    public List<DockingCrane> dockingCranes = new ArrayList();
- 
+
     public BoatArea(AssetManager assetmanager, int cranes) {
         this.assetManager = assetmanager;
         this.cranes = cranes;
         initBoatArea();
     }
- 
+
     /**
      * Initialize a boat area.
      */
     private void initBoatArea() {
- 
+
         // Add docking cranes to the list and scene.
         for (int i = 0; i < cranes; i++) {
             dockingCranes.add(new DockingCrane(assetManager));
@@ -36,7 +36,7 @@ public class BoatArea extends Area {
             this.attachChild(dockingCranes.get(i));
             craneZAxis += 18;
         }
- 
+
         // Add crane rails.
         Spatial craneRails = assetManager.loadModel("Models/rails/craneRails.j3o");
         for (int i = 0; i < 28; i++) {

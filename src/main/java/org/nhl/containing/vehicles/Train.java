@@ -7,11 +7,11 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import java.util.ArrayList;
 import org.nhl.containing.Container;
 
+import java.util.ArrayList;
+
 /**
- *
  * @author Jeroen
  */
 public class Train extends Transporter {
@@ -36,16 +36,16 @@ public class Train extends Transporter {
         this.attachChild(train);
 
         //Load wagons.
-        Node wagon =(Node) assetManager.loadModel("Models/medium/train/wagon.j3o");
+        Node wagon = (Node) assetManager.loadModel("Models/medium/train/wagon.j3o");
 
         for (int i = 0; i < trainContainerList.size(); i++) {
-            Node nextWagon = (Node)wagon.clone();
+            Node nextWagon = (Node) wagon.clone();
             nextWagon.setLocalTranslation(0, 0, wagonZAxis);
             trainContainerList.get(i).setLocalTranslation(0, 1, 0);
             nextWagon.attachChild(trainContainerList.get(i));
-            
+
             this.attachChild(nextWagon);
-            
+
             wagonZAxis -= 15;
         }
     }

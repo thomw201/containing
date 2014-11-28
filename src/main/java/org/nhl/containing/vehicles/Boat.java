@@ -6,11 +6,11 @@ import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
-import java.util.ArrayList;
 import org.nhl.containing.Container;
 
+import java.util.ArrayList;
+
 /**
- *
  * @author Jeroen
  */
 public class Boat extends Transporter {
@@ -31,16 +31,12 @@ public class Boat extends Transporter {
     private int zexAs = -23;
     private int zeyAs = 0;
     private int zezAs = 160;
-
-    public enum Size {
-
-        INLANDSHIP, SEASHIP
-    };
     private Boat.Size size;
-    private Spatial boat;
 
+    ;
+    private Spatial boat;
     public Boat(AssetManager assetManager, Size size,
-            ArrayList<Container> inlandshipContainerList, ArrayList<Container> seashipContainerList) {
+                ArrayList<Container> inlandshipContainerList, ArrayList<Container> seashipContainerList) {
         this.assetManager = assetManager;
         this.size = size;
         this.inlandshipContainerList = inlandshipContainerList;
@@ -130,5 +126,10 @@ public class Boat extends Transporter {
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();
+    }
+
+    public enum Size {
+
+        INLANDSHIP, SEASHIP
     }
 }

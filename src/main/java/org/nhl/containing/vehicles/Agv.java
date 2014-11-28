@@ -4,7 +4,6 @@ import com.jme3.asset.AssetManager;
 import com.jme3.scene.Spatial;
 
 /**
- *
  * @author Jeroen
  */
 public class Agv extends Vehicle {
