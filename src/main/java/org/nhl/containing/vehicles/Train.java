@@ -34,7 +34,7 @@ public class Train extends Transporter {
      */
     public void initTrain() {
         // Load a model.
-        Spatial train = assetManager.loadModel("Models/medium/train/train.j3o");
+        Node train = (Node)assetManager.loadModel("Models/medium/train/train.j3o");
         this.attachChild(train);
 
         //Load wagons.
