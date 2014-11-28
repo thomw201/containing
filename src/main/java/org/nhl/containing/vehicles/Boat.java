@@ -20,7 +20,7 @@ public class Boat extends Transporter {
     private float speed = 0.5f;
     private ArrayList<Container> inlandshipContainerList;
     private ArrayList<Container> seashipContainerList;
-    // TIJDELIJK! indoorship Dit is x=0 Y=0 Z=0, links onderin.
+    // indoorship Dit is x=0 Y=0 Z=0, links onderin.
     private int inxAs = -8;
     private int inyAs = 0;
     private int inzAs = 100;
@@ -30,10 +30,9 @@ public class Boat extends Transporter {
     private int zezAs = 160;
     private Boat.ShipSize size;
     private Spatial boat;
-    ;
 
     public Boat(AssetManager assetManager, ShipSize shipSize, ArrayList<Container> inlandshipContainerList,
-                ArrayList<Container> seashipContainerList) {
+            ArrayList<Container> seashipContainerList) {
         this.assetManager = assetManager;
         this.size = shipSize;
         this.inlandshipContainerList = inlandshipContainerList;
@@ -54,32 +53,24 @@ public class Boat extends Transporter {
                     boat.scale(0.6f, 1, 0.37f);
                     this.attachChild(boat);
                     for (Container c : inlandshipContainerList) {
-                        c.setLocalTranslation(inxAs, 0, inzAs);
+                        inxAs = inxAs + (c.getxLoc() * 5);
+                        inyAs = c.getyLoc() * 3;
+                        inzAs = inzAs - (c.getzLoc() * -14);
+                        c.setLocalTranslation(inxAs, inyAs, inzAs);
                         this.attachChild(c);
-                        if (inxAs < 3) {
-                            inxAs += 5;
-                        } else {
-                            inzAs -= 14;
-                        }
                     }
                     break;
                 case SEASHIP:
                     // Load a model.
                     boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
-                    this.attachChild(boat);
                     boat.scale(0.87f, 1, 0.57f);
+                    this.attachChild(boat);
                     for (Container c : seashipContainerList) {
-                        c.setLocalTranslation(speed, speed, speed);
-                        this.attachChild(c);
+                        zexAs = zexAs + (c.getxLoc() * 3);
+                        zeyAs = c.getyLoc() * 3;
+                        zezAs = zezAs - (c.getzLoc() * -14);
                         c.setLocalTranslation(zexAs, zeyAs, zezAs);
                         this.attachChild(c);
-                        if (zexAs < 22) {
-                            zexAs += 3;
-                        } else if (zezAs >= -119) {
-                            zezAs -= 14;
-                        } else {
-                            zeyAs += 3;
-                        }
                     }
                     break;
             }
@@ -101,8 +92,7 @@ public class Boat extends Transporter {
                 if (direction) {
                     path.addWayPoint(new Vector3f(-750, 0, 500));
                     path.addWayPoint(new Vector3f(-330, 0, -20));
-                }
-                //seaship departs
+                } //seaship departs
                 else {
                     path.addWayPoint(new Vector3f(-330, 0, -20));
                     path.addWayPoint(new Vector3f(-345, 0, -300));
@@ -114,8 +104,7 @@ public class Boat extends Transporter {
                     path.addWayPoint(new Vector3f(-500, 0, 300));
                     path.addWayPoint(new Vector3f(-200, 0, 220));
                     path.addWayPoint(new Vector3f(-190, 0, 220));
-                }
-                // inlandship departs
+                } // inlandship departs
                 else {
                     path.addWayPoint(new Vector3f(-200, 0, 220));
                     path.addWayPoint(new Vector3f(350, 0, 260));
@@ -130,6 +119,7 @@ public class Boat extends Transporter {
     }
 
     public static enum ShipSize {
+
         INLANDSHIP, SEASHIP
     }
 }

@@ -22,13 +22,19 @@ public class Container extends Node {
     private String containerID;
     private String transportType;
     private Vector3f Location;
+    private int xLoc;
+    private int yLoc;
+    private int zLoc;
 
-    public Container(AssetManager assetManager, String owner, String containerID, String transportType, Vector3f Location) {
+    public Container(AssetManager assetManager, String owner, String containerID, String transportType, int xLoc, int yLoc, int zLoc) {
         this.assetManager = assetManager;
         this.owner = owner;
         this.containerID = containerID;
         this.transportType = transportType;
-        this.Location = Location;
+        this.Location = new Vector3f(xLoc, yLoc, zLoc);
+        this.xLoc = xLoc;
+        this.yLoc = yLoc;
+        this.zLoc = zLoc;
         initContainer();
     }
 
@@ -45,7 +51,7 @@ public class Container extends Node {
         container.setMaterial(mat);
         this.attachChild(container);
         //create a random text color
-        ColorRGBA textColor = ColorRGBA.randomColor();
+        ColorRGBA textColor = ColorRGBA.Black;
         //place the company name on the side
         drawText(1.2f, 2.6f, 6, textColor, new Quaternion().fromAngleAxis(FastMath.PI / 2, new Vector3f(0, 1, 0)));
         drawText(-1.2f, 2.6f, -6, textColor, new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
@@ -86,4 +92,17 @@ public class Container extends Node {
     public String getTransportType() {
         return transportType;
     }
+
+    public int getxLoc() {
+        return xLoc;
+    }
+
+    public int getyLoc() {
+        return yLoc;
+    }
+
+    public int getzLoc() {
+        return zLoc;
+    }
+    
 }
