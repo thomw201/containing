@@ -12,7 +12,7 @@ import java.net.Socket;
 /**
  * Client.
  */
-class Client implements Runnable {
+public class Client implements Runnable {
     private final int portNumber = 6666;
     private final String serverName = "localhost";
     private Socket socket;
