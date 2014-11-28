@@ -12,6 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 enum Command {
+
     Create, Move, Dispose, LastMessage
 }
 
@@ -20,14 +21,17 @@ enum Command {
  */
 public class Xml {
 
-    public static int maxValueContainers;
-    public static String containerIso;
-    public static String containerOwner;
-    public static String transportType;
-    public static String objectName;
-    public static String destinationName;
-    public static String speed;
-    public static Command command;
+    private int maxValueContainers = 4;
+    private String containerIso;
+    private String containerOwner;
+    private String transportType;
+    private String objectName;
+    private String destinationName;
+    private String speed;
+    private Command command;
+    private int xLoc;
+    private int yLoc;
+    private int zLoc;
 
     /**
      * Tries to decode the incoming XML message and splits it within attributes
@@ -35,7 +39,7 @@ public class Xml {
      *
      * @param xmlMessage The xml message you're willing to decode
      */
-    public static void decodeXMLMessage(String xmlMessage) {
+    public void decodeXMLMessage(String xmlMessage) {
         try {
             DocumentBuilderFactory dbf =
                     DocumentBuilderFactory.newInstance();
@@ -76,6 +80,18 @@ public class Xml {
                     line = (Element) nodeList.item(0);
                     transportType = getCharacterDataFromElement(line);
                     System.out.println("arrivalTransportType: " + transportType);
+                    nodeList = element.getElementsByTagName("arrivalTransportType");
+                    line = (Element) nodeList.item(0);
+                    xLoc = Integer.parseInt(getCharacterDataFromElement(line));
+                    System.out.println("xLoc: " + xLoc);
+                    nodeList = element.getElementsByTagName("arrivalTransportType");
+                    line = (Element) nodeList.item(0);
+                    yLoc = Integer.parseInt(getCharacterDataFromElement(line));
+                    System.out.println("yLoc: " + yLoc);
+                    nodeList = element.getElementsByTagName("arrivalTransportType");
+                    line = (Element) nodeList.item(0);
+                    zLoc = Integer.parseInt(getCharacterDataFromElement(line));
+                    System.out.println("zLoc: " + zLoc);
                 }
                 objectName = null;
                 destinationName = null;
@@ -137,4 +153,49 @@ public class Xml {
         }
         return "?";
     }
+
+    public Command getCommand() {
+        return command;
+    }
+
+    public String getContainerIso() {
+        return containerIso;
+    }
+
+    public String getContainerOwner() {
+        return containerOwner;
+    }
+
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public int getMaxValueContainers() {
+        return maxValueContainers;
+    }
+
+    public String getObjectName() {
+        return objectName;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public String getTransportType() {
+        return transportType;
+    }
+
+    public int getxLoc() {
+        return xLoc;
+    }
+
+    public int getyLoc() {
+        return yLoc;
+    }
+
+    public int getzLoc() {
+        return zLoc;
+    }
+    
 }

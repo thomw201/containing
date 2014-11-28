@@ -20,20 +20,19 @@ public class Boat extends Transporter {
     private float speed = 0.5f;
     private ArrayList<Container> inlandshipContainerList;
     private ArrayList<Container> seashipContainerList;
-    // TIJDELIJK! indoorship Dit is x=0 Y=0 Z=0, links onderin.
-    private int inxAs = -8;
-    private int inyAs = 0;
-    private int inzAs = 100;
+    // indoorship Dit is x=0 Y=0 Z=0, links onderin.
+    private final int inxAs = -8;
+    private final int inyAs = 0;
+    private final int inzAs = 100;
     // zeeship Dit is x=0 Y=0 Z=0, links onderin.
-    private int zexAs = -23;
-    private int zeyAs = 0;
-    private int zezAs = 160;
+    private final int zexAs = -23;
+    private final int zeyAs = 0;
+    private final int zezAs = 160;
     private Boat.ShipSize size;
     private Spatial boat;
-    ;
 
     public Boat(AssetManager assetManager, ShipSize shipSize, ArrayList<Container> inlandshipContainerList,
-                ArrayList<Container> seashipContainerList) {
+            ArrayList<Container> seashipContainerList) {
         this.assetManager = assetManager;
         this.size = shipSize;
         this.inlandshipContainerList = inlandshipContainerList;
@@ -53,33 +52,25 @@ public class Boat extends Transporter {
                     this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
                     boat.scale(0.6f, 1, 0.37f);
                     this.attachChild(boat);
-                    for (Container c : inlandshipContainerList) {
-                        c.setLocalTranslation(inxAs, 0, inzAs);
-                        this.attachChild(c);
-                        if (inxAs < 3) {
-                            inxAs += 5;
-                        } else {
-                            inzAs -= 14;
-                        }
+                    for (int i = 0; i < inlandshipContainerList.size(); i++) {
+                        int x = inxAs * (i + 1) + (inlandshipContainerList.get(i).getSpawnX() * 5);
+                        int y = inlandshipContainerList.get(i).getSpawnY() * 3;
+                        int z = inzAs * (i + 1) - (inlandshipContainerList.get(i).getSpawnZ() * -14);
+                        inlandshipContainerList.get(i).setLocalTranslation(x, y, z);
+                        this.attachChild(inlandshipContainerList.get(i));
                     }
                     break;
                 case SEASHIP:
                     // Load a model.
                     boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
-                    this.attachChild(boat);
                     boat.scale(0.87f, 1, 0.57f);
-                    for (Container c : seashipContainerList) {
-                        c.setLocalTranslation(speed, speed, speed);
-                        this.attachChild(c);
-                        c.setLocalTranslation(zexAs, zeyAs, zezAs);
-                        this.attachChild(c);
-                        if (zexAs < 22) {
-                            zexAs += 3;
-                        } else if (zezAs >= -119) {
-                            zezAs -= 14;
-                        } else {
-                            zeyAs += 3;
-                        }
+                    this.attachChild(boat);
+                    for (int i = 0; i < seashipContainerList.size(); i++) {
+                        int x = zexAs * (i + 1) + (seashipContainerList.get(i).getSpawnX() * 3);
+                        int y = seashipContainerList.get(i).getSpawnY() * 3;
+                        int z = zezAs * (i + 1) - (seashipContainerList.get(i).getSpawnZ() * -14);
+                        seashipContainerList.get(i).setLocalTranslation(x, y, z);
+                        this.attachChild(inlandshipContainerList.get(i));
                     }
                     break;
             }
@@ -101,8 +92,7 @@ public class Boat extends Transporter {
                 if (direction) {
                     path.addWayPoint(new Vector3f(-750, 0, 500));
                     path.addWayPoint(new Vector3f(-330, 0, -20));
-                }
-                //seaship departs
+                } //seaship departs
                 else {
                     path.addWayPoint(new Vector3f(-330, 0, -20));
                     path.addWayPoint(new Vector3f(-345, 0, -300));
@@ -114,8 +104,7 @@ public class Boat extends Transporter {
                     path.addWayPoint(new Vector3f(-500, 0, 300));
                     path.addWayPoint(new Vector3f(-200, 0, 220));
                     path.addWayPoint(new Vector3f(-190, 0, 220));
-                }
-                // inlandship departs
+                } // inlandship departs
                 else {
                     path.addWayPoint(new Vector3f(-200, 0, 220));
                     path.addWayPoint(new Vector3f(350, 0, 260));
@@ -130,6 +119,7 @@ public class Boat extends Transporter {
     }
 
     public static enum ShipSize {
+
         INLANDSHIP, SEASHIP
     }
 }

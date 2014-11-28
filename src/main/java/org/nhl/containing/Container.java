@@ -22,14 +22,18 @@ public class Container extends Node {
     private String owner;
     private String containerID;
     private String transportType;
-    private Vector3f location;
+    private int spawnX;
+    private int spawnY;
+    private int spawnZ;
 
-    public Container(AssetManager assetManager, String owner, String containerID, String transportType, Vector3f Location) {
+    public Container(AssetManager assetManager, String owner, String containerID, String transportType, int spawnX, int spawnY, int spawnZ) {
         this.assetManager = assetManager;
         this.owner = owner;
         this.containerID = containerID;
         this.transportType = transportType;
-        this.location = Location;
+        this.spawnX = spawnX;
+        this.spawnY = spawnY;
+        this.spawnZ = spawnZ;
         initContainer();
     }
 
@@ -46,7 +50,7 @@ public class Container extends Node {
         container.setMaterial(mat);
         this.attachChild(container);
         //create a random text color
-        ColorRGBA textColor = ColorRGBA.randomColor();
+        ColorRGBA textColor = ColorRGBA.Black;
         //place the company name on the side
         drawText(1.2f, 2.6f, 6, textColor, new Quaternion().fromAngleAxis(FastMath.PI / 2, new Vector3f(0, 1, 0)));
         drawText(-1.2f, 2.6f, -6, textColor, new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
@@ -68,14 +72,6 @@ public class Container extends Node {
         this.attachChild(companyText);
     }
 
-    public Vector3f getLocation() {
-        return location;
-    }
-
-    public void setLocation(Vector3f Location) {
-        this.location = location;
-    }
-
     public String getContainerID() {
         return containerID;
     }
@@ -87,4 +83,17 @@ public class Container extends Node {
     public String getTransportType() {
         return transportType;
     }
+
+    public int getSpawnX() {
+        return spawnX;
+    }
+
+    public int getSpawnY() {
+        return spawnY;
+    }
+
+    public int getSpawnZ() {
+        return spawnZ;
+    }
+    
 }

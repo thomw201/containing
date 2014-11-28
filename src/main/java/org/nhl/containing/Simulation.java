@@ -53,10 +53,12 @@ public class Simulation extends SimpleApplication {
     private Boat boat;
     private Lorry lorry;
     private Container c;
+    private Xml xml;
     private boolean debug;
 
     public Simulation() {
         client = new Client();
+        xml = new Xml();
         totalContainerList = new ArrayList<Container>();
         trainContainerList = new ArrayList<Container>();
         seashipContainerList = new ArrayList<Container>();
@@ -76,6 +78,7 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+        createObject();
     }
 
     @Override
@@ -111,46 +114,47 @@ public class Simulation extends SimpleApplication {
      * vehicles.
      */
     private void createObject() {
-        /*if (communication.getMaxValueContainers() != 0) {
-            //if (communication.getMaxValueContainers() == totalContainerList.size()) {
-            for (Container c : totalContainerList) {
-                if (c.getTransportType().equals("binnenschip")) {
-                    inlandshipContainerList.add(c);
+        if (xml.getMaxValueContainers() != 0) {
+            if (xml.getMaxValueContainers() == totalContainerList.size()) {
+                for (Container c : totalContainerList) {
+                    if (c.getTransportType().equals("binnenschip")) {
+                        inlandshipContainerList.add(c);
+                    }
+                    if (c.getTransportType().equals("zeeschip")) {
+                        seashipContainerList.add(c);
+                    }
+                    if (c.getTransportType().equals("trein")) {
+                        trainContainerList.add(c);
+                    }
+                    if (c.getTransportType().equals("vrachtauto")) {
+                        // Lorry can only contain 1 container, so has to create immediately.
+                        Lorry l = new Lorry(assetManager, c);
+                        l.move(true);
+                        rootNode.attachChild(l);
+                    }
                 }
-                if (c.getTransportType().equals("zeeschip")) {
-                    seashipContainerList.add(c);
+                if (!inlandshipContainerList.isEmpty()) {
+                    Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList, seashipContainerList);
+                    b.move(true);
+                    rootNode.attachChild(b);
                 }
-                if (c.getTransportType().equals("trein")) {
-                    trainContainerList.add(c);
+                if (!seashipContainerList.isEmpty()) {
+                    Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, inlandshipContainerList, seashipContainerList);
+                    b.move(true);
+                    rootNode.attachChild(b);
                 }
-                if (c.getTransportType().equals("vrachtauto")) {
-                    // Lorry can only contain 1 container, so has to create immediately.
-                    Lorry l = new Lorry(assetManager , c);
-                    rootNode.attachChild(l);
+                if (!trainContainerList.isEmpty()) {
+                    Train t = new Train(assetManager, trainContainerList);
+                    t.move(true);
+                    rootNode.attachChild(t);
                 }
             }
-            if (!inlandshipContainerList.isEmpty()) {
-                Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP, inlandshipContainerList, seashipContainerList);
-                b.move(debug);
-                rootNode.attachChild(b);
-            }
-            if (!seashipContainerList.isEmpty()) {
-                Boat b = new Boat(assetManager, Boat.Size.SEASHIP, inlandshipContainerList, seashipContainerList);
-                b.move(debug);
-                rootNode.attachChild(b);
-            }
-            if (!trainContainerList.isEmpty()) {
-                Train t = new Train(assetManager, trainContainerList);
-                t.setLocalTranslation(-180, 0, -180);
-                t.rotate(0, (float) Math.PI / -2f, 0);
-                rootNode.attachChild(t);
-            }
-            //}
         } else {
-            c = new Container(assetManager, communication.getContainerOwner(),
-                    communication.getContainerIso(), communication.getTransportType(), new Vector3f(0, locationInt += 10, 0));
+            c = new Container(assetManager, xml.getContainerOwner(),
+                    xml.getContainerIso(), xml.getTransportType(),
+                    xml.getxLoc(), xml.getyLoc(), xml.getzLoc());
             totalContainerList.add(c);
-        }*/
+        }
     }
 
     /**
@@ -158,22 +162,19 @@ public class Simulation extends SimpleApplication {
      */
     private void createContainers() {
         for (int i = 0; i < 29; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "trein", new Vector3f(0, 2, 0));
+            c = new Container(assetManager, "Coca Cola", "8-9912", "trein", 0, 0, 0);
             totalContainerList.add(c);
         }
-
-
-        c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", new Vector3f(0, 2, 0));
+        c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", 0, 0, 0);
         totalContainerList.add(c);
         for (int i = 0; i < 41; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", new Vector3f(0, 2, 0));
+            c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", 0, 0, 0);
             totalContainerList.add(c);
         }
         for (int i = 0; i < 17; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", new Vector3f(0, 2, 0));
+            c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", 0, 0, 0);
             totalContainerList.add(c);
         }
-
         createObject();
     }
 
