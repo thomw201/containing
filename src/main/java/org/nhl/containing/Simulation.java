@@ -38,7 +38,7 @@ public class Simulation extends SimpleApplication {
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
-    private Client server;
+    private Client client;
     private Train train;
     private Boat boat;
     private Lorry lorry;
@@ -46,7 +46,7 @@ public class Simulation extends SimpleApplication {
     private boolean debug;
 
     public Simulation() {
-        server = new Client();
+        client = new Client();
         totalContainerList = new ArrayList<Container>();
         trainContainerList = new ArrayList<Container>();
         seashipContainerList = new ArrayList<Container>();
@@ -59,9 +59,9 @@ public class Simulation extends SimpleApplication {
         initScene();
         initUserInput();
         createContainers();
-        Thread serverThread = new Thread(server);
-        serverThread.setName("ServerThread");
-        serverThread.start();
+        Thread clientThread = new Thread(client);
+        clientThread.setName("ClientThread");
+        clientThread.start();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class Simulation extends SimpleApplication {
     @Override
     public void destroy() {
         super.destroy();
-        server.stop();
+        client.stop();
     }
 
     /**
@@ -88,7 +88,7 @@ public class Simulation extends SimpleApplication {
      */
     private void sendOkMessage(Vehicle veh) {
         String message = "<OK><OBJECT>" + veh.getName() + "</OBJECT><OBJECTID>" + veh.getId() + "</OBJECTID></OK>";
-        server.writeMessage(message);
+        client.writeMessage(message);
     }
 
     /**
