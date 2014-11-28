@@ -34,7 +34,7 @@ public class SendRunnable implements Runnable {
                 }
             } else {
                 // Send outputLine to client
-                out.write(outputLine);
+                out.println(outputLine);
                 System.out.println("Sent " + outputLine);
             }
         }
