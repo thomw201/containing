@@ -14,8 +14,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
 import java.util.ArrayList;
-import java.util.List;
 import org.nhl.containing.areas.BoatArea;
+import org.nhl.containing.areas.LorryArea;
 import org.nhl.containing.areas.StorageArea;
 import org.nhl.containing.areas.TrainArea;
 import org.nhl.containing.vehicles.*;
@@ -31,10 +31,6 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> trainContainerList;
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
-    private List<Container> totalContainerList;
-    private List<Container> trainContainerList;
-    private List<Container> seashipContainerList;
-    private List<Container> inlandshipContainerList;
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
@@ -42,7 +38,7 @@ public class Simulation extends SimpleApplication {
     private Train train;
     private Boat inlandship;
     private Boat seaship;
-    private Lorry lorry;
+    //private Lorry l;
     private Container c;
     private boolean debug;
 
@@ -115,23 +111,31 @@ public class Simulation extends SimpleApplication {
                 if (c.getTransportType().equals("vrachtauto")) {
                     // Lorry can only contain 1 container, so has to create immediately.
                     Lorry l = new Lorry(assetManager , c);
+                    Lorry l2 = new Lorry(assetManager , c);
+                    Lorry l3 = new Lorry(assetManager , c);
+                    l.move(true, 0);
+                    l2.move(true, 19);
+                    l3.move(true, 8);
                     rootNode.attachChild(l);
+                    rootNode.attachChild(l2);
+                    rootNode.attachChild(l3);
                 }
             }
             if (!inlandshipContainerList.isEmpty()) {
                 Boat b = new Boat(assetManager, Boat.Size.INLANDSHIP, inlandshipContainerList, seashipContainerList);
-                b.move(debug);
+                b.move(true);
                 rootNode.attachChild(b);
             }
             if (!seashipContainerList.isEmpty()) {
                 Boat b = new Boat(assetManager, Boat.Size.SEASHIP, inlandshipContainerList, seashipContainerList);
-                b.move(debug);
+                b.move(true);
                 rootNode.attachChild(b);
             }
             if (!trainContainerList.isEmpty()) {
                 Train t = new Train(assetManager, trainContainerList);
-                t.setLocalTranslation(280, 0, -180);
-                t.rotate(0, (float) Math.PI / 2f, 0);
+                //t.setLocalTranslation(280, 0, -180);
+                //t.rotate(0, (float) Math.PI / 2f, 0);
+                t.move(true);
                 rootNode.attachChild(t);
             }
             //}
@@ -242,6 +246,11 @@ public class Simulation extends SimpleApplication {
     }
 
     private void initAreas() {
+        // Add lorry area.
+        LorryArea lorryArea = new LorryArea(assetManager, 20);
+        lorryArea.setLocalTranslation(20,0,170);
+        rootNode.attachChild(lorryArea);
+        
         // Add the TrainArea.
         TrainArea trainArea = new TrainArea(assetManager, 4);
         trainArea.setLocalTranslation(-160, 0, -180);
@@ -287,27 +296,14 @@ public class Simulation extends SimpleApplication {
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    if (!debug) {
+                    if (debug) {
                         debug = true;
-                        if (inlandship == null) {
-                            //testing inlandship
-                            inlandship = new Boat(assetManager, Boat.Size.INLANDSHIP);
-                            rootNode.attachChild(inlandship);
-                            //testing seaship
-                            if (seaship == null) {
-                                seaship = new Boat(assetManager, Boat.Size.SEASHIP);
-                                rootNode.attachChild(seaship);
-                            }
                         }
-                        inlandship.move(true);
-                        seaship.move(true);
                     } 
                     else {
-                        inlandship.move(false);
-                        seaship.move(false);
+                    debug = false;
                     }
                 }
-            }
         };
         inputManager.addListener(acl, "debugmode");
     }
