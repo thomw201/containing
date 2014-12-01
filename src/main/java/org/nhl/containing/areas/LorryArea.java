@@ -14,15 +14,11 @@ public class LorryArea extends Area {
     private AssetManager assetManager;
     private int cranes;
     private int craneXAxis = 0;
-    public List<Boolean> hasLorry = new ArrayList();
     public List<TruckCrane> truckCranes = new ArrayList();
     
     public LorryArea(AssetManager assetManager, int cranes){
         this.assetManager = assetManager;
         this.cranes = cranes;
-        for (int i = 0; i < 20; i++) {
-            hasLorry.add(i, false);
-        }
         initLorryArea();
     }
     

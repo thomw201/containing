@@ -297,9 +297,7 @@ public class Simulation extends SimpleApplication {
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    System.out.println("testing");
                         debug = !debug;
-                        test.move(debug, 9);
                 }
             }
         };
