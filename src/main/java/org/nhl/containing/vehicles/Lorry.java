@@ -3,8 +3,6 @@ package org.nhl.containing.vehicles;
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
-import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
@@ -19,7 +17,7 @@ public class Lorry extends Transporter {
     private float speed = 2;
     private int lorryZAxis = 11;
     private Container containter;
-
+            
     public Lorry(AssetManager assetManager, Container c) {
         this.assetManager = assetManager;
         this.containter = c;
@@ -41,18 +39,23 @@ public class Lorry extends Transporter {
         //this.rotate(new Quaternion().fromAngleAxis(FastMath.PI  ,   new Vector3f(0,1,0)));
     }
 
-    /**
-     * creates waypoints and lets the lorrys drive over them direction TRUE =
-     * arrive direction FALSE = depart position = parking place to move to
-     */
-    public void move(boolean direction, int position) {
+/**
+ * this methods makes the lorrys arrive at the given position
+ * @param direction direction set to true for incoming, false for outgoing
+ * @param parkingPlace 0-19, the parking place the lorry will drive to/from
+ */
+    public void move(boolean direction, int parkingPlace) {
         MotionPath path = new MotionPath();
         MotionEvent motionControl = new MotionEvent(this, path);
-        path.addWayPoint(new Vector3f(286 - (14 * position), 0, 190));
-        path.addWayPoint(new Vector3f(286 - (14 * position), 0, 159));
+        if (direction) {
+        path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 190));
+        path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 159));
+        }
+        else{
+        path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 159));
+        path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 200));
+        }
         motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        //motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        //motionControl.setInitialDuration (10f);
         motionControl.setSpeed(speed);
         motionControl.play();
     }

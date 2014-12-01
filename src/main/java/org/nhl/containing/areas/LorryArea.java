@@ -20,6 +20,9 @@ public class LorryArea extends Area {
     public LorryArea(AssetManager assetManager, int cranes){
         this.assetManager = assetManager;
         this.cranes = cranes;
+        for (int i = 0; i < 20; i++) {
+            hasLorry.add(i, false);
+        }
         initLorryArea();
     }
     
@@ -34,20 +37,5 @@ public class LorryArea extends Area {
             this.attachChild(truckCranes.get(i));
             craneXAxis += 14;
         }
-    }
-    /**
-     * this method changes the value of a parking space
-     * @param nr parking spot location
-     * @param status TRUE = taken, FALSE = free.
-     */
-    public void setParkingPlace(int nr, boolean status){
-        hasLorry.set(nr, status);
-    }
-    /**
-     * loops through the array to find a parking spot that isn't taken
-     * @return the number of free parking spot.
-     */
-    public int getParkingPlace(){
-        return 0;
     }
 }

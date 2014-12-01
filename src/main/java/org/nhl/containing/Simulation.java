@@ -31,6 +31,7 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> trainContainerList;
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
+    LorryArea lorryArea;
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
@@ -38,9 +39,9 @@ public class Simulation extends SimpleApplication {
     private Train train;
     private Boat inlandship;
     private Boat seaship;
-    //private Lorry l;
+    public Lorry test;
     private Container c;
-    private boolean debug;
+    public boolean debug = true;
 
     public Simulation() {
         communication = new Communication();
@@ -53,8 +54,8 @@ public class Simulation extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         initCam();
-        initScene();
         initUserInput();
+        initScene();
         createContainers();
         communication.Start();
     }
@@ -110,12 +111,12 @@ public class Simulation extends SimpleApplication {
                 }
                 if (c.getTransportType().equals("vrachtauto")) {
                     // Lorry can only contain 1 container, so has to create immediately.
-                    Lorry l = new Lorry(assetManager , c);
-                    Lorry l2 = new Lorry(assetManager , c);
-                    Lorry l3 = new Lorry(assetManager , c);
+                    Lorry l = new Lorry(assetManager, c);
+                    Lorry l2 = new Lorry(assetManager, c);
+                    Lorry l3 = new Lorry(assetManager, c);
                     l.move(true, 0);
-                    l2.move(true, 19);
-                    l3.move(true, 8);
+                    l2.move(true, 10);
+                    l3.move(true, 19);
                     rootNode.attachChild(l);
                     rootNode.attachChild(l2);
                     rootNode.attachChild(l3);
@@ -247,10 +248,10 @@ public class Simulation extends SimpleApplication {
 
     private void initAreas() {
         // Add lorry area.
-        LorryArea lorryArea = new LorryArea(assetManager, 20);
+        lorryArea = new LorryArea(assetManager, 20);
         lorryArea.setLocalTranslation(20,0,170);
         rootNode.attachChild(lorryArea);
-        
+
         // Add the TrainArea.
         TrainArea trainArea = new TrainArea(assetManager, 4);
         trainArea.setLocalTranslation(-160, 0, -180);
@@ -296,14 +297,11 @@ public class Simulation extends SimpleApplication {
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    if (debug) {
-                        debug = true;
-                        }
-                    } 
-                    else {
-                    debug = false;
-                    }
+                    System.out.println("testing");
+                        debug = !debug;
+                        test.move(debug, 9);
                 }
+            }
         };
         inputManager.addListener(acl, "debugmode");
     }
