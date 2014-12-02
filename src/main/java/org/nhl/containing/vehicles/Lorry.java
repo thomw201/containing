@@ -38,22 +38,24 @@ public class Lorry extends Transporter {
         this.attachChild(containter);
     }
 
-    public void move(boolean direction) {
+    /**
+     * this methods makes the lorrys arrive at the given position
+     *
+     * @param direction direction set to true for incoming, false for outgoing
+     * @param parkingPlace 0-19, the parking place the lorry will drive to/from
+     */
+    public void move(boolean direction, int parkingPlace) {
         MotionPath path = new MotionPath();
         MotionEvent motionControl = new MotionEvent(this, path);
-        //boat arrives
         if (direction) {
-            path.addWayPoint(new Vector3f(250, 0, 180));
-            path.addWayPoint(new Vector3f(200, 0, 180));
-        } //boat leaves
-        else {
-            path.addWayPoint(new Vector3f(200, 0, 180));
-            path.addWayPoint(new Vector3f(250, 0, 180));
+            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 185));
+            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 159));
+        } else {
+            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 159));
+            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 185));
         }
-        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();
+
     }
 }

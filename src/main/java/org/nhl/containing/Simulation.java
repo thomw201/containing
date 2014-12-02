@@ -42,11 +42,7 @@ public class Simulation extends SimpleApplication {
     private StorageArea boatStorageArea;
     private StorageArea trainStorageArea;
     private StorageArea lorryStorageArea;
-    
-    
-    
-    //TIJDELIJK
-    private int locationInt = -10;
+
     private Agv agv;
     private Client client;
     private Train train;
@@ -129,7 +125,7 @@ public class Simulation extends SimpleApplication {
                     if (c.getTransportType().equals("vrachtauto")) {
                         // Lorry can only contain 1 container, so has to create immediately.
                         Lorry l = new Lorry(assetManager, c);
-                        l.move(true);
+                        l.move(true, 3);
                         rootNode.attachChild(l);
                     }
                 }
@@ -304,13 +300,13 @@ public class Simulation extends SimpleApplication {
                         //testing train code
                         train.move(debug);
                         boat.move(debug);
-                        lorry.move(debug);
+                        lorry.move(debug, 0);
                     } else {
                         debug = true;
                         //testing train code
                         train.move(debug);
                         boat.move(debug);
-                        lorry.move(debug);
+                        lorry.move(debug, 2);
                     }
                 }
             }
