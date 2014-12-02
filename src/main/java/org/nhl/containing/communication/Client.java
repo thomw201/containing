@@ -1,13 +1,12 @@
 package org.nhl.containing.communication;
 
-import org.nhl.containing.communication.ListenRunnable;
-import org.nhl.containing.communication.SendRunnable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Client.
@@ -55,6 +54,7 @@ public class Client implements Runnable {
             } catch (Throwable e) {
                 e.printStackTrace();
             }
+            if(listenRunnable != null)
             if (!listenRunnable.isRunning()) {
                 this.stop();
             }
@@ -62,16 +62,22 @@ public class Client implements Runnable {
 
     }
 
+    /**
+     * Stops the client an thus the listen- and sendrunnables
+     */
     public void stop() {
+        if(socket != null)
         try {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        if(listenRunnable != null)
         try {
             listenRunnable.stop();
         } catch (Throwable e) {
         }
+        if(sendRunnable != null)
         try {
             sendRunnable.stop();
         } catch (Throwable e) {
@@ -79,10 +85,26 @@ public class Client implements Runnable {
         running = false;
     }
 
-    public String getMessage() {
-        return listenRunnable.getMessage();
+    /**
+     * Returns a list of decoded messages
+     * @return an arraylist of decoded messages
+     */
+    public ArrayList<Message> getMessages() {
+        Xml xml = new Xml();
+        String incomingMsg = null;
+        if(listenRunnable != null)
+            incomingMsg = listenRunnable.getMessage();
+            if(incomingMsg != null)
+        return xml.decodeXMLMessage(incomingMsg);
+        
+        
+        return null;
     }
 
+    /**
+     * sends a message to the backend system
+     * @param message 
+     */
     public void writeMessage(String message) {
         sendRunnable.writeMessage(message);
     }
