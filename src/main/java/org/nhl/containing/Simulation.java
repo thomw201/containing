@@ -42,9 +42,6 @@ public class Simulation extends SimpleApplication {
     private StorageArea boatStorageArea;
     private StorageArea trainStorageArea;
     private StorageArea lorryStorageArea;
-    
-    
-    
     //TIJDELIJK
     private int locationInt = -10;
     private Agv agv;
@@ -99,8 +96,39 @@ public class Simulation extends SimpleApplication {
      *
      * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
      */
-    private void sendOkMessage(Vehicle veh) {
-        String message = "<OK><OBJECT>" + veh.getName() + "</OBJECT><OBJECTID>" + veh.getId() + "</OBJECTID></OK>";
+    private void sendOkMessageLorry(Vehicle veh) {
+        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
+                + "<OBJECTID>" + veh.getId() + "</OBJECTID></OK>";
+        client.writeMessage(message);
+    }
+
+    private void sendOkMessageTrain(Vehicle veh) {
+        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
+                + "<OBJECTID>" + veh.getId() + "</OBJECTID>"
+                + "<OBJECTSIZE>" + trainContainerList.size() + "</OBJECTSIZE></OK>";
+        client.writeMessage(message);
+        trainContainerList.clear();
+    }
+
+    private void sendOkMessageInlandShip(Vehicle veh) {
+        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
+                + "<OBJECTID>" + veh.getId() + "</OBJECTID>"
+                + "<OBJECTSIZE>" + inlandshipContainerList.size() + "</OBJECTSIZE></OK>";
+        client.writeMessage(message);
+        inlandshipContainerList.clear();
+    }
+
+    private void sendOkMessageSeaShip(Vehicle veh) {
+        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
+                + "<OBJECTID>" + veh.getId() + "</OBJECTID>"
+                + "<OBJECTSIZE>" + seashipContainerList.size() + "</OBJECTSIZE></OK>";
+        client.writeMessage(message);
+        seashipContainerList.clear();
+    }
+
+    private void sendOkMessageContainer(Container c) {
+        String message = "<OK><OBJECTNAME>" + c.getName() + "</OBJECTNAME>"
+                + "<OBJECTID>" + c.getContainerID() + "</OBJECTID></OK>";
         client.writeMessage(message);
     }
 
@@ -238,7 +266,7 @@ public class Simulation extends SimpleApplication {
         initAreas();
         initPlatform();
     }
-    
+
     private void initLighting() {
         // Light pointing diagonal from the top right to the bottom left.
         DirectionalLight light = new DirectionalLight();
