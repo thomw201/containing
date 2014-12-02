@@ -31,7 +31,7 @@ public class LorryArea extends Area {
             truckCranes.add(new TruckCrane(assetManager));
             truckCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
             this.attachChild(truckCranes.get(i));
-            craneXAxis += 6;
+            craneXAxis += 14;
         }
     }
 }
