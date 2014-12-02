@@ -13,17 +13,13 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
-import org.nhl.containing.areas.BoatArea;
-import org.nhl.containing.areas.StorageArea;
-import org.nhl.containing.areas.TrainArea;
+import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
 import org.nhl.containing.cranes.TrainCrane;
 import org.nhl.containing.vehicles.*;
-import org.nhl.containing.vehicles.Agv;
-import org.nhl.containing.vehicles.Train;
-import org.nhl.containing.vehicles.Vehicle;
 
 import java.util.ArrayList;
+import org.nhl.containing.areas.LorryArea;
 
 /**
  * test
@@ -36,13 +32,15 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> trainContainerList;
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
+    
     private TrainArea trainArea;
+    private LorryArea lorryArea;
     private BoatArea boatArea;
     private BoatArea inlandBoatArea;
     private StorageArea boatStorageArea;
     private StorageArea trainStorageArea;
     private StorageArea lorryStorageArea;
-
+    
     private Agv agv;
     private Client client;
     private Train train;
@@ -234,7 +232,7 @@ public class Simulation extends SimpleApplication {
         initAreas();
         initPlatform();
     }
-    
+
     private void initLighting() {
         // Light pointing diagonal from the top right to the bottom left.
         DirectionalLight light = new DirectionalLight();
@@ -250,6 +248,11 @@ public class Simulation extends SimpleApplication {
     }
 
     private void initAreas() {
+                // Add lorry area.
+        lorryArea = new LorryArea(assetManager, 20);
+        lorryArea.setLocalTranslation(300,0,170);
+        rootNode.attachChild(lorryArea);
+        
         // Add the TrainArea.
         trainArea = new TrainArea(assetManager, 4);
         trainArea.setLocalTranslation(-160, 0, -180);
@@ -286,7 +289,10 @@ public class Simulation extends SimpleApplication {
     private void initPlatform() {
         // Platform for the scene.
         Spatial platform = assetManager.loadModel("Models/platform/platform.j3o");
-        platform.scale(20, 1, 20);
+        //vergroot platform
+        platform.scale(30, 1, 20);
+        //schuif platform op
+        platform.setLocalTranslation(150, 0, 0);
         rootNode.attachChild(platform);
     }
 

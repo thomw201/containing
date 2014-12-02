@@ -48,11 +48,11 @@ public class Lorry extends Transporter {
         MotionPath path = new MotionPath();
         MotionEvent motionControl = new MotionEvent(this, path);
         if (direction) {
-            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 185));
-            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 159));
+            path.addWayPoint(new Vector3f(566 - (14 * parkingPlace), 0, 185));
+            path.addWayPoint(new Vector3f(566 - (14 * parkingPlace), 0, 159));
         } else {
-            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 159));
-            path.addWayPoint(new Vector3f(286 - (14 * parkingPlace), 0, 185));
+            path.addWayPoint(new Vector3f(566 - (14 * parkingPlace), 0, 159));
+            path.addWayPoint(new Vector3f(566 - (14 * parkingPlace), 0, 185));
         }
         motionControl.setSpeed(speed);
         motionControl.play();
