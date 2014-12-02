@@ -84,6 +84,6 @@ public class Client implements Runnable {
     }
 
     public void writeMessage(String message) {
-        sendRunnable.writeMessage(message);
+        sendRunnable.writeMessage("<Simulation>" + message + "</Simulation>");
     }
 }
