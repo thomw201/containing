@@ -2,7 +2,6 @@ package org.nhl.containing.cranes;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
-import com.jme3.cinematic.MotionPathListener;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -40,12 +39,13 @@ public class TrainCrane extends Crane {
     }
 
     /**
-     * Let the crane move to the container's position. And Put the container on the Agv.
+     * Let the crane move to the container's position. And Put the container on
+     * the Agv.
      *
      * @param container Request a container.
-     * @param agv       Agv that needs the container.
+     * @param agv Agv that needs the container.
      */
-    public void activateCrane(Container container, Agv agv) {
+    public void trainToAgv(Container container, Agv agv) {
 
         this.container = container;
         this.agv = agv;
@@ -56,14 +56,7 @@ public class TrainCrane extends Crane {
         cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, 0));
         cranePath.setCurveTension(0.0f);
         cranePath.enableDebugShape(assetManager, this);
-        cranePath.addListener(new MotionPathListener() {
-            public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
-                if (cranePath.getNbWayPoints() == wayPointIndex + 1) {
-                    cranePath.clearWayPoints();
-                    moveContainer();
-                }
-            }
-        });
+        cranePath.addListener(this);
 
         MotionEvent motionControl = new MotionEvent(this, cranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
@@ -75,7 +68,6 @@ public class TrainCrane extends Crane {
      * Move a container to the Agv.
      */
     private void moveContainer() {
-        final TrainCrane currentCrane = this;
         attachChild(container);
         container.rotate(0, (float) Math.PI / 2, 0);
         containerPath = new MotionPath();
@@ -85,19 +77,31 @@ public class TrainCrane extends Crane {
         containerPath.addWayPoint(new Vector3f(0, 1, 6));
         containerPath.setCurveTension(0.0f);
         containerPath.enableDebugShape(assetManager, this);
-        containerPath.addListener(new MotionPathListener() {
-            public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
-                if (containerPath.getNbWayPoints() == wayPointIndex + 1) {
-                    detachChild(currentCrane.getChild(1));
-                    agv.attachChild(container);
-                    container.rotate(0, (float) Math.PI / 2, 0);
-                    container.setLocalTranslation(0, 1, 0);
-                }
-            }
-        });
-
+        containerPath.addListener(this);
+        
         MotionEvent motionControl = new MotionEvent(getChild(2), containerPath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
         motionControl.play();
+    }
+
+    /**
+     * Method gets automatically called everytime a waypoint is reached.
+     * @param motionControl motioncontrol of the path.
+     * @param wayPointIndex Index of the current waypoint.
+     */
+    @Override
+    public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
+        if (cranePath.getNbWayPoints() == wayPointIndex + 1) {
+            cranePath.clearWayPoints();
+            moveContainer();
+        }
+
+        if (containerPath.getNbWayPoints() == wayPointIndex + 1) {
+            detachChild(getChild(1));
+            agv.attachChild(container);
+            container.rotate(0, (float) Math.PI / 2, 0);
+            container.setLocalTranslation(0, 1, 0);
+        }
+        
     }
 }
