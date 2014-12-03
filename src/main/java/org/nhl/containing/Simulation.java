@@ -300,12 +300,12 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(trainArea);
 
         // Add the BoatArea (Sea).
-        boatArea = new BoatArea(assetManager, 10);
+        boatArea = new BoatArea(assetManager, 10, 28);
         boatArea.setLocalTranslation(-325, 0, -100);
         rootNode.attachChild(boatArea);
 
         // Add the inlandBoatArea.
-        inlandBoatArea = new BoatArea(assetManager, 8);
+        inlandBoatArea = new BoatArea(assetManager, 8, 40);
         inlandBoatArea.rotate(0, (float) (0.5 * Math.PI), 0);
         inlandBoatArea.scale(0.8f, 0.8f, 0.8f);
         inlandBoatArea.setLocalTranslation(-240, 0, 220);
@@ -313,17 +313,17 @@ public class Simulation extends SimpleApplication {
 
         // Add the StorageArea for boat containers.
         boatStorageArea = new StorageArea(assetManager, 4);
-        boatStorageArea.setLocalTranslation(-200, 0, -130);
+        boatStorageArea.setLocalTranslation(-150, 0, -130);
         rootNode.attachChild(boatStorageArea);
 
         // Add the StorageArea for train containers.
         trainStorageArea = new StorageArea(assetManager, 4);
-        trainStorageArea.setLocalTranslation(-20, 0, -130);
+        trainStorageArea.setLocalTranslation(130, 0, -130);
         rootNode.attachChild(trainStorageArea);
 
         // Add the StorageArea for lorry containers.
         lorryStorageArea = new StorageArea(assetManager, 4);
-        lorryStorageArea.setLocalTranslation(150, 0, -130);
+        lorryStorageArea.setLocalTranslation(380, 0, -130);
         rootNode.attachChild(lorryStorageArea);
     }
 

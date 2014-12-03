@@ -35,7 +35,7 @@ public class StorageArea extends Area {
             storageCranes.add(new StorageCrane(assetManager));
             storageCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
             this.attachChild(storageCranes.get(i));
-            craneXAxis += 35;
+            craneXAxis += 50;
         }
 
         // Add crane rails.
@@ -48,7 +48,7 @@ public class StorageArea extends Area {
                 craneRailsZAxis += 11;
             }
             craneRailsZAxis = 0;
-            craneRailsXAxis += 35;
+            craneRailsXAxis += 50;
         }
 
     }

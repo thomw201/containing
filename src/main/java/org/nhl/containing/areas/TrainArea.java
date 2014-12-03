@@ -48,7 +48,7 @@ public class TrainArea extends Area {
         Spatial railTrack = assetManager.loadModel("Models/rails/trainRails.j3o");
         railTrack.setLocalRotation(YAW090);
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 72; i++) {
             Spatial nextRail = railTrack.clone();
             nextRail.setLocalTranslation(trainRailsXAxis, 0, 0);
             this.attachChild(nextRail);
@@ -59,7 +59,7 @@ public class TrainArea extends Area {
         Spatial craneRails = assetManager.loadModel("Models/rails/craneRails.j3o");
         craneRails.setLocalRotation(YAW090);
 
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 72; i++) {
             Spatial nextRail = craneRails.clone();
             nextRail.setLocalTranslation(craneRailsXAxis, 0, 0);
             this.attachChild(nextRail);
