@@ -31,11 +31,6 @@ public class ListenRunnable implements Runnable {
                 // Write to queue
                 queue.add(inputLine);
                 System.out.println("Received " + inputLine);
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
             }
         } catch (IOException e) {
         }
