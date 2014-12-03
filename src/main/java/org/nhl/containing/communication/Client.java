@@ -86,23 +86,17 @@ public class Client implements Runnable {
     }
 
     /**
-     * Returns a list of decoded messages
-     * @return an arraylist of decoded messages
+     * 
+     * 
+     * @return 
      */
-    public ArrayList<Message> getMessages() {
-        Xml xml = new Xml();
-        String incomingMsg = null;
-        if(listenRunnable != null)
-            incomingMsg = listenRunnable.getMessage();
-            if(incomingMsg != null)
-        return xml.decodeXMLMessage(incomingMsg);
-        
-        
-        return null;
+    public String getMessage() {
+        return listenRunnable.getMessage();
     }
 
     /**
      * sends a message to the backend system
+     * 
      * @param message 
      */
     public void writeMessage(String message) {

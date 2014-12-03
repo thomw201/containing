@@ -71,7 +71,6 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
-        createObject();
     }
 
     @Override
@@ -106,52 +105,48 @@ public class Simulation extends SimpleApplication {
      * TransportList. When the List<container> == empty then create the
      * vehicles.
      */
-    private void createObject() {
-        ArrayList<Message> incomingMessages = client.getMessages();
-        if (incomingMessages != null) {
-            for (Message msg : incomingMessages) {
-                if (msg.getCommand() == Command.Create) {
-                    
-                    //Creates a container from the incoming message
-                    c = new Container(assetManager, msg.getContainerOwner(),
-                            msg.getContainerIso(), msg.getTransportType(),
-                            msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
-                    totalContainerList.add(c);
-                    
-                    //Places the newly created container on the right vehicle
-                        for (Container con : totalContainerList) {
-                            if (con.getTransportType().equals("binnenschip")) {
-                                inlandshipContainerList.add(con);
-                            }
-                            if (con.getTransportType().equals("zeeschip")) {
-                                seashipContainerList.add(con);
-                            }
-                            if (con.getTransportType().equals("trein")) {
-                                trainContainerList.add(con);
-                            }
-                            if (con.getTransportType().equals("vrachtauto")) {
-                                // Lorry can only contain 1 container, so has to create immediately.
-                                Lorry l = new Lorry(assetManager, con);
-                                l.move(true);
-                                rootNode.attachChild(l);
-                            }
-                        }
-                        if (!inlandshipContainerList.isEmpty()) {
-                            Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList, seashipContainerList);
-                            b.move(true);
-                            rootNode.attachChild(b);
-                        }
-                        if (!seashipContainerList.isEmpty()) {
-                            Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, inlandshipContainerList, seashipContainerList);
-                            b.move(true);
-                            rootNode.attachChild(b);
-                        }
-                        if (!trainContainerList.isEmpty()) {
-                            Train t = new Train(assetManager, trainContainerList);
-                            t.move(true);
-                            rootNode.attachChild(t);
-                        }
+    private void createObject(Message msg) {
+        // TODO. This whole thing basically doesn't work.
+        if (msg.getCommand() == Command.Create) {
+
+            //Creates a container from the incoming message
+            c = new Container(assetManager, msg.getContainerOwner(),
+                    msg.getContainerIso(), msg.getTransportType(),
+                    msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+            totalContainerList.add(c);
+
+            //Places the newly created container on the right vehicle
+            for (Container con : totalContainerList) {
+                if (con.getTransportType().equals("binnenschip")) {
+                    inlandshipContainerList.add(con);
                 }
+                if (con.getTransportType().equals("zeeschip")) {
+                    seashipContainerList.add(con);
+                }
+                if (con.getTransportType().equals("trein")) {
+                    trainContainerList.add(con);
+                }
+                if (con.getTransportType().equals("vrachtauto")) {
+                    // Lorry can only contain 1 container, so has to create immediately.
+                    Lorry l = new Lorry(assetManager, con);
+                    l.move(true);
+                    rootNode.attachChild(l);
+                }
+            }
+            if (!inlandshipContainerList.isEmpty()) {
+                Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
+                b.move(true);
+                rootNode.attachChild(b);
+            }
+            if (!seashipContainerList.isEmpty()) {
+                Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
+                b.move(true);
+                rootNode.attachChild(b);
+            }
+            if (!trainContainerList.isEmpty()) {
+                Train t = new Train(assetManager, trainContainerList);
+                t.move(true);
+                rootNode.attachChild(t);
             }
         }
     }
@@ -174,7 +169,6 @@ public class Simulation extends SimpleApplication {
             c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", 0, 0, 0);
             totalContainerList.add(c);
         }
-        createObject();
     }
 
     /**
