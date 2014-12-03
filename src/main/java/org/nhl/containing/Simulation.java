@@ -129,12 +129,6 @@ public class Simulation extends SimpleApplication {
         seashipContainerList.clear();
     }
 
-    private void sendOkMessageContainer(Container c) {
-        String message = "<OK><OBJECTNAME>" + c.getName() + "</OBJECTNAME>"
-                + "<OBJECTID>" + c.getContainerID() + "</OBJECTID></OK>";
-        client.writeMessage(message);
-    }
-
     /**
      * This functions will process all incomming create commands.
      * <p/>
@@ -195,22 +189,25 @@ public class Simulation extends SimpleApplication {
             Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
             b.move(true);
             rootNode.attachChild(b);
-            //sendOkMessageInlandShip(b);
+            sendOkMessageInlandShip(b);
         }
         if (!seashipContainerList.isEmpty()) {
             Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
             b.move(true);
             rootNode.attachChild(b);
-            //sendOkMessageSeaShip(b);
+            sendOkMessageSeaShip(b);
         }
         if (!trainContainerList.isEmpty()) {
             Train t = new Train(assetManager, trainContainerList);
             t.move(true);
             rootNode.attachChild(t);
-            //sendOkMessageTrain(t);
+            sendOkMessageTrain(t);
         }
         for (int i = 0 ; i < totalLorryList.size() ; i++)
+        {
             totalLorryList.get(i).move(true, i);
+            sendOkMessageLorry(totalLorryList.get(i));
+        }
     }
 
     /**
