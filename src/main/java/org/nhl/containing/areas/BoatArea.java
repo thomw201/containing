@@ -17,10 +17,12 @@ public class BoatArea extends Area {
     private int craneZAxis = 0;
     private int craneRailsZAxis = -30;
     private int cranes;
+    private int rails;
 
-    public BoatArea(AssetManager assetmanager, int cranes) {
+    public BoatArea(AssetManager assetmanager, int cranes, int rails) {
         this.assetManager = assetmanager;
         this.cranes = cranes;
+        this.rails = rails;
         initBoatArea();
     }
 
@@ -39,7 +41,7 @@ public class BoatArea extends Area {
 
         // Add crane rails.
         Spatial craneRails = assetManager.loadModel("Models/rails/craneRails.j3o");
-        for (int i = 0; i < 28; i++) {
+        for (int i = 0; i < rails; i++) {
             Spatial nextRail = craneRails.clone();
             nextRail.setLocalTranslation(42f, 0, craneRailsZAxis);
             nextRail.setLocalScale(0.89f, 1, 1);
