@@ -46,8 +46,6 @@ public class Simulation extends SimpleApplication {
     private Train train;
     private Boat boat;
     private Lorry lorry;
-    private Container c;
-    private Xml xml;
     private boolean debug;
 
     public Simulation() {
@@ -135,27 +133,23 @@ public class Simulation extends SimpleApplication {
      * vehicles.
      */
     public void msgCheck() {
-        xml = new Xml();
         String incoming = client.getMessage();
-        incomingMessages.addAll(xml.decodeXMLMessage(incoming));
+        incomingMessages.addAll(Xml.decodeXMLMessage(incoming));
         for (Message msg : incomingMessages) {
             if (msg.getCommand() == Command.Create) {
-                createContainers(msg);
+                createContainer(msg);
             }
         }
-        
+        sortContainers();
     }
 
-    private void createContainers(Message msg) {
-        if (msg.getCommand() == Command.Create) {
+    private void createContainer(Message msg) {
 
-            //Creates a container from the incoming message
-            c = new Container(assetManager, msg.getContainerOwner(),
-                    msg.getContainerIso(), msg.getTransportType(),
-                    msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
-            totalContainerList.add(c);
-        }
-        sortContainers();
+        //Creates a container from the incoming message
+        Container container = new Container(assetManager, msg.getContainerOwner(),
+                msg.getContainerIso(), msg.getTransportType(),
+                msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+        totalContainerList.add(container);
     }
 
     private void sortContainers() {//Places the newly created container on the right vehicle
@@ -176,6 +170,7 @@ public class Simulation extends SimpleApplication {
                 rootNode.attachChild(l);
             }
         }  
+        totalContainerList.clear();
         createObjects();
     }
 
@@ -201,6 +196,7 @@ public class Simulation extends SimpleApplication {
      * Voor het testen.
      */
     private void createContainers() {
+        Container c;
         for (int i = 0; i < 29; i++) {
             c = new Container(assetManager, "Coca Cola", "8-9912", "trein", 0, 0, 0);
             totalContainerList.add(c);
