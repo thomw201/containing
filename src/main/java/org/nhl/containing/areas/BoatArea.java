@@ -47,4 +47,8 @@ public class BoatArea extends Area {
             craneRailsZAxis += 11;
         }
     }
+    
+    public List<DockingCrane> getStorageCranes(){
+        return dockingCranes;
+    }
 }

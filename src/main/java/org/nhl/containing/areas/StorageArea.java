@@ -52,4 +52,8 @@ public class StorageArea extends Area {
         }
 
     }
+    
+    public List<StorageCrane> getStorageCranes(){
+        return storageCranes;
+    }
 }
