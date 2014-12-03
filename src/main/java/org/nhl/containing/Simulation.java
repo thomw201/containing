@@ -20,6 +20,7 @@ import org.nhl.containing.vehicles.*;
 import java.util.ArrayList;
 import org.nhl.containing.communication.Message;
 import org.nhl.containing.communication.Message.Command;
+import org.nhl.containing.communication.Xml;
 
 /**
  * test
@@ -32,7 +33,7 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> trainContainerList;
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
-    
+    private ArrayList<Message> incomingMessages;
     private TrainArea trainArea;
     private LorryArea lorryArea;
     private BoatArea boatArea;
@@ -40,13 +41,11 @@ public class Simulation extends SimpleApplication {
     private StorageArea boatStorageArea;
     private StorageArea trainStorageArea;
     private StorageArea lorryStorageArea;
-
     private Agv agv;
     private Client client;
     private Train train;
     private Boat boat;
     private Lorry lorry;
-    private Container c;
     private boolean debug;
 
     public Simulation() {
@@ -124,9 +123,8 @@ public class Simulation extends SimpleApplication {
                 + "<OBJECTID>" + c.getContainerID() + "</OBJECTID></OK>";
         client.writeMessage(message);
     }
-
     /**
-     * This method will process all incomming create commands.
+     * This functions will process all incomming create commands.
      * <p/>
      * Create containers and add them to a list<container>. When the
      * list<container> == maxValueContainer (so max count of the sended
@@ -134,49 +132,63 @@ public class Simulation extends SimpleApplication {
      * TransportList. When the List<container> == empty then create the
      * vehicles.
      */
-    private void createObject(Message msg) {
-        // TODO. This whole thing basically doesn't work.
-        if (msg.getCommand() == Command.Create) {
+    public void msgCheck() {
+        String incoming = client.getMessage();
+        incomingMessages.addAll(Xml.decodeXMLMessage(incoming));
+        for (Message msg : incomingMessages) {
+            if (msg.getCommand() == Command.Create) {
+                createContainer(msg);
+            }
+        }
+        sortContainers();
+    }
 
-            //Creates a container from the incoming message
-            c = new Container(assetManager, msg.getContainerOwner(),
-                    msg.getContainerIso(), msg.getTransportType(),
-                    msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
-            totalContainerList.add(c);
+    private void createContainer(Message msg) {
 
-            //Places the newly created container on the right vehicle
-            for (Container con : totalContainerList) {
-                if (con.getTransportType().equals("binnenschip")) {
-                    inlandshipContainerList.add(con);
-                }
-                if (con.getTransportType().equals("zeeschip")) {
-                    seashipContainerList.add(con);
-                }
-                if (con.getTransportType().equals("trein")) {
-                    trainContainerList.add(con);
-                }
-                if (con.getTransportType().equals("vrachtauto")) {
-                    // Lorry can only contain 1 container, so has to create immediately.
-                    Lorry l = new Lorry(assetManager, con);
-                    l.move(true, 0);
-                    rootNode.attachChild(l);
-                }
+        //Creates a container from the incoming message
+        Container container = new Container(assetManager, msg.getContainerOwner(),
+                msg.getContainerIso(), msg.getTransportType(),
+                msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+        totalContainerList.add(container);
+    }
+
+    private void sortContainers() {//Places the newly created container on the right vehicle
+        for (Container con : totalContainerList) {
+            if (con.getTransportType().equals("binnenschip")) {
+                inlandshipContainerList.add(con);
             }
-            if (!inlandshipContainerList.isEmpty()) {
-                Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
-                b.move(true);
-                rootNode.attachChild(b);
+            if (con.getTransportType().equals("zeeschip")) {
+                seashipContainerList.add(con);
             }
-            if (!seashipContainerList.isEmpty()) {
-                Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
-                b.move(true);
-                rootNode.attachChild(b);
+            if (con.getTransportType().equals("trein")) {
+                trainContainerList.add(con);
             }
-            if (!trainContainerList.isEmpty()) {
-                Train t = new Train(assetManager, trainContainerList);
-                t.move(true);
-                rootNode.attachChild(t);
+            if (con.getTransportType().equals("vrachtauto")) {
+                // Lorry can only contain 1 container, so has to create immediately.
+                Lorry l = new Lorry(assetManager, con);
+                l.move(true, 0);
+                rootNode.attachChild(l);
             }
+        }  
+        totalContainerList.clear();
+        createObjects();
+    }
+
+    private void createObjects() {
+        if (!inlandshipContainerList.isEmpty()) {
+            Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
+            b.move(true);
+            rootNode.attachChild(b);
+        }
+        if (!seashipContainerList.isEmpty()) {
+            Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
+            b.move(true);
+            rootNode.attachChild(b);
+        }
+        if (!trainContainerList.isEmpty()) {
+            Train t = new Train(assetManager, trainContainerList);
+            t.move(true);
+            rootNode.attachChild(t);
         }
     }
 
@@ -184,6 +196,7 @@ public class Simulation extends SimpleApplication {
      * Voor het testen.
      */
     private void createContainers() {
+        Container c;
         for (int i = 0; i < 29; i++) {
             c = new Container(assetManager, "Coca Cola", "8-9912", "trein", 0, 0, 0);
             totalContainerList.add(c);
@@ -276,11 +289,11 @@ public class Simulation extends SimpleApplication {
     }
 
     private void initAreas() {
-                // Add lorry area.
+        // Add lorry area.
         lorryArea = new LorryArea(assetManager, 20);
-        lorryArea.setLocalTranslation(300,0,170);
+        lorryArea.setLocalTranslation(300, 0, 170);
         rootNode.attachChild(lorryArea);
-        
+
         // Add the TrainArea.
         trainArea = new TrainArea(assetManager, 4);
         trainArea.setLocalTranslation(-160, 0, -180);
