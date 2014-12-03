@@ -54,6 +54,7 @@ public class Simulation extends SimpleApplication {
         trainContainerList = new ArrayList<Container>();
         seashipContainerList = new ArrayList<Container>();
         inlandshipContainerList = new ArrayList<Container>();
+        incomingMessages = new ArrayList<Message>();
     }
 
     @Override
@@ -64,10 +65,18 @@ public class Simulation extends SimpleApplication {
         Thread clientThread = new Thread(client);
         clientThread.setName("ClientThread");
         clientThread.start();
+        try {
+            Thread.sleep(1000);
+        } catch (Throwable e) {
+        }
+        //createContainers();
     }
 
     @Override
     public void simpleUpdate(float tpf) {
+        if (client != null) {
+            msgCheck();
+        }
     }
 
     @Override
@@ -123,6 +132,7 @@ public class Simulation extends SimpleApplication {
                 + "<OBJECTID>" + c.getContainerID() + "</OBJECTID></OK>";
         client.writeMessage(message);
     }
+
     /**
      * This functions will process all incomming create commands.
      * <p/>
@@ -134,6 +144,10 @@ public class Simulation extends SimpleApplication {
      */
     public void msgCheck() {
         String incoming = client.getMessage();
+        if (incoming == null) {
+            return;
+        }
+        
         incomingMessages.addAll(Xml.decodeXMLMessage(incoming));
         for (Message msg : incomingMessages) {
             if (msg.getCommand() == Command.Create) {
@@ -169,7 +183,7 @@ public class Simulation extends SimpleApplication {
                 l.move(true, 0);
                 rootNode.attachChild(l);
             }
-        }  
+        }
         totalContainerList.clear();
         createObjects();
     }
@@ -179,16 +193,19 @@ public class Simulation extends SimpleApplication {
             Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
             b.move(true);
             rootNode.attachChild(b);
+            //sendOkMessageInlandShip(b);
         }
         if (!seashipContainerList.isEmpty()) {
             Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
             b.move(true);
             rootNode.attachChild(b);
+            //sendOkMessageSeaShip(b);
         }
         if (!trainContainerList.isEmpty()) {
             Train t = new Train(assetManager, trainContainerList);
             t.move(true);
             rootNode.attachChild(t);
+            //sendOkMessageTrain(t);
         }
     }
 
@@ -203,14 +220,39 @@ public class Simulation extends SimpleApplication {
         }
         c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", 0, 0, 0);
         totalContainerList.add(c);
-        for (int i = 0; i < 41; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", 0, 0, 0);
+        for (int i = 0; i < 100; i++) {
+            c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", i, 0, 0);
             totalContainerList.add(c);
+
+
         }
-        for (int i = 0; i < 17; i++) {
+        for (int i = 0; i < 50; i++) {
             c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", 0, 0, 0);
             totalContainerList.add(c);
         }
+        sortShit();
+    }
+
+    private void sortShit() {
+        for (Container con : totalContainerList) {
+            if (con.getTransportType().equals("binnenschip")) {
+                inlandshipContainerList.add(con);
+            }
+            if (con.getTransportType().equals("zeeschip")) {
+                seashipContainerList.add(con);
+            }
+            if (con.getTransportType().equals("trein")) {
+                trainContainerList.add(con);
+            }
+            if (con.getTransportType().equals("vrachtauto")) {
+                // Lorry can only contain 1 container, so has to create immediately.
+                Lorry l = new Lorry(assetManager, con);
+                l.move(true, 0);
+                rootNode.attachChild(l);
+            }
+        }
+        totalContainerList.clear();
+        createObjects();
     }
 
     /**
