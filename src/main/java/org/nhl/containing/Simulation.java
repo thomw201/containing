@@ -68,11 +68,12 @@ public class Simulation extends SimpleApplication {
         Thread clientThread = new Thread(client);
         clientThread.setName("ClientThread");
         clientThread.start();
+        createAGVPath();
     }
 
     @Override
     public void simpleUpdate(float tpf) {
-        createObject();
+        //createObject();
     }
 
     @Override
@@ -208,33 +209,37 @@ public class Simulation extends SimpleApplication {
      * them
      */
     private void createAGVPath() {
+        agv = new Agv(assetManager);
+        rootNode.attachChild(agv);
         MotionPath agvPath = new MotionPath();
         MotionEvent agvmotionControl = new MotionEvent(agv, agvPath);
         //Create the AGV waypoints
-        agvPath.addWayPoint(new Vector3f(-230, 0, -180));
-        agvPath.addWayPoint(new Vector3f(-230, 0, -80));
-        agvPath.addWayPoint(new Vector3f(-230, 0, 20));
-        agvPath.addWayPoint(new Vector3f(-230, 0, 125));
-        agvPath.addWayPoint(new Vector3f(-130, 0, 125));
-        agvPath.addWayPoint(new Vector3f(30, 0, 125));
-        agvPath.addWayPoint(new Vector3f(80, 0, 125));
-        agvPath.addWayPoint(new Vector3f(180, 0, 125));
-        agvPath.addWayPoint(new Vector3f(290, 0, 125));
-        agvPath.addWayPoint(new Vector3f(290, 0, 20));
-        agvPath.addWayPoint(new Vector3f(290, 0, -80));
-        agvPath.addWayPoint(new Vector3f(290, 0, -140));
-        agvPath.addWayPoint(new Vector3f(190, 0, -140));
-        agvPath.addWayPoint(new Vector3f(90, 0, -140));
-        agvPath.addWayPoint(new Vector3f(0, 0, -140));
-        agvPath.addWayPoint(new Vector3f(-90, 0, -140));
-        agvPath.addWayPoint(new Vector3f(-190, 0, -140));
+        //waypoint A
+        agvPath.addWayPoint(new Vector3f(580, 0, -140));
+        //waypont C
+        agvPath.addWayPoint(new Vector3f(330, 0, -140));
+        //waypoint E
+        agvPath.addWayPoint(new Vector3f(70, 0, -140));
+        //waypoint G
+        agvPath.addWayPoint(new Vector3f(-210, 0, -140));
+        //waypoint H
+        agvPath.addWayPoint(new Vector3f(-210, 0, 135));
+        //waypoint F
+        agvPath.addWayPoint(new Vector3f(70, 0, 135));
+        //waypoint D
+        agvPath.addWayPoint(new Vector3f(330, 0, 136));
+        //waypoint B
+        agvPath.addWayPoint(new Vector3f(580, 0, 135));
+        
+        
+        agvPath.setCurveTension(0.1f);
         // set the speed and direction of the AGV using motioncontrol
         agvmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
         agvmotionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
         agvmotionControl.setInitialDuration(10f);
-        agvmotionControl.setSpeed(0.2f);
+        agvmotionControl.setSpeed(1f);
         //make the vehicles start moving
-        agvmotionControl.setLoopMode(LoopMode.Loop);
+        //agvmotionControl.setLoopMode(LoopMode.Loop);
         agvmotionControl.play();
         //make waypoints visible
         //agvPath.disableDebugShape();
@@ -335,15 +340,10 @@ public class Simulation extends SimpleApplication {
                     if (!debug) {
                         debug = false;
                         //testing train code
-                        train.move(debug);
-                        boat.move(debug);
-                        lorry.move(debug, 0);
+                        createAGVPath();
                     } else {
                         debug = true;
                         //testing train code
-                        train.move(debug);
-                        boat.move(debug);
-                        lorry.move(debug, 2);
                     }
                 }
             }
