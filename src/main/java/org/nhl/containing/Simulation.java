@@ -34,6 +34,7 @@ public class Simulation extends SimpleApplication {
     private ArrayList<Container> seashipContainerList;
     private ArrayList<Container> inlandshipContainerList;
     private ArrayList<Message> incomingMessages;
+    private ArrayList<Lorry> totalLorryList;
     private TrainArea trainArea;
     private LorryArea lorryArea;
     private BoatArea boatArea;
@@ -55,6 +56,7 @@ public class Simulation extends SimpleApplication {
         seashipContainerList = new ArrayList<Container>();
         inlandshipContainerList = new ArrayList<Container>();
         incomingMessages = new ArrayList<Message>();
+        totalLorryList = new ArrayList<Lorry>();
     }
 
     @Override
@@ -127,12 +129,6 @@ public class Simulation extends SimpleApplication {
         seashipContainerList.clear();
     }
 
-    private void sendOkMessageContainer(Container c) {
-        String message = "<OK><OBJECTNAME>" + c.getName() + "</OBJECTNAME>"
-                + "<OBJECTID>" + c.getContainerID() + "</OBJECTID></OK>";
-        client.writeMessage(message);
-    }
-
     /**
      * This functions will process all incomming create commands.
      * <p/>
@@ -180,8 +176,8 @@ public class Simulation extends SimpleApplication {
             if (con.getTransportType().equals("vrachtauto")) {
                 // Lorry can only contain 1 container, so has to create immediately.
                 Lorry l = new Lorry(assetManager, con);
-                l.move(true, 0);
                 rootNode.attachChild(l);
+                totalLorryList.add(l);
             }
         }
         totalContainerList.clear();
@@ -193,19 +189,24 @@ public class Simulation extends SimpleApplication {
             Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
             b.move(true);
             rootNode.attachChild(b);
-            //sendOkMessageInlandShip(b);
+            sendOkMessageInlandShip(b);
         }
         if (!seashipContainerList.isEmpty()) {
             Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
             b.move(true);
             rootNode.attachChild(b);
-            //sendOkMessageSeaShip(b);
+            sendOkMessageSeaShip(b);
         }
         if (!trainContainerList.isEmpty()) {
             Train t = new Train(assetManager, trainContainerList);
             t.move(true);
             rootNode.attachChild(t);
-            //sendOkMessageTrain(t);
+            sendOkMessageTrain(t);
+        }
+        for (int i = 0 ; i < totalLorryList.size() ; i++)
+        {
+            totalLorryList.get(i).move(true, i);
+            sendOkMessageLorry(totalLorryList.get(i));
         }
     }
 
