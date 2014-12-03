@@ -179,16 +179,19 @@ public class Simulation extends SimpleApplication {
             Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
             b.move(true);
             rootNode.attachChild(b);
+            sendOkMessageInlandShip(b);
         }
         if (!seashipContainerList.isEmpty()) {
             Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
             b.move(true);
             rootNode.attachChild(b);
+            sendOkMessageSeaShip(b);
         }
         if (!trainContainerList.isEmpty()) {
             Train t = new Train(assetManager, trainContainerList);
             t.move(true);
             rootNode.attachChild(t);
+            sendOkMessageTrain(t);
         }
     }
 
