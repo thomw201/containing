@@ -95,5 +95,12 @@ public class Container extends Node {
     public int getSpawnZ() {
         return spawnZ;
     }
+     /**
+     * Debug method, displays object name,owner, container ID, transporttype and location.
+     * @return information about this object
+     */
+    public String getDebugInfo(){
+        return this.getClass().getSimpleName() + "\nOwner: " + owner + "\nContainerID: " + containerID + "\nTransporttype: " + transportType + "\nLocation: " + this.getLocalTranslation() + "\nLocallocation (X,Y,Z): " + spawnX + "," + spawnY + "," + spawnZ + "\n";
+    }
     
 }
