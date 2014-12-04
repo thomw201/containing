@@ -29,6 +29,7 @@ public class Boat extends Transporter {
     private final int zezAs = 160;
     private Boat.ShipSize size;
     private Spatial boat;
+    private MotionPath path;
 
     public Boat(AssetManager assetManager, ShipSize shipSize, ArrayList<Container> containerList) {
         this.assetManager = assetManager;
@@ -78,11 +79,12 @@ public class Boat extends Transporter {
     }
 
     /**
-     * creates waypoints and moves the ship over them direction TRUE = arrive
-     * direction FALSE = depart
+     * creates waypoints and moves the ship over them direction
+     * @param direction set to true to make ship arrive, false to make it leave
+     * @param takefirstspot set to true if the main spot of the inlandship is not taken - it will go to second
      */
-    public void move(boolean direction) {
-        MotionPath path = new MotionPath();
+    public void move(boolean direction, boolean takefirstspot) {
+        path = new MotionPath();
         MotionEvent motionControl = new MotionEvent(this, path);
         switch (size) {
             case SEASHIP:
@@ -99,21 +101,51 @@ public class Boat extends Transporter {
             case INLANDSHIP:
                 // inlandship arrives
                 if (direction) {
-                    path.addWayPoint(new Vector3f(-500, 0, 300));
-                    path.addWayPoint(new Vector3f(-200, 0, 220));
-                    path.addWayPoint(new Vector3f(-190, 0, 220));
+                    //at first parking spot
+                    if (takefirstspot) {
+                        path.addWayPoint(new Vector3f(-500, 0, 260));
+                        path.addWayPoint(new Vector3f(-200, 0, 220));
+                        path.addWayPoint(new Vector3f(-190, 0, 220));
+                    } //arrive at second parking spot
+                    else {
+                        path.addWayPoint(new Vector3f(-400, 0, 320));
+                        path.addWayPoint(new Vector3f(-50, 0, 280));
+                        path.addWayPoint(new Vector3f(40, 0, 240));
+                        path.addWayPoint(new Vector3f(80, 0, 220));
+                    }
+
                 } // inlandship departs
                 else {
-                    path.addWayPoint(new Vector3f(-200, 0, 220));
-                    path.addWayPoint(new Vector3f(350, 0, 260));
-                    break;
+                    //from primary parking spot
+                    if (takefirstspot) {
+                        path.addWayPoint(new Vector3f(-200, 0, 220));
+                        path.addWayPoint(new Vector3f(-115, 0, 275));
+                        path.addWayPoint(new Vector3f(450, 0, 290));
+                    }
+                    //else depart from secondary
+                    else{
+                        path.addWayPoint(new Vector3f(80, 0, 220));
+                        path.addWayPoint(new Vector3f(450, 0, 250));
+                    }
                 }
+                break;
         }
-        path.setCurveTension(0.2f);
+        path.setCurveTension(0.3f);
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis((float) Math.PI, Vector3f.UNIT_Y));
-        motionControl.setInitialDuration(10f);
+        //motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();
+    }
+    /**
+     * Debug method, displays object name, speed, amount of containers and it's waypoints.
+     * @return information about this object
+     */
+    public String getDebugInfo(){
+        String info = size + "\nSpeed: " + speed + "\nLocation: " + this.getLocalTranslation() + "\nCarrying: " + containerList.size() + " containers.\n";
+        for (int i = 0; i < path.getNbWayPoints(); i++) {
+            info += "Waypoint " + (i+1) + ": " + path.getWayPoint(i) + " ";
+        }
+        return info + "\n";
     }
 
     public static enum ShipSize {

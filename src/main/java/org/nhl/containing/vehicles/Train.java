@@ -7,7 +7,6 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 
 import java.util.ArrayList;
@@ -21,6 +20,7 @@ public class Train extends Transporter {
     private int wagonZAxis = -11;
     private float speed = 0.8f;
     private ArrayList<Container> trainContainerList;
+    private MotionPath path;
 
     public Train(AssetManager assetManager, ArrayList<Container> trainContainerList) {
         this.assetManager = assetManager;
@@ -57,7 +57,7 @@ public class Train extends Transporter {
      * train arrives direction FALSE = the train departs
      */
     public void move(boolean direction) {
-        MotionPath path = new MotionPath();
+        path = new MotionPath();
         MotionEvent motionControl = new MotionEvent(this, path);
         //train arrives
         if (direction) {
@@ -72,5 +72,16 @@ public class Train extends Transporter {
         motionControl.setInitialDuration(10f);
         motionControl.setSpeed(speed);
         motionControl.play();
+    }
+     /**
+     * Debug method, displays object name, speed, amount of containers and it's waypoints.
+     * @return information about this object
+     */
+    public String getDebugInfo(){
+        String info = this.getClass().getSimpleName() + "\nSpeed: " + speed + "\nLocation: " + this.getLocalTranslation() + "\nCarrying: " + trainContainerList.size() + " containers.\n";
+        for (int i = 0; i < path.getNbWayPoints(); i++) {
+            info += "Waypoint " + (i+1) + ": " + path.getWayPoint(i) + " ";
+        }
+        return info + "\n";
     }
 }
