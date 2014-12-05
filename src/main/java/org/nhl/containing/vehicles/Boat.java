@@ -11,19 +11,17 @@ import org.nhl.containing.Container;
 
 import java.util.ArrayList;
 
-/**
- * @author Jeroen
- */
 public class Boat extends Transporter {
 
     private AssetManager assetManager;
     private float speed = 0.5f;
     private ArrayList<Container> containerList;
-    // indoorship Dit is x=0 Y=0 Z=0, links onderin.
-    private final int inxAs = -8;
+    // inlandship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
+    private final int inxAs = -16;
     private final int inyAs = 0;
     private final int inzAs = 100;
-    // zeeship Dit is x=0 Y=0 Z=0, links onderin.
+    // zeeship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
+    // Hier passen op de x as 16 containers op
     private final int zexAs = -23;
     private final int zeyAs = 0;
     private final int zezAs = 160;
@@ -47,17 +45,17 @@ public class Boat extends Transporter {
                 case INLANDSHIP:
                     // Load a model.
                     boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
-                    
                     boat.scale(0.6f, 1, 0.37f);
                     this.attachChild(boat);
                     for (int i = 0; i < containerList.size(); i++) {
-                        int x = (inxAs /** (i + 1)*/ + (containerList.get(i).getSpawnX() * 5)) * -1;
-                        int y = containerList.get(i).getSpawnY() * 3;
-                        int z = inzAs - (containerList.get(i).getSpawnZ());
+                        float containerLength = (int) containerList.get(i).getBoundingBox().getYExtent() * 13.5f;
+                        float x = inxAs + containerList.get(i).getSpawnY() * 2.5f;
+                        float y = inzAs - containerList.get(i).getSpawnX() * containerLength;
+                        float z = inyAs + containerList.get(i).getSpawnZ() * 7.5f;
                         containerList.get(i).setLocalTranslation(x, y, z);
                         this.attachChild(containerList.get(i));
                     }
-                    this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
+                    //this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
                     break;
                 case SEASHIP:
                     // Load a model.
@@ -65,11 +63,14 @@ public class Boat extends Transporter {
                     boat.scale(0.87f, 1, 0.57f);
                     this.attachChild(boat);
                     for (int i = 0; i < containerList.size(); i++) {
-                        int x = (zexAs + (containerList.get(i).getSpawnX() * 3)) * -1;
-                        int y = containerList.get(i).getSpawnY() * 3;
-                        int z = zezAs - (containerList.get(i).getSpawnZ());
-                        containerList.get(i).setLocalTranslation(x, y, z);
-                        this.attachChild(containerList.get(i));
+                        if (containerList.get(i).getTransportType().equals("zeeschip")) {
+                            float containerLength = (int) containerList.get(i).getBoundingBox().getYExtent() * 13.5f;
+                            float x = zexAs + containerList.get(i).getSpawnY() * 3;
+                            float z = zezAs - containerList.get(i).getSpawnX() * containerLength;
+                            float y = zeyAs + containerList.get(i).getSpawnZ() * 3f;
+                            containerList.get(i).setLocalTranslation(x, y, z);
+                            this.attachChild(containerList.get(i));
+                        }
                     }
                     break;
             }

@@ -1,9 +1,9 @@
 package org.nhl.containing;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.bounding.BoundingBox;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
-import com.jme3.bounding.BoundingVolume;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
@@ -13,9 +13,6 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
-/**
- * @author Jeroen
- */
 public class Container extends Node {
 
     private AssetManager assetManager;
@@ -25,6 +22,7 @@ public class Container extends Node {
     private int spawnX;
     private int spawnY;
     private int spawnZ;
+    private BoundingBox boundingBox;
 
     public Container(AssetManager assetManager, String owner, String containerID, String transportType, int spawnX, int spawnY, int spawnZ) {
         this.assetManager = assetManager;
@@ -42,7 +40,7 @@ public class Container extends Node {
      */
     private void initContainer() {
         // Load a model.
-        Spatial container = assetManager.loadModel("Models/medium/container/container.j3o");
+        Spatial container = assetManager.loadModel("Models/low/container/container.j3o");
         Material mat = new Material(assetManager,
                 "Common/MatDefs/Misc/Unshaded.j3md");  // create a simple material
         mat.setColor("Color", ColorRGBA.White);   // set color of material to blue
@@ -54,6 +52,7 @@ public class Container extends Node {
         //place the company name on the side
         drawText(1.2f, 2.6f, 6, textColor, new Quaternion().fromAngleAxis(FastMath.PI / 2, new Vector3f(0, 1, 0)));
         drawText(-1.2f, 2.6f, -6, textColor, new Quaternion().fromAngleAxis(FastMath.PI * 1.5f, new Vector3f(0, 1, 0)));
+        boundingBox = (BoundingBox) container.getWorldBound();
     }
 
     /**
@@ -101,6 +100,9 @@ public class Container extends Node {
      */
     public String getDebugInfo(){
         return this.getClass().getSimpleName() + "\nOwner: " + owner + "\nContainerID: " + containerID + "\nTransporttype: " + transportType + "\nLocation: " + this.getLocalTranslation() + "\nLocallocation (X,Y,Z): " + spawnX + "," + spawnY + "," + spawnZ + "\n";
+    }
+    public BoundingBox getBoundingBox() {
+        return boundingBox;
     }
     
 }
