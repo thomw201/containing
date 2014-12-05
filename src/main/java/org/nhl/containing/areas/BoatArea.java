@@ -14,13 +14,15 @@ public class BoatArea extends Area {
 
     public List<DockingCrane> dockingCranes = new ArrayList();
     private AssetManager assetManager;
-    private int craneZAxis = 0;
-    private int craneRailsZAxis = -30;
+    private int craneAxis = 0;
+    private int craneRailsAxis = -30;
     private int cranes;
     private int rails;
+    private BoatArea.AreaType type;
 
-    public BoatArea(AssetManager assetmanager, int cranes, int rails) {
+    public BoatArea(AssetManager assetmanager, AreaType type, int cranes, int rails) {
         this.assetManager = assetmanager;
+        this.type = type;
         this.cranes = cranes;
         this.rails = rails;
         initBoatArea();
@@ -30,27 +32,57 @@ public class BoatArea extends Area {
      * Initialize a boat area.
      */
     private void initBoatArea() {
-
-        // Add docking cranes to the list and scene.
-        for (int i = 0; i < cranes; i++) {
-            dockingCranes.add(new DockingCrane(assetManager));
-            dockingCranes.get(i).setLocalTranslation(0, 0, craneZAxis);
-            this.attachChild(dockingCranes.get(i));
-            craneZAxis += 18;
-        }
-
-        // Add crane rails.
         Spatial craneRails = assetManager.loadModel("Models/rails/craneRails.j3o");
-        for (int i = 0; i < rails; i++) {
-            Spatial nextRail = craneRails.clone();
-            nextRail.setLocalTranslation(42f, 0, craneRailsZAxis);
-            nextRail.setLocalScale(0.89f, 1, 1);
-            this.attachChild(nextRail);
-            craneRailsZAxis += 11;
+        switch (type) {
+            case SEASHIP:
+                // Add docking cranes to the list and scene.
+                for (int i = 0; i < cranes; i++) {
+                    dockingCranes.add(new DockingCrane(assetManager, this.type));
+                    dockingCranes.get(i).setLocalTranslation(0, 0, craneAxis);
+                    this.attachChild(dockingCranes.get(i));
+                    craneAxis += 18;
+                }
+
+                // Add crane rails.
+
+                for (int i = 0; i < rails; i++) {
+                    Spatial nextRail = craneRails.clone();
+                    nextRail.setLocalTranslation(42f, 0, craneRailsAxis);
+                    nextRail.setLocalScale(0.89f, 1, 1);
+                    this.attachChild(nextRail);
+                    craneRailsAxis += 11;
+                }
+                break;
+            case INLANDSHIP:
+                // Add docking cranes to the list and scene.
+                for (int i = 0; i < cranes; i++) {
+                    dockingCranes.add(new DockingCrane(assetManager, this.type));
+                    dockingCranes.get(i).setLocalTranslation(craneAxis, 0, 0);
+                    dockingCranes.get(i).rotate(0, (float) Math.PI / 2, 0);
+                    this.attachChild(dockingCranes.get(i));
+                    craneAxis += 18;
+                }
+
+                // Add crane rails.
+
+                for (int i = 0; i < rails; i++) {
+                    Spatial nextRail = craneRails.clone();
+                    nextRail.setLocalTranslation(craneRailsAxis, 0, -42f);
+                    nextRail.rotate(0, (float) Math.PI / 2, 0);
+                    nextRail.setLocalScale(0.89f, 1, 1);
+                    this.attachChild(nextRail);
+                    craneRailsAxis += 11;
+                }
+                break;
         }
     }
-    
-    public List<DockingCrane> getStorageCranes(){
+
+    public static enum AreaType {
+
+        INLANDSHIP, SEASHIP
+    }
+
+    public List<DockingCrane> getStorageCranes() {
         return dockingCranes;
     }
 }

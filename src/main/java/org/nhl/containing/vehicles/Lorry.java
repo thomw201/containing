@@ -3,7 +3,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
+import com.jme3.scene.Node;
 import org.nhl.containing.Container;
 
 /**
@@ -26,11 +26,11 @@ public class Lorry extends Transporter {
     /**
      * Initialize a lorry.
      */
-    public void initLorry() {
+    private void initLorry() {
 
 
         // Load a model.
-        Spatial lorry = assetManager.loadModel("Models/medium/truck.j3o");
+        Node lorry = (Node)assetManager.loadModel("Models/medium/truck.j3o");
         lorry.setLocalTranslation(0, 0, lorryZAxis);
         container.setLocalTranslation(0, 1, lorryZAxis);
         this.attachChild(lorry);

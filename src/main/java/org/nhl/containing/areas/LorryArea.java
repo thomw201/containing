@@ -34,4 +34,8 @@ public class LorryArea extends Area {
             craneXAxis += 14;
         }
     }
+    
+    public List<TruckCrane> getTruckCranes(){
+        return truckCranes;
+    }
 }
