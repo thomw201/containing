@@ -123,6 +123,7 @@ public class Simulation extends SimpleApplication {
                 + "<OBJECTID>" + c.getContainerID() + "</OBJECTID></OK>";
         client.writeMessage(message);
     }
+
     /**
      * This functions will process all incomming create commands.
      * <p/>
@@ -169,7 +170,7 @@ public class Simulation extends SimpleApplication {
                 l.move(true, 0);
                 rootNode.attachChild(l);
             }
-        }  
+        }
         totalContainerList.clear();
         createObjects();
     }
@@ -261,7 +262,7 @@ public class Simulation extends SimpleApplication {
      */
     private void initCam() {
         viewPort.setBackgroundColor(ColorRGBA.Blue);
-        cam.setLocation(new Vector3f(0, 5, 0));
+        cam.setLocation(new Vector3f(-240, 5, 220));
         flyCam.setMoveSpeed(50);
     }
 
@@ -272,6 +273,7 @@ public class Simulation extends SimpleApplication {
         initLighting();
         initAreas();
         initPlatform();
+        //testMethodCranes();
     }
 
     private void initLighting() {
@@ -300,14 +302,12 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(trainArea);
 
         // Add the BoatArea (Sea).
-        boatArea = new BoatArea(assetManager, 10, 28);
+        boatArea = new BoatArea(assetManager, BoatArea.AreaType.SEASHIP, 10, 28);
         boatArea.setLocalTranslation(-325, 0, -100);
         rootNode.attachChild(boatArea);
 
         // Add the inlandBoatArea.
-        inlandBoatArea = new BoatArea(assetManager, 8, 40);
-        inlandBoatArea.rotate(0, (float) (0.5 * Math.PI), 0);
-        inlandBoatArea.scale(0.8f, 0.8f, 0.8f);
+        inlandBoatArea = new BoatArea(assetManager, BoatArea.AreaType.INLANDSHIP, 8, 40);
         inlandBoatArea.setLocalTranslation(-240, 0, 220);
         rootNode.attachChild(inlandBoatArea);
 
@@ -359,5 +359,64 @@ public class Simulation extends SimpleApplication {
             }
         };
         inputManager.addListener(acl, "debugmode");
+    }
+    
+    /**
+     * Method to see cranes in action!
+     */
+    private void testMethodCranes(){
+        //TC test
+        for (int i = 0; i < 15; i++) {
+            trainContainerList.add(new Container(assetManager, "TEST CONTAINER", "8-9912", "trein", 0, 0, 0));
+        }
+        Train t = new Train(assetManager, trainContainerList);
+        t.setLocalTranslation(-180, 0, -180);
+        //t.rotate(0, (float) Math.PI / -2f, 0);
+        rootNode.attachChild(t);
+        Agv agv1 = new Agv(assetManager);
+        agv1.rotate(0, (float) Math.PI / 2, 0);
+        agv1.setLocalTranslation(-169, 0, -174);
+        rootNode.attachChild(agv1);
+        trainArea.getTrainCranes().get(3).trainToAgv(trainContainerList.get(0), agv1);
+        //SC
+        Agv agv2 = new Agv(assetManager);
+        agv2.rotate(0, 0, 0);
+        agv2.setLocalTranslation(140, 0, -125);
+        rootNode.attachChild(agv2);
+        Container container1 = new Container(assetManager, "TEST CONTAINER", "8-9912", "binnenschip", 0, 0, 0);
+        container1.setLocalTranslation(120, 0, 0);
+        rootNode.attachChild(container1);
+        trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
+        //TruckCrane
+        Lorry lorry1 = new Lorry(assetManager, new Container(assetManager, "TEST CONTAINER", "8-9912", "vrachtwagen", 0, 0, 0) );
+        lorry1.setLocalTranslation(300,0,170);
+        rootNode.attachChild(lorry1);
+        Agv agv4 = new Agv(assetManager);
+        agv4.rotate(0, 0, 0);
+        agv4.setLocalTranslation(300, 0, 150);
+        rootNode.attachChild(agv4);
+        lorryArea.getTruckCranes().get(0).truckToAgv(lorry1.getChild(1), agv4);
+        //DC test
+        Container container2 = new Container(assetManager, "TEST CONTAINER", "8-0002", "binnenschip", 0, 0, 0);
+        container2.setLocalTranslation(-325,0,0);
+        rootNode.attachChild(container2);
+        Agv agv3 = new Agv(assetManager);
+        agv3.rotate(0, 0, 0);
+        agv3.setLocalTranslation(-285, 0, 20);
+        rootNode.attachChild(agv3);
+        boatArea.dockingCranes.get(0).boatToAgv(container2, agv3);
+        
+        //DC
+        Container container5 = new Container(assetManager, "TEST CONTAINER", "8-0002", "binnenschip", 0, 0, 0);
+        container5.setLocalTranslation(-200,0,240);
+        container5.rotate(0, (float)Math.PI / 2, 0);
+        rootNode.attachChild(container5);
+        
+        Agv agv5 = new Agv(assetManager);
+        agv5.rotate(0, (float)Math.PI / 2, 0);
+        agv5.setLocalTranslation(-180, 0, 140);
+        rootNode.attachChild(agv5);
+        inlandBoatArea.dockingCranes.get(0).boatToAgv(container5, agv5);
+        
     }
 }
