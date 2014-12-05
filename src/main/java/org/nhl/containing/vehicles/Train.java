@@ -84,4 +84,16 @@ public class Train extends Transporter {
         }
         return info + "\n";
     }
+    /**
+     * Creates train waypoints and returns the coörds
+     * @return string containing the waypoints
+     */
+    public String getWaypoints() {
+        String info = "\nTrain waypoints ";
+        move(true);
+        for (int j = 0; j < path.getNbWayPoints(); j++) {
+        info += "Waypoint " + (j+1) + ": " + path.getWayPoint(j) + " ";
+        }
+        return info + "\n";
+    }
 }
