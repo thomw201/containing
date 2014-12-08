@@ -1,4 +1,5 @@
 package org.nhl.containing.vehicles;
+
 import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
@@ -56,20 +57,37 @@ public class Lorry extends Transporter {
         motionControl.setSpeed(speed);
         motionControl.play();
     }
+
     /**
-     * Debug method, displays object name, speed, amount of containers and it's waypoints.
+     * Debug method, displays object name, speed, amount of containers and it's
+     * waypoints.
+     *
      * @return debug information about the object
      */
-    public String getDebugInfo(){
+    public String getDebugInfo() {
         String info = this.getClass().getSimpleName() + "\nSpeed: " + speed + "\nLocation: " + this.getLocalTranslation() + "\nCarrying: ";
-        if(container != null){
-            info+= "1 Container.\n";
-        }
-        else{
+        if (container != null) {
+            info += "1 Container.\n";
+        } else {
             info += "nothing.\n";
         }
         for (int i = 0; i < path.getNbWayPoints(); i++) {
-            info += "Waypoint " + (i+1) + ": " + path.getWayPoint(i) + " ";
+            info += "Waypoint " + (i + 1) + ": " + path.getWayPoint(i) + " ";
+        }
+        return info + "\n";
+    }
+
+    /**
+     * debug method that returns the waypoints of the given truck
+     *
+     * @param place parking place number
+     * @return string containing the waypoints/debug info
+     */
+    public String getWaypoints(int place) {
+        String info = "\nWaypoints truck #" + place + " : ";
+        this.move(true, place);
+        for (int j = 0; j < path.getNbWayPoints(); j++) {
+            info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }
         return info + "\n";
     }

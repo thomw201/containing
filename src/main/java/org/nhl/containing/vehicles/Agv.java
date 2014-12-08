@@ -1,6 +1,10 @@
 package org.nhl.containing.vehicles;
 
 import com.jme3.asset.AssetManager;
+import com.jme3.cinematic.MotionPath;
+import com.jme3.cinematic.events.MotionEvent;
+import com.jme3.math.Quaternion;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 
@@ -11,7 +15,8 @@ public class Agv extends Vehicle {
 
     private AssetManager assetManager;
     private Container container;
-    private float speed;
+    private float speed = 0.5f;
+    private MotionPath path;
     
     public Agv(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -27,7 +32,49 @@ public class Agv extends Vehicle {
         Spatial agv = assetManager.loadModel("Models/medium/agv/agv.j3o");
         this.attachChild(agv);
     }
-        /**
+    /**
+     * Method that moves this agv over the given path
+     * @param path character arraylist filled with the waypoints
+     */
+    public void move(char[] route){
+        path = new MotionPath();
+        MotionEvent motionControl = new MotionEvent(this, path);
+        for (char waypoint : route) {
+            switch(waypoint){
+                case 'A':
+                    path.addWayPoint(new Vector3f(580, 0, -140));
+                break;
+                case 'B':
+                    path.addWayPoint(new Vector3f(580, 0, 135));
+                break;
+                case 'C':
+                    path.addWayPoint(new Vector3f(330, 0, -140));
+                break;
+                case 'D':
+                    path.addWayPoint(new Vector3f(330, 0, 136));
+                    break;
+                case 'E':
+                    path.addWayPoint(new Vector3f(70, 0, -140));
+                    break;
+                case 'F':
+                    path.addWayPoint(new Vector3f(70, 0, 135));
+                    break;
+                case 'G':
+                    path.addWayPoint(new Vector3f(-210, 0, -140));
+                    break;
+                case 'H':
+                    path.addWayPoint(new Vector3f(-210, 0, 135));
+                    break;
+            }
+        }
+        path.setCurveTension(0.1f);
+        // set the speed and direction of the AGV using motioncontrol
+        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
+        motionControl.setSpeed(speed);
+        motionControl.play();
+    }
+    /**
      * Debug method, displays object name, speed, amount of containers and it's waypoints.
      * @return debug information about the object
      */
@@ -43,6 +90,19 @@ public class Agv extends Vehicle {
 //        for (int i = 0; i < path.getNbWayPoints(); i++) {
 //            info += "Waypoint " + (i+1) + ": " + path.getWayPoint(i) + " ";
 //        }
+        return info + "\n";
+    }
+        /**
+         * Creates all AGV waypoints and returns the coörds
+         * @return string with the waypoints
+         */
+        public String getWaypoints(){
+        char[] debugarr = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
+        move(debugarr);
+        String info = "\nAGV Waypoints: ";
+        for (int j = 0; j < path.getNbWayPoints(); j++) {
+        info += "Waypoint " + (j+1) + ": " + path.getWayPoint(j) + " ";
+        }
         return info + "\n";
     }
 }
