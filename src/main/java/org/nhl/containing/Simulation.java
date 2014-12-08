@@ -18,6 +18,7 @@ import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
 
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import org.nhl.containing.communication.Message;
 import org.nhl.containing.communication.Message.Command;
 import org.nhl.containing.communication.Xml;
@@ -48,6 +49,10 @@ public class Simulation extends SimpleApplication {
     private Boat boat;
     private Lorry lorry;
     private boolean debug;
+    private PriorityQueue<Boat> inlandShipQueue;
+    private PriorityQueue<Boat> seaShipQueue;
+    private PriorityQueue<Train> trainQueue;
+    private PriorityQueue<Lorry> lorryQueue;
 
     public Simulation() {
         client = new Client();
@@ -57,6 +62,10 @@ public class Simulation extends SimpleApplication {
         inlandshipContainerList = new ArrayList<Container>();
         incomingMessages = new ArrayList<Message>();
         totalLorryList = new ArrayList<Lorry>();
+        inlandShipQueue = new PriorityQueue<Boat>();
+        seaShipQueue = new PriorityQueue<Boat>();
+        trainQueue = new PriorityQueue<Train>();
+        lorryQueue = new PriorityQueue<Lorry>();
     }
 
     @Override
@@ -100,34 +109,9 @@ public class Simulation extends SimpleApplication {
      *
      * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
      */
-    private void sendOkMessageLorry(Vehicle veh) {
-        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
-                + "<OBJECTID>" + veh.getId() + "</OBJECTID></OK>";
+    private void sendOkMessage(Message msg) {
+        String message = "<Simulation><Ok>" + msg + "</Ok></Simulation>";
         client.writeMessage(message);
-    }
-
-    private void sendOkMessageTrain(Vehicle veh) {
-        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
-                + "<OBJECTID>" + veh.getId() + "</OBJECTID>"
-                + "<OBJECTSIZE>" + trainContainerList.size() + "</OBJECTSIZE></OK>";
-        client.writeMessage(message);
-        trainContainerList.clear();
-    }
-
-    private void sendOkMessageInlandShip(Vehicle veh) {
-        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
-                + "<OBJECTID>" + veh.getId() + "</OBJECTID>"
-                + "<OBJECTSIZE>" + inlandshipContainerList.size() + "</OBJECTSIZE></OK>";
-        client.writeMessage(message);
-        inlandshipContainerList.clear();
-    }
-
-    private void sendOkMessageSeaShip(Vehicle veh) {
-        String message = "<OK><OBJECTNAME>" + veh.getName() + "</OBJECTNAME>"
-                + "<OBJECTID>" + veh.getId() + "</OBJECTID>"
-                + "<OBJECTSIZE>" + seashipContainerList.size() + "</OBJECTSIZE></OK>";
-        client.writeMessage(message);
-        seashipContainerList.clear();
     }
 
     /**
@@ -144,70 +128,181 @@ public class Simulation extends SimpleApplication {
         if (incoming == null) {
             return;
         }
-        
+
         incomingMessages.addAll(Xml.decodeXMLMessage(incoming));
         for (Message msg : incomingMessages) {
-            if (msg.getCommand() == Command.Create) {
-                createContainer(msg);
+            if ("trein".equals(msg.getTransportType())) {
+                createTrainContainers(msg);
+            }
+            if ("lorry".equals(msg.getTransportType())) {
+                createLorryContainers(msg);
+            }
+            if ("zeeschip".equals(msg.getTransportType())) {
+                createSeashipContainers(msg);
+            }
+            if ("binnenschip".equals(msg.getTransportType())) {
+                createInlandshipContainers(msg);
             }
         }
-        sortContainers();
-    }
-
-    private void createContainer(Message msg) {
-
-        //Creates a container from the incoming message
-        Container container = new Container(assetManager, msg.getContainerOwner(),
-                msg.getContainerIso(), msg.getTransportType(),
-                msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
-        totalContainerList.add(container);
-    }
-
-    private void sortContainers() {//Places the newly created container on the right vehicle
-        for (Container con : totalContainerList) {
-            if (con.getTransportType().equals("binnenschip")) {
-                inlandshipContainerList.add(con);
-            }
-            if (con.getTransportType().equals("zeeschip")) {
-                seashipContainerList.add(con);
-            }
-            if (con.getTransportType().equals("trein")) {
-                trainContainerList.add(con);
-            }
-            if (con.getTransportType().equals("vrachtauto")) {
-                // Lorry can only contain 1 container, so has to create immediately.
-                Lorry l = new Lorry(assetManager, con);
-                rootNode.attachChild(l);
-                totalLorryList.add(l);
-            }
-        }
-        totalContainerList.clear();
         createObjects();
+    }
+
+    private void createTrainContainers(Message msg) {
+        if ("trein".equals(msg.getTransportType())) {
+            for (Message msg1 : incomingMessages) {
+                if (msg1.getCommand() == Command.Create) {
+                    //Creates a container from the incoming message
+                    Container container = new Container(assetManager, msg.getContainerOwner(),
+                            msg.getContainerIso(), msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+                    trainContainerList.add(container);
+                }
+            }
+        }
+    }
+
+    private void createLorryContainers(Message msg) {
+        if ("lorry".equals(msg.getTransportType())) {
+            for (Message msg1 : incomingMessages) {
+                if (msg1.getCommand() == Command.Create) {
+                    //Creates a container from the incoming message
+                    Container container = new Container(assetManager, msg.getContainerOwner(),
+                            msg.getContainerIso(), msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+                }
+            }
+        }
+    }
+
+    private void createSeashipContainers(Message msg) {
+        if ("zeeschip".equals(msg.getTransportType())) {
+            for (Message msg1 : incomingMessages) {
+                if (msg1.getCommand() == Command.Create) {
+                    //Creates a container from the incoming message
+                    Container container = new Container(assetManager, msg.getContainerOwner(),
+                            msg.getContainerIso(), msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+                    seashipContainerList.add(container);
+                }
+            }
+        }
+    }
+
+    private void createInlandshipContainers(Message msg) {
+        if ("binnenschip".equals(msg.getTransportType())) {
+            for (Message msg1 : incomingMessages) {
+                if (msg1.getCommand() == Command.Create) {
+                    //Creates a container from the incoming message
+                    Container container = new Container(assetManager, msg.getContainerOwner(),
+                            msg.getContainerIso(), msg.getxLoc(), msg.getyLoc(), msg.getzLoc());
+                    inlandshipContainerList.add(container);
+                }
+            }
+        }
     }
 
     private void createObjects() {
         if (!inlandshipContainerList.isEmpty()) {
             Boat b = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, inlandshipContainerList);
             b.move(true, true);
-            rootNode.attachChild(b);
-            sendOkMessageInlandShip(b);
+            inlandShipQueue.add(b);
+            addInlandShipToField(b);
+            //sendOkMessageInlandShip(b);
         }
         if (!seashipContainerList.isEmpty()) {
             Boat b = new Boat(assetManager, Boat.ShipSize.SEASHIP, seashipContainerList);
             b.move(true, true);
-            rootNode.attachChild(b);
-            sendOkMessageSeaShip(b);
+            seaShipQueue.add(b);
+            addSeaShipToField(b);
+            //sendOkMessageSeaShip(b);
         }
         if (!trainContainerList.isEmpty()) {
             Train t = new Train(assetManager, trainContainerList);
             t.move(true);
-            rootNode.attachChild(t);
-            sendOkMessageTrain(t);
+            trainQueue.add(t);
+            addTrainToField(t);
+            //sendOkMessageTrain(t);
         }
-        for (int i = 0 ; i < totalLorryList.size() ; i++)
-        {
+        for (int i = 0; i < totalLorryList.size(); i++) {
             totalLorryList.get(i).move(true, i);
-            sendOkMessageLorry(totalLorryList.get(i));
+            //sendOkMessageLorry(totalLorryList.get(i));
+        }
+    }
+
+    /**
+     * Checks queue length and adds inland ship to field
+     *
+     * @param b
+     */
+    private void addInlandShipToField(Boat b) {
+        int inlandShipQueueLength = inlandShipQueue.size();
+
+        if (inlandShipQueueLength > 1) {
+            for (int i = 0; i < inlandShipQueueLength; i++) {
+                for (int j = 0; j < 2; j++) {
+                    Boat boat = inlandShipQueue.poll();
+                    rootNode.attachChild(boat);
+                }
+            }
+        } else {
+            rootNode.attachChild(b);
+        }
+    }
+
+    /**
+     * Checks queue length and adds sea ship to field
+     *
+     * @param b
+     */
+    private void addSeaShipToField(Boat b) {
+        int seaShipQueueLength = seaShipQueue.size();
+
+        if (seaShipQueueLength > 1) {
+            for (int i = 0; i < seaShipQueueLength; i++) {
+                for (int j = 0; j < 1; j++) {
+                    Boat boat = seaShipQueue.poll();
+                    rootNode.attachChild(boat);
+                }
+            }
+        } else {
+            rootNode.attachChild(b);
+        }
+    }
+
+    /**
+     * Checks queue length and adds train to field
+     *
+     * @param t
+     */
+    private void addTrainToField(Train t) {
+        int trainQueueLength = trainQueue.size();
+
+        if (trainQueueLength > 1) {
+            for (int i = 0; i < trainQueueLength; i++) {
+                for (int j = 0; j < 1; j++) {
+                    Train train = trainQueue.poll();
+                    rootNode.attachChild(train);
+                }
+            }
+        } else {
+            rootNode.attachChild(t);
+        }
+    }
+
+    /**
+     * Checks queue length and adds lorry to field
+     *
+     * @param l
+     */
+    private void addLorryToField(Lorry l) {
+        int lorryQueueLength = lorryQueue.size();
+
+        if (lorryQueueLength > 1) {
+            for (int i = 0; i < lorryQueueLength; i++) {
+                for (int j = 0; j < 20; j++) {
+                    Lorry lorry = lorryQueue.poll();
+                    rootNode.attachChild(lorry);
+                }
+            }
+        } else {
+            rootNode.attachChild(l);
         }
     }
 
@@ -217,46 +312,36 @@ public class Simulation extends SimpleApplication {
     private void createContainers() {
         Container c;
         for (int i = 0; i < 29; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "trein", 0, 0, 0);
+            c = new Container(assetManager, "Coca Cola", "8-9912", 0, 0, 0);
             totalContainerList.add(c);
         }
-        c = new Container(assetManager, "Coca Cola", "8-9612", "vrachtauto", 0, 0, 0);
+        c = new Container(assetManager, "Coca Cola", "8-9612", 0, 0, 0);
         totalContainerList.add(c);
         for (int i = 0; i < 100; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "zeeschip", i, 0, 0);
+            c = new Container(assetManager, "Coca Cola", "8-9912", i, 0, 0);
             totalContainerList.add(c);
 
 
         }
         for (int i = 0; i < 50; i++) {
-            c = new Container(assetManager, "Coca Cola", "8-9912", "binnenschip", 0, 0, 0);
+            c = new Container(assetManager, "Coca Cola", "8-9912", 0, 0, 0);
             totalContainerList.add(c);
         }
-        sortShit();
+        //sortShit();
     }
 
-    private void sortShit() {
-        for (Container con : totalContainerList) {
-            if (con.getTransportType().equals("binnenschip")) {
-                inlandshipContainerList.add(con);
-            }
-            if (con.getTransportType().equals("zeeschip")) {
-                seashipContainerList.add(con);
-            }
-            if (con.getTransportType().equals("trein")) {
-                trainContainerList.add(con);
-            }
-            if (con.getTransportType().equals("vrachtauto")) {
-                // Lorry can only contain 1 container, so has to create immediately.
-                Lorry l = new Lorry(assetManager, con);
-                l.move(true, 0);
-                rootNode.attachChild(l);
-            }
-        }
-        totalContainerList.clear();
-        createObjects();
-    }
-
+    /**
+     * private void sortShit() { for (Container con : totalContainerList) { if
+     * (con.getTransportType().equals("binnenschip")) {
+     * inlandshipContainerList.add(con); } if
+     * (con.getTransportType().equals("zeeschip")) {
+     * seashipContainerList.add(con); } if
+     * (con.getTransportType().equals("trein")) { trainContainerList.add(con); }
+     * if (con.getTransportType().equals("vrachtauto")) { // Lorry can only
+     * contain 1 container, so has to create immediately. Lorry l = new
+     * Lorry(assetManager, con); l.move(true, 0); rootNode.attachChild(l); } }
+     * totalContainerList.clear(); createObjects(); }
+     */
     /**
      * This method creates waypoints on the AGV roads and lets an AGV drive over
      * them
@@ -283,8 +368,8 @@ public class Simulation extends SimpleApplication {
         agvPath.addWayPoint(new Vector3f(330, 0, 136));
         //waypoint B
         agvPath.addWayPoint(new Vector3f(580, 0, 135));
-        
-        
+
+
         agvPath.setCurveTension(0.1f);
         // set the speed and direction of the AGV using motioncontrol
         agvmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
@@ -402,14 +487,14 @@ public class Simulation extends SimpleApplication {
         };
         inputManager.addListener(acl, "debugmode");
     }
-    
+
     /**
      * Method to see cranes in action!
      */
-    private void testMethodCranes(){
+    private void testMethodCranes() {
         //TC test
         for (int i = 0; i < 15; i++) {
-            trainContainerList.add(new Container(assetManager, "TEST CONTAINER", "8-9912", "trein", 0, 0, 0));
+            trainContainerList.add(new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
         }
         Train t = new Train(assetManager, trainContainerList);
         t.setLocalTranslation(-180, 0, -180);
@@ -425,13 +510,13 @@ public class Simulation extends SimpleApplication {
         agv2.rotate(0, 0, 0);
         agv2.setLocalTranslation(140, 0, -125);
         rootNode.attachChild(agv2);
-        Container container1 = new Container(assetManager, "TEST CONTAINER", "8-9912", "binnenschip", 0, 0, 0);
+        Container container1 = new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0);
         container1.setLocalTranslation(120, 0, 0);
         rootNode.attachChild(container1);
         trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
         //TruckCrane
-        Lorry lorry1 = new Lorry(assetManager, new Container(assetManager, "TEST CONTAINER", "8-9912", "vrachtwagen", 0, 0, 0) );
-        lorry1.setLocalTranslation(300,0,170);
+        Lorry lorry1 = new Lorry(assetManager, new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
+        lorry1.setLocalTranslation(300, 0, 170);
         rootNode.attachChild(lorry1);
         Agv agv4 = new Agv(assetManager);
         agv4.rotate(0, 0, 0);
@@ -439,26 +524,26 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(agv4);
         lorryArea.getTruckCranes().get(0).truckToAgv(lorry1.getChild(1), agv4);
         //DC test
-        Container container2 = new Container(assetManager, "TEST CONTAINER", "8-0002", "binnenschip", 0, 0, 0);
-        container2.setLocalTranslation(-325,0,0);
+        Container container2 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
+        container2.setLocalTranslation(-325, 0, 0);
         rootNode.attachChild(container2);
         Agv agv3 = new Agv(assetManager);
         agv3.rotate(0, 0, 0);
         agv3.setLocalTranslation(-285, 0, 20);
         rootNode.attachChild(agv3);
         boatArea.dockingCranes.get(0).boatToAgv(container2, agv3);
-        
+
         //DC
-        Container container5 = new Container(assetManager, "TEST CONTAINER", "8-0002", "binnenschip", 0, 0, 0);
-        container5.setLocalTranslation(-200,0,240);
-        container5.rotate(0, (float)Math.PI / 2, 0);
+        Container container5 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
+        container5.setLocalTranslation(-200, 0, 240);
+        container5.rotate(0, (float) Math.PI / 2, 0);
         rootNode.attachChild(container5);
-        
+
         Agv agv5 = new Agv(assetManager);
-        agv5.rotate(0, (float)Math.PI / 2, 0);
+        agv5.rotate(0, (float) Math.PI / 2, 0);
         agv5.setLocalTranslation(-180, 0, 140);
         rootNode.attachChild(agv5);
         inlandBoatArea.dockingCranes.get(0).boatToAgv(container5, agv5);
-        
+
     }
 }
