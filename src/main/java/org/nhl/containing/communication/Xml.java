@@ -1,5 +1,6 @@
 package org.nhl.containing.communication;
 
+import java.io.IOException;
 import org.w3c.dom.CharacterData;
 import org.xml.sax.InputSource;
 
@@ -13,6 +14,7 @@ import org.w3c.dom.NodeList;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
 
 /**
  * Parses provided XML files and returns Containers.
@@ -25,9 +27,9 @@ public class Xml {
      *
      * @param xmlMessage An XML instruction as defined in the project's XML protocol.
      * @return (Mostly) one-on-one conversion towards an instance of Message.
-     * @throws Exception No idea.
      */
-    public static Message parseXmlMessage(String xmlMessage) throws Exception {
+    public static Message parseXmlMessage(String xmlMessage) throws
+            ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         InputSource source = new InputSource();
@@ -41,7 +43,7 @@ public class Xml {
 
         NodeList nodes = doc.getElementsByTagName("id");
         if (nodes.getLength() != 1) {
-            throw new Exception(xmlMessage + " is not a valid message");
+            throw new IllegalArgumentException(xmlMessage + " is not a valid message");
         }
 
         Element line = (Element) nodes.item(0);
@@ -65,7 +67,7 @@ public class Xml {
 
         // etc etc etc. TODO
 
-        throw new Exception("Could not find valid tag in " + xmlMessage);
+        throw new IllegalArgumentException("Could not find valid tag in " + xmlMessage);
     }
 
     private static CreateMessage parseCreateMessage(Node createNode, int id) {

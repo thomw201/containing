@@ -13,6 +13,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Spatial;
+import java.io.IOException;
 import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
@@ -20,11 +21,13 @@ import org.nhl.containing.vehicles.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+import javax.xml.parsers.ParserConfigurationException;
 import org.nhl.containing.communication.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
 import org.nhl.containing.communication.CreateMessage;
 import org.nhl.containing.communication.Message;
 import org.nhl.containing.communication.Xml;
+import org.xml.sax.SAXException;
 
 /**
  * test
@@ -90,18 +93,21 @@ public class Simulation extends SimpleApplication {
             }
             xmlMessages.add(xmlMessage);
         }
-        
+
         for (String xmlMessage : xmlMessages) {
             handleMessage(xmlMessage);
         }
     }
-    
+
     private void handleMessage(String xmlMessage) {
         Message message = null;
         try {
             message = Xml.parseXmlMessage(xmlMessage);
-        } catch (Exception e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.out.println(xmlMessage + " is not a valid message");
+            return;
         }
 
         switch (message.getMessageType()) {
