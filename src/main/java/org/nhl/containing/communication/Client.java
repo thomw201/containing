@@ -27,7 +27,7 @@ public class Client implements Runnable {
     public void run() {
         try {
             if (calledStop) { //Ugly fix to stop the reconnect-loop when there's no connection at all
-                stop();
+               stop();
             } else {
             
             // Open up the socket.
@@ -47,7 +47,7 @@ public class Client implements Runnable {
             }
         } catch (IOException e) {
             try {
-                Thread.sleep(2500);
+                Thread.sleep(1000);
                 System.out.println("SERVER NOT FOUND! Make sure the server is running! Now trying to reconnect...");
                 run();
             } catch (InterruptedException ex) {
@@ -61,6 +61,8 @@ public class Client implements Runnable {
                 // Do nothing.
                 Thread.sleep(1000);
                 // In case the client shut down the listener, shut down everything.
+                if(calledStop)
+                    stop();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
