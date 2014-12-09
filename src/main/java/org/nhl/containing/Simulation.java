@@ -105,7 +105,7 @@ public class Simulation extends SimpleApplication {
         }
 
         switch (message.getMessageType()) {
-            case Message.CREATE_MESSAGE:
+            case Message.CREATE:
                 handleCreateMessage((CreateMessage) message);
                 break;
             //case Message.ARRIVE_MESSAGE:

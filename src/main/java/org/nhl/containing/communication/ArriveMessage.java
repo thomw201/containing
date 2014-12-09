@@ -9,15 +9,9 @@ package org.nhl.containing.communication;
  *
  */
 public class ArriveMessage extends Message {
-    private static final int messageType = Message.ARRIVE_MESSAGE;
     
     // TODO
     public ArriveMessage(int id) {
-        super(id);
-    }
-    
-    @Override
-    public int getMessageType() {
-        return messageType;
+        super(id, Message.ARRIVE);
     }
 }

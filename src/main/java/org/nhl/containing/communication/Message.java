@@ -8,18 +8,23 @@ import java.lang.String;
  *
  */
 public abstract class Message {
+
+    public static final int CREATE = 1;
+    public static final int ARRIVE = 2;
+
     private int id;
+    private final int messageType;
     
-    public static final int CREATE_MESSAGE = 1;
-    public static final int ARRIVE_MESSAGE = 2;
-    
-    public Message(int id){
+    public Message(int id, int messageType){
         this.id = id;
+        this.messageType = messageType;
     }
     
     public int getId() {
         return id;
     }
     
-    public abstract int getMessageType();
+    public int getMessageType() {
+        return messageType;
+    }
 }
