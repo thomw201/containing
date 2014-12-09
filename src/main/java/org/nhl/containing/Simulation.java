@@ -108,9 +108,9 @@ public class Simulation extends SimpleApplication {
             case Message.CREATE:
                 handleCreateMessage((CreateMessage) message);
                 break;
-            //case Message.ARRIVE_MESSAGE:
-            //    handleArriveMessage((ArriveMessage) message);
-            //    break;
+            case Message.ARRIVE:
+                //handleArriveMessage((ArriveMessage) message);
+                break;
         }
     }
     
@@ -150,7 +150,7 @@ public class Simulation extends SimpleApplication {
      * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
      */
     private void sendOkMessage(Message message) {
-        client.writeMessage("<Ok>" + message.getId() + "</Ok>");
+        client.writeMessage("<Ok><id>" + message.getId() + "</id></Ok>");
     }
     
     /**
