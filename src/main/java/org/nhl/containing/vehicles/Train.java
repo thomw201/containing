@@ -9,7 +9,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import org.nhl.containing.Container;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Jeroen
@@ -19,10 +19,10 @@ public class Train extends Transporter {
     private AssetManager assetManager;
     private int wagonZAxis = -11;
     private float speed = 0.8f;
-    private ArrayList<Container> trainContainerList;
+    private List<Container> trainContainerList;
     private MotionPath path;
 
-    public Train(AssetManager assetManager, ArrayList<Container> trainContainerList) {
+    public Train(AssetManager assetManager, List<Container> trainContainerList) {
         this.assetManager = assetManager;
         this.trainContainerList = trainContainerList;
         initTrain();

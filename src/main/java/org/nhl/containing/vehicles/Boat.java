@@ -10,13 +10,13 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Boat extends Transporter {
 
     private AssetManager assetManager;
     private float speed = 0.5f;
-    private ArrayList<Container> containerList;
+    private List<Container> containerList;
     // inlandship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
     // zeeship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
     // Hier passen op de x as 16 containers op
@@ -28,7 +28,7 @@ public class Boat extends Transporter {
     private Spatial boat;
     private MotionPath path;
 
-    public Boat(AssetManager assetManager, ShipSize shipSize, ArrayList<Container> containerList) {
+    public Boat(AssetManager assetManager, ShipSize shipSize, List<Container> containerList) {
         this.assetManager = assetManager;
         this.size = shipSize;
         this.containerList = containerList;
