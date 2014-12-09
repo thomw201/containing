@@ -79,8 +79,7 @@ public class Client implements Runnable {
     public void stop() {
         try {
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
         }
         try {
             listenRunnable.stop();
