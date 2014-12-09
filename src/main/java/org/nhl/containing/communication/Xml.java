@@ -46,7 +46,6 @@ public class Xml {
         // ugly code.
 
         NodeList messageTypeNodes = doc.getElementsByTagName("Create");
-
         if (messageTypeNodes.getLength() > 0) {
             return parseCreateMessage(messageTypeNodes.item(0), id);
         }
