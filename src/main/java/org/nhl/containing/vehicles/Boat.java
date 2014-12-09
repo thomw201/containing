@@ -56,7 +56,7 @@ public class Boat extends Transporter {
                         float containerWidth = containerList.get(i).getBoundingBox().getXExtent();
                         float x = (inxAs - containerWidth) - containerList.get(i).getSpawnY() * 3;
                         float y = inzAs + containerList.get(i).getSpawnZ() * 3f;
-                        float z = (inyAs - containerLength)  - containerList.get(i).getSpawnX() * (containerLength * 10);
+                        float z = (inyAs - containerLength) - containerList.get(i).getSpawnX() * (containerLength * 10);
                         containerList.get(i).setLocalTranslation(x, y, z);
                         this.attachChild(containerList.get(i));
                     }
@@ -70,14 +70,12 @@ public class Boat extends Transporter {
                     boat.scale(0.87f, 1, 0.57f);
                     this.attachChild(boat);
                     for (int i = 0; i < containerList.size(); i++) {
-                        if (containerList.get(i).getTransportType().equals("zeeschip")) {
-                            float containerLength = containerList.get(i).getBoundingBox().getYExtent() * 10;
-                            float x = zexAs + containerList.get(i).getSpawnY() * 3;
-                            float z = zezAs - containerList.get(i).getSpawnX() * containerLength;
-                            float y = zeyAs + containerList.get(i).getSpawnZ() * 3f;
-                            containerList.get(i).setLocalTranslation(x, y, z);
-                            this.attachChild(containerList.get(i));
-                        }
+                        float containerLength = containerList.get(i).getBoundingBox().getYExtent() * 10;
+                        float x = zexAs + containerList.get(i).getSpawnY() * 3;
+                        float z = zezAs - containerList.get(i).getSpawnX() * containerLength;
+                        float y = zeyAs + containerList.get(i).getSpawnZ() * 3f;
+                        containerList.get(i).setLocalTranslation(x, y, z);
+                        this.attachChild(containerList.get(i));
                     }
                     break;
             }
