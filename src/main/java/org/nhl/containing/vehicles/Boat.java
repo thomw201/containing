@@ -10,13 +10,13 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class Boat extends Transporter {
 
     private AssetManager assetManager;
     private float speed = 0.5f;
-    private ArrayList<Container> containerList;
+    private List<Container> containerList;
     // inlandship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
     // zeeship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
     // Hier passen op de x as 16 containers op
@@ -28,7 +28,7 @@ public class Boat extends Transporter {
     private Spatial boat;
     private MotionPath path;
 
-    public Boat(AssetManager assetManager, ShipSize shipSize, ArrayList<Container> containerList) {
+    public Boat(AssetManager assetManager, ShipSize shipSize, List<Container> containerList) {
         this.assetManager = assetManager;
         this.size = shipSize;
         this.containerList = containerList;
@@ -56,7 +56,7 @@ public class Boat extends Transporter {
                         float containerWidth = containerList.get(i).getBoundingBox().getXExtent();
                         float x = (inxAs - containerWidth) - containerList.get(i).getSpawnY() * 3;
                         float y = inzAs + containerList.get(i).getSpawnZ() * 3f;
-                        float z = (inyAs - containerLength)  - containerList.get(i).getSpawnX() * (containerLength * 10);
+                        float z = (inyAs - containerLength) - containerList.get(i).getSpawnX() * (containerLength * 10);
                         containerList.get(i).setLocalTranslation(x, y, z);
                         this.attachChild(containerList.get(i));
                     }
@@ -70,14 +70,12 @@ public class Boat extends Transporter {
                     boat.scale(0.87f, 1, 0.57f);
                     this.attachChild(boat);
                     for (int i = 0; i < containerList.size(); i++) {
-                        if (containerList.get(i).getTransportType().equals("zeeschip")) {
-                            float containerLength = containerList.get(i).getBoundingBox().getYExtent() * 10;
-                            float x = zexAs + containerList.get(i).getSpawnY() * 3;
-                            float z = zezAs - containerList.get(i).getSpawnX() * containerLength;
-                            float y = zeyAs + containerList.get(i).getSpawnZ() * 3f;
-                            containerList.get(i).setLocalTranslation(x, y, z);
-                            this.attachChild(containerList.get(i));
-                        }
+                        float containerLength = containerList.get(i).getBoundingBox().getYExtent() * 10;
+                        float x = zexAs + containerList.get(i).getSpawnY() * 3;
+                        float z = zezAs - containerList.get(i).getSpawnX() * containerLength;
+                        float y = zeyAs + containerList.get(i).getSpawnZ() * 3f;
+                        containerList.get(i).setLocalTranslation(x, y, z);
+                        this.attachChild(containerList.get(i));
                     }
                     break;
             }

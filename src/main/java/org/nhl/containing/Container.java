@@ -18,17 +18,15 @@ public class Container extends Node {
     private AssetManager assetManager;
     private String owner;
     private String containerID;
-    private String transportType;
     private int spawnX;
     private int spawnY;
     private int spawnZ;
     private BoundingBox boundingBox;
 
-    public Container(AssetManager assetManager, String owner, String containerID, String transportType, int spawnX, int spawnY, int spawnZ) {
+    public Container(AssetManager assetManager, String owner, String containerID, int spawnX, int spawnY, int spawnZ) {
         this.assetManager = assetManager;
         this.owner = owner;
         this.containerID = containerID;
-        this.transportType = transportType;
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         this.spawnZ = spawnZ;
@@ -79,10 +77,6 @@ public class Container extends Node {
         return owner;
     }
 
-    public String getTransportType() {
-        return transportType;
-    }
-
     public int getSpawnX() {
         return spawnX;
     }
@@ -99,7 +93,9 @@ public class Container extends Node {
      * @return information about this object
      */
     public String getDebugInfo(){
-        return this.getClass().getSimpleName() + "\nOwner: " + owner + "\nContainerID: " + containerID + "\nTransporttype: " + transportType + "\nLocation: " + this.getLocalTranslation() + "\nLocallocation (X,Y,Z): " + spawnX + "," + spawnY + "," + spawnZ + "\n";
+        return this.getClass().getSimpleName() + "\nOwner: " + owner + "\nContainerID: " 
+                + containerID + "\nLocation: " + this.getLocalTranslation() + 
+                "\nLocallocation (X,Y,Z): " + spawnX + "," + spawnY + "," + spawnZ + "\n";
     }
     public BoundingBox getBoundingBox() {
         return boundingBox;

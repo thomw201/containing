@@ -1,7 +1,5 @@
 package org.nhl.containing.communication;
 
-
-
 import org.w3c.dom.CharacterData;
 import org.xml.sax.InputSource;
 
@@ -13,117 +11,107 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import java.util.ArrayList;
-import org.nhl.containing.communication.Message.Command;
-
-
+import java.util.List;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Parses provided XML files and returns Containers.
  */
 public class Xml {
-    /**
-     * Tries to decode the incoming XML message and puts the data in an arraylist which contains a message class with all the data
-     *
-     * @param xmlMessage The xml message you're willing to decode
-     */
-    public static ArrayList<Message> decodeXMLMessage(String xmlMessage) {
-        ArrayList messageList = new ArrayList();
-        if(xmlMessage != null)
-        try {
 
-            DocumentBuilderFactory dbf =
-                    DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            InputSource is = new InputSource();
-            is.setCharacterStream(new StringReader(xmlMessage));
-            Document doc = db.parse(is);
-            NodeList parentNode = doc.getElementsByTagName("Controller");
-            for (int j = 0; j < parentNode.getLength(); j++) {
-            NodeList attributes = doc.getElementsByTagName("LastMessage");
-            if (attributes.getLength() > 0) {
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    Message message = new Message();
-                    Element element = (Element) attributes.item(i);
-                    NodeList numberOfContainers = element.getElementsByTagName("numberOfContainers");
-                    Element line = (Element) numberOfContainers.item(0);
+    public static Message parseXmlMessage(String xmlMessage) throws Exception {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        InputSource source = new InputSource();
+        source.setCharacterStream(new StringReader(xmlMessage));
 
-                    message.setMaxValueContainers(Integer.parseInt(getCharacterDataFromElement(line)));
-                    message.setCommand(Command.LastMessage);
-                    messageList.add(message);
-                }
-            }
-            attributes = doc.getElementsByTagName("Create");
-            if (attributes.getLength() > 0) {
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    Message message = new Message();
-                    Element element = (Element) attributes.item(i);
-                    NodeList nodeList = element.getElementsByTagName("iso");
-                    Element line = (Element) nodeList.item(0);
-                    message.setContainerIso(getCharacterDataFromElement(line));
+        Document doc = db.parse(source);
 
-                    nodeList = element.getElementsByTagName("owner");
-                    line = (Element) nodeList.item(0);
-                    message.setContainerOwner(getCharacterDataFromElement(line));
+        // Optional, but recommended.
+        // Read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
+        doc.getDocumentElement().normalize();
 
-                    nodeList = element.getElementsByTagName("arrivalTransportType");
-                    line = (Element) nodeList.item(0);
-                    message.setTransportType(getCharacterDataFromElement(line));
-
-                    nodeList = element.getElementsByTagName("xLoc");
-                    line = (Element) nodeList.item(0);
-                    message.setxLoc(Integer.parseInt(getCharacterDataFromElement(line)));
-
-                    nodeList = element.getElementsByTagName("yLoc");
-                    line = (Element) nodeList.item(0);
-                    message.setyLoc(Integer.parseInt(getCharacterDataFromElement(line)));
-
-                    nodeList = element.getElementsByTagName("zLoc");
-                    line = (Element) nodeList.item(0);
-                    message.setzLoc(Integer.parseInt(getCharacterDataFromElement(line)));
-
-                    message.setCommand(Command.Create);
-                    messageList.add(message);
-                }
-            }
-            attributes = doc.getElementsByTagName("Move");
-            if (attributes.getLength() > 0) {
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    Message message = new Message();
-                    Element element = (Element) attributes.item(i);
-                    NodeList nodeList = element.getElementsByTagName("objectName");
-                    Element line = (Element) nodeList.item(0);
-                    message.setObjectName(getCharacterDataFromElement(line));
-
-                    nodeList = element.getElementsByTagName("destinationName");
-                    line = (Element) nodeList.item(0);
-                    message.setDestinationName(getCharacterDataFromElement(line));
-
-                    nodeList = element.getElementsByTagName("speed");
-                    line = (Element) nodeList.item(0);
-                    message.setSpeed(getCharacterDataFromElement(line));
-
-                    message.setCommand(Command.Move);
-                    messageList.add(message);
-                }
-            }
-            attributes = doc.getElementsByTagName("Dispose");
-            if (attributes.getLength() > 0) {
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    Message message = new Message();
-                    Element element = (Element) attributes.item(i);
-                    NodeList nodeList = element.getElementsByTagName("objectName");
-                    Element line = (Element) nodeList.item(0);
-                    message.setObjectName(getCharacterDataFromElement(line));
-                    message.setCommand(Command.Dispose);
-                    messageList.add(message);
-                }
-            }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+        NodeList nodes = doc.getElementsByTagName("id");
+        if (nodes.getLength() != 1) {
+            throw new Exception(xmlMessage + " is not a valid message");
         }
-        return messageList;
+
+        Element line = (Element) nodes.item(0);
+        int id = Integer.parseInt(Xml.getCharacterDataFromElement(line));
+
+        // The following is trying to find, match and parse the correct message
+        // type. There is probably a better way of achieving this, but this
+        // appears to be the simplest way.
+        // There don't seem to be any drawbacks by doing this, other than
+        // ugly code.
+
+        NodeList messageTypeNodes = doc.getElementsByTagName("Create");
+
+        if (messageTypeNodes.getLength() > 0) {
+            return parseCreateMessage(messageTypeNodes.item(0), id);
+        }
+
+        messageTypeNodes = doc.getElementsByTagName("Arrive");
+        if (messageTypeNodes.getLength() > 0) {
+            return parseArriveMessage(messageTypeNodes.item(0), id);
+        }
+
+        // etc etc etc. TODO
+
+        throw new Exception("Could not find valid tag in " + xmlMessage);
+    }
+
+    private static CreateMessage parseCreateMessage(Node createNode, int id) {
+        List<ContainerBean> containerBeans = new ArrayList<ContainerBean>();
+
+        // There is only one child node, which is the transporter.
+        Node transporterNode = createNode.getFirstChild();
+        int identifier = Integer.parseInt(transporterNode.getAttributes().
+                getNamedItem("identifier").getNodeValue());
+        String type = transporterNode.getAttributes().getNamedItem("type").
+                getNodeValue();
+
+        NodeList transporterNodes = transporterNode.getChildNodes();
+
+        for (int i = 0; i < transporterNodes.getLength(); i++) {
+            Node node = transporterNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE
+                    && node.getNodeName().equals("Container")) {
+                containerBeans.add(parseContainerXml(node));
+            }
+        }
+        return new CreateMessage(id, type, identifier, containerBeans);
+    }
+
+    private static ContainerBean parseContainerXml(Node containerNode) {
+        ContainerBean containerBean = new ContainerBean();
+
+        NodeList containerNodes = containerNode.getChildNodes();
+
+        for (int i = 0; i < containerNodes.getLength(); i++) {
+            Node node = containerNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String content = node.getTextContent();
+                String nodeName = node.getNodeName();
+
+                if (nodeName.equals("iso")) {
+                    containerBean.setIso(content);
+                } else if (nodeName.equals("owner")) {
+                    containerBean.setOwner(content);
+                } else if (nodeName.equals("xLoc")) {
+                    containerBean.setxLoc(Integer.parseInt(content));
+                } else if (nodeName.equals("yLoc")) {
+                    containerBean.setyLoc(Integer.parseInt(content));
+                } else if (nodeName.equals("zLoc")) {
+                    containerBean.setzLoc(Integer.parseInt(content));
+                }
+            }
+        }
+        return containerBean;
+    }
+
+    private static ArriveMessage parseArriveMessage(Node arriveNode, int id) {
+        return null;
     }
 
     /**
@@ -135,6 +123,6 @@ public class Xml {
             CharacterData cd = (CharacterData) child;
             return cd.getData();
         }
-        return "?";
+        return "";
     }
 }
