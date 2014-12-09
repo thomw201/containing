@@ -19,6 +19,14 @@ import javax.xml.parsers.ParserConfigurationException;
  */
 public class Xml {
 
+    /**
+     * Parse an XML instruction from the backend, and represent it as program-
+     * readable Message object.
+     *
+     * @param xmlMessage An XML instruction as defined in the project's XML protocol.
+     * @return (Mostly) one-on-one conversion towards an instance of Message.
+     * @throws Exception No idea.
+     */
     public static Message parseXmlMessage(String xmlMessage) throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
