@@ -83,7 +83,7 @@ public class Simulation extends SimpleApplication {
         super.destroy();
         client.stop();
     }
-    
+
     private void handleMessages() {
         List<String> xmlMessages = new ArrayList<String>();
         while (true) {
@@ -119,7 +119,7 @@ public class Simulation extends SimpleApplication {
                 break;
         }
     }
-    
+
     private void handleCreateMessage(CreateMessage message) {
         List<Container> containers = new ArrayList<Container>();
         for (ContainerBean containerBean : message.getContainerBeans()) {
@@ -144,7 +144,7 @@ public class Simulation extends SimpleApplication {
         }
         sendOkMessage(message);
     }
-    
+
     private void handleArriveMessage(ArriveMessage message) {
     }
 
@@ -158,11 +158,11 @@ public class Simulation extends SimpleApplication {
     private void sendOkMessage(Message message) {
         client.writeMessage("<Ok><id>" + message.getId() + "</id></Ok>");
     }
-    
+
     /**
      * Reads the message object and creates and returns a Transporter from its
      * information.
-     * 
+     *
      * @param message Create message.
      * @return Transporter as described in the message.
      */

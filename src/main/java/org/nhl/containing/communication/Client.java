@@ -1,6 +1,5 @@
 package org.nhl.containing.communication;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,6 +11,7 @@ import java.net.SocketException;
  * Client.
  */
 public class Client implements Runnable {
+
     private final int portNumber = 6666;
     private final String serverName = "localhost";
     private Socket socket;
@@ -20,7 +20,6 @@ public class Client implements Runnable {
     private boolean running;
 
     public Client() {
-
     }
 
     @Override
@@ -99,7 +98,7 @@ public class Client implements Runnable {
      * If no listener exists yet, return null instead. This is also the default
      * return value from the listener if there is no message in the message
      * pool.
-     * 
+     *
      * @return An XML instruction from the backend.
      */
     public String getMessage() {
@@ -114,7 +113,7 @@ public class Client implements Runnable {
      * Send a message to the backend server.
      * </p>
      * This function encapsulates the message in <Simulation> tags.
-     * 
+     *
      * @param message XML message.
      */
     public void writeMessage(String message) {
