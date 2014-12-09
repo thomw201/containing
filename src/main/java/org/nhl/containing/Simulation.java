@@ -67,6 +67,7 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+        handleMessages();
     }
 
     @Override
@@ -107,9 +108,9 @@ public class Simulation extends SimpleApplication {
             case Message.CREATE_MESSAGE:
                 handleCreateMessage((CreateMessage) message);
                 break;
-            case Message.ARRIVE_MESSAGE:
-                handleArriveMessage((ArriveMessage) message);
-                break;
+            //case Message.ARRIVE_MESSAGE:
+            //    handleArriveMessage((ArriveMessage) message);
+            //    break;
         }
     }
     
@@ -149,7 +150,7 @@ public class Simulation extends SimpleApplication {
      * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
      */
     private void sendOkMessage(Message message) {
-        client.writeMessage("<Simulation><Ok>" + message.getId() + "</Ok></Simulation>");
+        client.writeMessage("<Ok>" + message.getId() + "</Ok>");
     }
     
     /**

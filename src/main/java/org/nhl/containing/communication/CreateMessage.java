@@ -7,7 +7,7 @@ import java.util.List;
  *
  */
 public class CreateMessage extends Message {
-    private static final int messageType = Message.ARRIVE_MESSAGE;
+    private static final int messageType = Message.CREATE_MESSAGE;
     private String transporterType;
     private int transporterIdentifier;
     private List<ContainerBean> containerBeans;
