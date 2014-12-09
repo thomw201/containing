@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Client.
@@ -16,7 +17,6 @@ public class Client implements Runnable {
     private Socket socket;
     private ListenRunnable listenRunnable;
     private SendRunnable sendRunnable;
-    private boolean calledStop;
     private boolean running;
 
     public Client() {
@@ -26,12 +26,21 @@ public class Client implements Runnable {
     @Override
     public void run() {
         try {
-            if (calledStop) { //Ugly fix to stop the reconnect-loop when there's no connection at all
-               stop();
-            } else {
-            
-            // Open up the socket.
-            socket = new Socket(serverName, portNumber);
+            // Try to connect to the server.
+            while (true) {
+                try {
+                    // Open up the socket.
+                    socket = new Socket(serverName, portNumber);
+                    break;
+                } catch (SocketException e) {
+                    System.out.println("Could not establish connection with " + serverName + " " + portNumber + ". Reconnecting.");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Throwable e_) {
+                        e_.printStackTrace();
+                    }
+                }
+            }
 
             listenRunnable = new ListenRunnable(new BufferedReader(new InputStreamReader(socket.getInputStream())));
             sendRunnable = new SendRunnable(new PrintWriter(socket.getOutputStream(), true));
@@ -44,15 +53,8 @@ public class Client implements Runnable {
             listenThread.start();
             sendThread.start();
             running = true;
-            }
         } catch (IOException e) {
-            try {
-                Thread.sleep(1000);
-                System.out.println("SERVER NOT FOUND! Make sure the server is running! Now trying to reconnect...");
-                run();
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
+            e.printStackTrace();
             
         }
 
@@ -60,13 +62,10 @@ public class Client implements Runnable {
             try {
                 // Do nothing.
                 Thread.sleep(1000);
-                // In case the client shut down the listener, shut down everything.
-                if(calledStop)
-                    stop();
             } catch (Throwable e) {
                 e.printStackTrace();
             }
-            if(listenRunnable != null)
+            // In case the client shut down the listener, shut down everything.
             if (!listenRunnable.isRunning()) {
                 this.stop();
             }
@@ -78,24 +77,20 @@ public class Client implements Runnable {
      * Stops the client an thus the listen- and sendrunnables
      */
     public void stop() {
-        if(socket != null)
         try {
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(listenRunnable != null)
         try {
             listenRunnable.stop();
         } catch (Throwable e) {
         }
-        if(sendRunnable != null)
         try {
             sendRunnable.stop();
         } catch (Throwable e) {
         }
         running = false;
-        calledStop = true;
     }
 
     /**
@@ -104,9 +99,11 @@ public class Client implements Runnable {
      * @return 
      */
     public String getMessage() {
-        if(listenRunnable != null)
-        return listenRunnable.getMessage();
-        return null;
+        try {
+            return listenRunnable.getMessage();
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     /**
