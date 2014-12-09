@@ -25,6 +25,7 @@ public class Client implements Runnable {
 
     @Override
     public void run() {
+        // Initialise the client.
         try {
             // Try to connect to the server.
             while (true) {
@@ -55,9 +56,9 @@ public class Client implements Runnable {
             running = true;
         } catch (IOException e) {
             e.printStackTrace();
-            
         }
 
+        // Enter the main loop.
         while (running) {
             try {
                 // Do nothing.
@@ -74,7 +75,7 @@ public class Client implements Runnable {
     }
 
     /**
-     * Stops the client an thus the listen- and sendrunnables
+     * Stop the client and its runnables.
      */
     public void stop() {
         try {
@@ -93,9 +94,13 @@ public class Client implements Runnable {
     }
 
     /**
+     * Pop a message from the listener's message pool, and return it.
+     * </p>
+     * If no listener exists yet, return null instead. This is also the default
+     * return value from the listener if there is no message in the message
+     * pool.
      * 
-     * 
-     * @return 
+     * @return An XML instruction from the backend.
      */
     public String getMessage() {
         try {
@@ -106,9 +111,11 @@ public class Client implements Runnable {
     }
 
     /**
-     * sends a message to the backend system
+     * Send a message to the backend server.
+     * </p>
+     * This function encapsulates the message in <Simulation> tags.
      * 
-     * @param message 
+     * @param message XML message.
      */
     public void writeMessage(String message) {
         sendRunnable.writeMessage("<Simulation>" + message + "</Simulation>");
