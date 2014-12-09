@@ -2,7 +2,6 @@ package org.nhl.containing;
 
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
-import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.input.KeyInput;
