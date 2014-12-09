@@ -11,9 +11,6 @@ import org.nhl.containing.Container;
 
 import java.util.List;
 
-/**
- * @author Jeroen
- */
 public class Train extends Transporter {
 
     private AssetManager assetManager;
@@ -34,11 +31,11 @@ public class Train extends Transporter {
      */
     public void initTrain() {
         // Load a model.
-        Node train = (Node)assetManager.loadModel("Models/medium/train/train.j3o");
+        Node train = (Node)assetManager.loadModel("Models/low/train/train.j3o");
         this.attachChild(train);
 
         //Load wagons.
-        Node wagon = (Node) assetManager.loadModel("Models/medium/train/wagon.j3o");
+        Node wagon = (Node) assetManager.loadModel("Models/low/train/wagon.j3o");
 
         for (int i = 0; i < trainContainerList.size(); i++) {
             Node nextWagon = (Node) wagon.clone();

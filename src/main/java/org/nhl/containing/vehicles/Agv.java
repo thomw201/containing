@@ -8,9 +8,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 
-/**
- * @author Jeroen
- */
 public class Agv extends Vehicle {
 
     private AssetManager assetManager;
@@ -29,7 +26,7 @@ public class Agv extends Vehicle {
     private void initAgv() {
 
         // Load a model.
-        Spatial agv = assetManager.loadModel("Models/medium/agv/agv.j3o");
+        Spatial agv = assetManager.loadModel("Models/low/agv/agv.j3o");
         this.attachChild(agv);
     }
     /**

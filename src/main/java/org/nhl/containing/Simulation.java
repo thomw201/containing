@@ -2,6 +2,7 @@ package org.nhl.containing;
 
 import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
+import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.input.KeyInput;
@@ -320,6 +321,5 @@ public class Simulation extends SimpleApplication {
         agv5.setLocalTranslation(-180, 0, 140);
         rootNode.attachChild(agv5);
         inlandBoatArea.dockingCranes.get(0).boatToAgv(container5, agv5);
-
     }
 }

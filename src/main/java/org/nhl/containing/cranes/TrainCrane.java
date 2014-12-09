@@ -10,9 +10,6 @@ import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 import org.nhl.containing.vehicles.Agv;
 
-/**
- * @author Jeroen
- */
 public class TrainCrane extends Crane {
 
     private static final Quaternion YAW090 = new Quaternion().fromAngleAxis(FastMath.PI / 2, new Vector3f(0, 1, 0));
