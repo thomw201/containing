@@ -120,7 +120,7 @@ public class Xml {
     }
 
     private static ArriveMessage parseArriveMessage(Node arriveNode, int id) {
-        return null;
+        return new ArriveMessage(id);
     }
 
     /**
