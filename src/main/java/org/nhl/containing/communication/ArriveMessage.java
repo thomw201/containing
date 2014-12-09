@@ -12,6 +12,6 @@ public class ArriveMessage extends Message {
     
     // TODO
     public ArriveMessage(int id) {
-        super(id);
+        super(id, Message.ARRIVE);
     }
 }

@@ -20,6 +20,9 @@ import org.nhl.containing.vehicles.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+import org.nhl.containing.communication.ArriveMessage;
+import org.nhl.containing.communication.ContainerBean;
+import org.nhl.containing.communication.CreateMessage;
 import org.nhl.containing.communication.Message;
 import org.nhl.containing.communication.Xml;
 
@@ -30,7 +33,7 @@ import org.nhl.containing.communication.Xml;
  */
 public class Simulation extends SimpleApplication {
 
-    private List<Message> messagePool;
+    private List<Transporter> transporterPool;
     private TrainArea trainArea;
     private LorryArea lorryArea;
     private BoatArea boatArea;
@@ -43,7 +46,7 @@ public class Simulation extends SimpleApplication {
 
     public Simulation() {
         client = new Client();
-        messagePool = new ArrayList<Message>();
+        transporterPool = new ArrayList<Transporter>();
     }
 
     @Override
@@ -64,6 +67,7 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleUpdate(float tpf) {
+        handleMessages();
     }
 
     @Override
@@ -93,11 +97,49 @@ public class Simulation extends SimpleApplication {
     }
     
     private void handleMessage(String xmlMessage) {
+        Message message = null;
         try {
-            Message message = Xml.parseXmlMessage(xmlMessage);
+            message = Xml.parseXmlMessage(xmlMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        switch (message.getMessageType()) {
+            case Message.CREATE:
+                handleCreateMessage((CreateMessage) message);
+                break;
+            //case Message.ARRIVE_MESSAGE:
+            //    handleArriveMessage((ArriveMessage) message);
+            //    break;
+        }
+    }
+    
+    private void handleCreateMessage(CreateMessage message) {
+        List<Container> containers = new ArrayList<Container>();
+        for (ContainerBean containerBean : message.getContainerBeans()) {
+            Container container = new Container(assetManager, containerBean.getOwner(),
+                    containerBean.getIso(), containerBean.getxLoc(),
+                    containerBean.getyLoc(), containerBean.getzLoc());
+            containers.add(container);
+        }
+
+        if (message.getTransporterType().equals("vrachtauto")) {
+            Lorry lorry = new Lorry(assetManager, containers.get(0));
+            transporterPool.add(lorry);
+        } else if (message.getTransporterType().equals("trein")) {
+            Train train = new Train(assetManager, containers);
+            transporterPool.add(train);
+        } else if (message.getTransporterType().equals("binnenschip")) {
+            Boat boat = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, containers);
+            transporterPool.add(boat);
+        } else if (message.getTransporterType().equals("zeeschip")) {
+            Boat boat = new Boat(assetManager, Boat.ShipSize.SEASHIP, containers);
+            transporterPool.add(boat);
+        }
+        sendOkMessage(message);
+    }
+    
+    private void handleArriveMessage(ArriveMessage message) {
     }
 
     /**
@@ -107,9 +149,8 @@ public class Simulation extends SimpleApplication {
      *
      * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
      */
-    private void sendOkMessage(Message msg) {
-        String message = "<Simulation><Ok>" + msg + "</Ok></Simulation>";
-        client.writeMessage(message);
+    private void sendOkMessage(Message message) {
+        client.writeMessage("<Ok>" + message.getId() + "</Ok>");
     }
     
     /**

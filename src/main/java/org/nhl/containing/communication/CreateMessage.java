@@ -13,7 +13,7 @@ public class CreateMessage extends Message {
     
     public CreateMessage(int id, String transporterType, int transporterIdentifier,
             List<ContainerBean> containerBeans) {
-        super(id);
+        super(id, Message.CREATE);
         this.transporterType = transporterType;
         this.transporterIdentifier = transporterIdentifier;
         this.containerBeans = containerBeans;
