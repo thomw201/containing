@@ -4,15 +4,14 @@ import java.util.List;
 
 /**
  * Data class that holds information pertaining the creation of a transporter.
- *
  */
 public class CreateMessage extends Message {
     private String transporterType;
     private int transporterIdentifier;
     private List<ContainerBean> containerBeans;
-    
+
     public CreateMessage(int id, String transporterType, int transporterIdentifier,
-            List<ContainerBean> containerBeans) {
+                         List<ContainerBean> containerBeans) {
         super(id, Message.CREATE);
         this.transporterType = transporterType;
         this.transporterIdentifier = transporterIdentifier;

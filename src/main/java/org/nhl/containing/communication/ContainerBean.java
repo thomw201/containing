@@ -12,13 +12,13 @@ package org.nhl.containing.communication;
  * @author Rubykuby
  */
 public class ContainerBean {
-    
+
     private String iso;
     private String owner;
     private int xLoc;
     private int yLoc;
     private int zLoc;
-    
+
     public ContainerBean() {
     }
 
