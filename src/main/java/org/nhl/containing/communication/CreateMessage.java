@@ -7,6 +7,7 @@ import java.util.List;
  *
  */
 public class CreateMessage extends Message {
+    private static final int messageType = Message.ARRIVE_MESSAGE;
     private String transporterType;
     private int transporterIdentifier;
     private List<ContainerBean> containerBeans;
@@ -29,5 +30,10 @@ public class CreateMessage extends Message {
 
     public List<ContainerBean> getContainerBeans() {
         return containerBeans;
+    }
+    
+    @Override
+    public int getMessageType() {
+        return messageType;
     }
 }

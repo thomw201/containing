@@ -20,6 +20,8 @@ import org.nhl.containing.vehicles.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
+import org.nhl.containing.communication.ArriveMessage;
+import org.nhl.containing.communication.CreateMessage;
 import org.nhl.containing.communication.Message;
 import org.nhl.containing.communication.Xml;
 
@@ -93,11 +95,28 @@ public class Simulation extends SimpleApplication {
     }
     
     private void handleMessage(String xmlMessage) {
+        Message message = null;
         try {
-            Message message = Xml.parseXmlMessage(xmlMessage);
+            message = Xml.parseXmlMessage(xmlMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        switch (message.getMessageType()) {
+            case Message.CREATE_MESSAGE:
+                handleCreateMessage((CreateMessage) message);
+                break;
+            case Message.ARRIVE_MESSAGE:
+                handleArriveMessage((ArriveMessage) message);
+                break;
+        }
+    }
+    
+    private void handleCreateMessage(CreateMessage message) {
+        
+    }
+    
+    private void handleArriveMessage(ArriveMessage message) {
     }
 
     /**
