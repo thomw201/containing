@@ -93,7 +93,11 @@ public class Simulation extends SimpleApplication {
     }
     
     private void handleMessage(String xmlMessage) {
-        
+        try {
+            Message message = Xml.parseXmlMessage(xmlMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
