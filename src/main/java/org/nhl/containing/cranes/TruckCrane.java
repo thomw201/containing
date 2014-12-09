@@ -8,9 +8,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.vehicles.Agv;
 
-/**
- * @author Jeroen
- */
 public class TruckCrane extends Crane {
 
     private AssetManager assetManager;

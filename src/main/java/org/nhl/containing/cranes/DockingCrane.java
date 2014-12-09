@@ -9,9 +9,6 @@ import org.nhl.containing.Container;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.vehicles.Agv;
 
-/**
- * @author Jeroen
- */
 public class DockingCrane extends Crane {
 
     private AssetManager assetManager;
@@ -39,7 +36,7 @@ public class DockingCrane extends Crane {
     private void initDockingCrane() {
 
         // Load a model.
-        Spatial moveableCrane = assetManager.loadModel("Models/high/crane/dockingcrane/crane.j3o");
+        Spatial moveableCrane = assetManager.loadModel("Models/low/crane/dockingcrane/crane.j3o");
         this.attachChild(moveableCrane);
     }
 

@@ -7,9 +7,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import org.nhl.containing.Container;
 
-/**
- * @author Jeroen
- */
 public class Lorry extends Transporter {
 
     private AssetManager assetManager;
@@ -31,7 +28,7 @@ public class Lorry extends Transporter {
 
 
         // Load a model.
-        Node lorry = (Node)assetManager.loadModel("Models/medium/truck.j3o");
+        Node lorry = (Node)assetManager.loadModel("Models/low/truck.j3o");
         lorry.setLocalTranslation(0, 0, lorryZAxis);
         container.setLocalTranslation(0, 1, lorryZAxis);
         this.attachChild(lorry);

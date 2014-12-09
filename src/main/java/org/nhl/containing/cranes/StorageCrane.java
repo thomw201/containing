@@ -8,9 +8,6 @@ import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 import org.nhl.containing.vehicles.Agv;
 
-/**
- * @author Jeroen
- */
 public class StorageCrane extends Crane {
 
     private AssetManager assetManager;

@@ -361,6 +361,5 @@ public class Simulation extends SimpleApplication {
         agv5.setLocalTranslation(-180, 0, 140);
         rootNode.attachChild(agv5);
         inlandBoatArea.dockingCranes.get(0).boatToAgv(container5, agv5);
-
     }
 }

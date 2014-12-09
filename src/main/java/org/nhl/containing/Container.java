@@ -44,6 +44,7 @@ public class Container extends Node {
         mat.setColor("Color", ColorRGBA.White);   // set color of material to blue
         mat.setColor("Color", ColorRGBA.randomColor());
         container.setMaterial(mat);
+        container.setCullHint(CullHint.Dynamic);
         this.attachChild(container);
         //create a random text color
         ColorRGBA textColor = ColorRGBA.Black;
