@@ -97,18 +97,23 @@ public class Xml {
             Node node = containerNodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 String content = node.getTextContent();
-                String nodeName = node.getNodeName();
 
-                if (nodeName.equals("iso")) {
-                    containerBean.setIso(content);
-                } else if (nodeName.equals("owner")) {
-                    containerBean.setOwner(content);
-                } else if (nodeName.equals("xLoc")) {
-                    containerBean.setxLoc(Integer.parseInt(content));
-                } else if (nodeName.equals("yLoc")) {
-                    containerBean.setyLoc(Integer.parseInt(content));
-                } else if (nodeName.equals("zLoc")) {
-                    containerBean.setzLoc(Integer.parseInt(content));
+                switch (node.getNodeName()) {
+                    case "iso":
+                        containerBean.setIso(content);
+                        break;
+                    case "owner":
+                        containerBean.setOwner(content);
+                        break;
+                    case "xLoc":
+                        containerBean.setxLoc(Integer.parseInt(content));
+                        break;
+                    case "yLoc":
+                        containerBean.setyLoc(Integer.parseInt(content));
+                        break;
+                    case "zLoc":
+                        containerBean.setzLoc(Integer.parseInt(content));
+                        break;
                 }
             }
         }
