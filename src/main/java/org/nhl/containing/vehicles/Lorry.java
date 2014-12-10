@@ -15,7 +15,8 @@ public class Lorry extends Transporter {
     private Container container;
     private MotionPath path;
 
-    public Lorry(AssetManager assetManager, Container c) {
+    public Lorry(AssetManager assetManager, int id, Container c) {
+        super(id);
         this.assetManager = assetManager;
         this.container = c;
         initLorry();

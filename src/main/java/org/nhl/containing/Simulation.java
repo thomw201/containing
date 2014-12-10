@@ -134,20 +134,25 @@ public class Simulation extends SimpleApplication {
 
         switch (message.getTransporterType()) {
             case "vrachtauto":
-                Lorry lorry = new Lorry(assetManager, containers.get(0));
+                Lorry lorry = new Lorry(assetManager,
+                        message.getTransporterIdentifier(), containers.get(0));
                 transporterPool.add(lorry);
                 break;
             case "trein":
-                Train train = new Train(assetManager, containers);
+                Train train = new Train(assetManager,
+                        message.getTransporterIdentifier(), containers);
                 transporterPool.add(train);
                 break;
             case "binnenschip":
-                Boat inland = new Boat(assetManager, Boat.ShipSize.INLANDSHIP,
-                        containers);
+                Boat inland = new Boat(assetManager,
+                        message.getTransporterIdentifier(),
+                        Boat.ShipSize.INLANDSHIP, containers);
                 transporterPool.add(inland);
                 break;
             case "zeeschip":
-                Boat sea = new Boat(assetManager, Boat.ShipSize.SEASHIP, containers);
+                Boat sea = new Boat(assetManager,
+                        message.getTransporterIdentifier(),
+                        Boat.ShipSize.SEASHIP, containers);
                 transporterPool.add(sea);
                 break;
         }
@@ -220,7 +225,7 @@ public class Simulation extends SimpleApplication {
      * them
      */
     private void createAGVPath() {
-        Agv agv = new Agv(assetManager);
+        Agv agv = new Agv(assetManager, -1);
         rootNode.attachChild(agv);
         MotionPath agvPath = new MotionPath();
         MotionEvent agvmotionControl = new MotionEvent(agv, agvPath);
@@ -364,17 +369,17 @@ public class Simulation extends SimpleApplication {
         for (int i = 0; i < 15; i++) {
             containers.add(new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
         }
-        Train t = new Train(assetManager, containers);
+        Train t = new Train(assetManager, -1, containers);
         t.setLocalTranslation(-180, 0, -180);
         //t.rotate(0, (float) Math.PI / -2f, 0);
         rootNode.attachChild(t);
-        Agv agv1 = new Agv(assetManager);
+        Agv agv1 = new Agv(assetManager, -1);
         agv1.rotate(0, (float) Math.PI / 2, 0);
         agv1.setLocalTranslation(-169, 0, -174);
         rootNode.attachChild(agv1);
         trainArea.getTrainCranes().get(3).trainToAgv(containers.get(0), agv1);
         //SC
-        Agv agv2 = new Agv(assetManager);
+        Agv agv2 = new Agv(assetManager, -1);
         agv2.rotate(0, 0, 0);
         agv2.setLocalTranslation(140, 0, -125);
         rootNode.attachChild(agv2);
@@ -383,10 +388,10 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(container1);
         trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
         //TruckCrane
-        Lorry lorry1 = new Lorry(assetManager, new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
+        Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
         lorry1.setLocalTranslation(300, 0, 170);
         rootNode.attachChild(lorry1);
-        Agv agv4 = new Agv(assetManager);
+        Agv agv4 = new Agv(assetManager, -1);
         agv4.rotate(0, 0, 0);
         agv4.setLocalTranslation(300, 0, 150);
         rootNode.attachChild(agv4);
@@ -395,7 +400,7 @@ public class Simulation extends SimpleApplication {
         Container container2 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
         container2.setLocalTranslation(-325, 0, 0);
         rootNode.attachChild(container2);
-        Agv agv3 = new Agv(assetManager);
+        Agv agv3 = new Agv(assetManager, -1);
         agv3.rotate(0, 0, 0);
         agv3.setLocalTranslation(-285, 0, 20);
         rootNode.attachChild(agv3);
@@ -407,7 +412,7 @@ public class Simulation extends SimpleApplication {
         container5.rotate(0, (float) Math.PI / 2, 0);
         rootNode.attachChild(container5);
 
-        Agv agv5 = new Agv(assetManager);
+        Agv agv5 = new Agv(assetManager, -1);
         agv5.rotate(0, (float) Math.PI / 2, 0);
         agv5.setLocalTranslation(-180, 0, 140);
         rootNode.attachChild(agv5);

@@ -28,7 +28,9 @@ public class Boat extends Transporter {
     private Spatial boat;
     private MotionPath path;
 
-    public Boat(AssetManager assetManager, ShipSize shipSize, List<Container> containerList) {
+    public Boat(AssetManager assetManager, int id, ShipSize shipSize,
+                List<Container> containerList) {
+        super(id);
         this.assetManager = assetManager;
         this.size = shipSize;
         this.containerList = containerList;
