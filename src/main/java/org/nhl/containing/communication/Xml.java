@@ -115,6 +115,9 @@ public class Xml {
                     case "zLoc":
                         containerBean.setzLoc(Integer.parseInt(content));
                         break;
+                    default:
+                        throw new IllegalArgumentException(node.getNodeName()
+                                + " is not a legal node name");
                 }
             }
         }
@@ -139,6 +142,9 @@ public class Xml {
                     case "depotIndex":
                         depotIndex = Integer.parseInt(content);
                         break;
+                    default:
+                        throw new IllegalArgumentException(node.getNodeName()
+                                + " is not a legal node name");
                 }
             }
         }

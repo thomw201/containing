@@ -155,6 +155,9 @@ public class Simulation extends SimpleApplication {
                         Boat.ShipSize.SEASHIP, containers);
                 transporterPool.add(sea);
                 break;
+            default:
+                throw new IllegalArgumentException(message.getTransporterType()
+                        + " is not a legal transporter type");
         }
         sendOkMessage(message);
     }
