@@ -106,6 +106,9 @@ public class Simulation extends SimpleApplication {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
+            // Maybe just stacktrace here? Depends on how robust we want this to
+            // be. With the current code, it just discards the erroneous
+            // message.
             System.out.println(xmlMessage + " is not a valid message");
             return;
         }
