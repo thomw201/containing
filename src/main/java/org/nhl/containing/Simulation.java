@@ -132,18 +132,24 @@ public class Simulation extends SimpleApplication {
             containers.add(container);
         }
 
-        if (message.getTransporterType().equals("vrachtauto")) {
-            Lorry lorry = new Lorry(assetManager, containers.get(0));
-            transporterPool.add(lorry);
-        } else if (message.getTransporterType().equals("trein")) {
-            Train train = new Train(assetManager, containers);
-            transporterPool.add(train);
-        } else if (message.getTransporterType().equals("binnenschip")) {
-            Boat boat = new Boat(assetManager, Boat.ShipSize.INLANDSHIP, containers);
-            transporterPool.add(boat);
-        } else if (message.getTransporterType().equals("zeeschip")) {
-            Boat boat = new Boat(assetManager, Boat.ShipSize.SEASHIP, containers);
-            transporterPool.add(boat);
+        switch (message.getTransporterType()) {
+            case "vrachtauto":
+                Lorry lorry = new Lorry(assetManager, containers.get(0));
+                transporterPool.add(lorry);
+                break;
+            case "trein":
+                Train train = new Train(assetManager, containers);
+                transporterPool.add(train);
+                break;
+            case "binnenschip":
+                Boat inland = new Boat(assetManager, Boat.ShipSize.INLANDSHIP,
+                        containers);
+                transporterPool.add(inland);
+                break;
+            case "zeeschip":
+                Boat sea = new Boat(assetManager, Boat.ShipSize.SEASHIP, containers);
+                transporterPool.add(sea);
+                break;
         }
         sendOkMessage(message);
     }
