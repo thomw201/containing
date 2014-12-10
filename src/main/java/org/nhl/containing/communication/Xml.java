@@ -21,7 +21,8 @@ public class Xml {
      * Parse an XML instruction from the backend, and represent it as program-
      * readable Message object.
      *
-     * @param xmlMessage An XML instruction as defined in the project's XML protocol.
+     * @param xmlMessage An XML instruction as defined in the project's XML
+     * protocol.
      * @return (Mostly) one-on-one conversion towards an instance of Message.
      */
     public static Message parseXmlMessage(String xmlMessage) throws
