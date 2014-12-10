@@ -115,7 +115,7 @@ public class Simulation extends SimpleApplication {
                 handleCreateMessage((CreateMessage) message);
                 break;
             case Message.ARRIVE:
-                //handleArriveMessage((ArriveMessage) message);
+                handleArriveMessage((ArriveMessage) message);
                 break;
         }
     }
@@ -146,6 +146,42 @@ public class Simulation extends SimpleApplication {
     }
 
     private void handleArriveMessage(ArriveMessage message) {
+        Transporter transporter = null;
+        boolean nobreak = true;
+
+        for (Transporter poolTransporter : transporterPool) {
+            if (poolTransporter.getId() == message.getTransporterId()) {
+                transporter = poolTransporter;
+                nobreak = false;
+                break;
+            }
+        }
+        if (nobreak) {
+            throw new IllegalArgumentException("Transporter " + message.getTransporterId()
+                    + " does not exist");
+        }
+        // Tell transporter to *arrive*. Rename move() to arrive(). move() is
+        // too ambiguous. move() should probably be an *abstract* method within
+        // Transporter, to be actually defined within each of the subclasses.
+        //
+        // Set `processingMessageId` within the Transporter/Vehicle/Object to
+        // this message ID. Once the Transporter has arrived at its destination,
+        // check for this in a separate function in simpleUpdate(), and then
+        // send an OK message for the Transporter/Vehicle/Object's
+        // `processingMessageId`.
+        //
+        // The `processingMesageId` also applies to cranes and AGVs. Cranes,
+        // AGVs and transporters should all therefore be subclassed from the
+        // same class, OR all implement the same interface (ProcessesMessage).
+        // An interface is the cleanest solution, and can be found within the
+        // backend. The default value should be -1 (i.e., not processing any
+        // messages).
+        //
+        // Finally, pop transporter from transporterPool, and add it to
+        // `transporters`. This list doesn't exist yet, but is trivial to
+        // create. The reason we don't want to keep the transporter in the pool,
+        // is because we want a way of discerning whether a transporter can
+        // actually be interacted with.
     }
 
     /**

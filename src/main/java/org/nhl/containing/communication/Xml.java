@@ -116,7 +116,27 @@ public class Xml {
     }
 
     private static ArriveMessage parseArriveMessage(Node arriveNode, int id) {
-        return new ArriveMessage(id);
+        int transporterId = -1;
+        int depotIndex = -1;
+
+        NodeList arriveNodes = arriveNode.getChildNodes();
+
+        for (int i = 0; i < arriveNodes.getLength(); i++) {
+            Node node = arriveNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String content = node.getTextContent();
+
+                switch (node.getNodeName()) {
+                    case "transporterId":
+                        transporterId = Integer.parseInt(content);
+                        break;
+                    case "depotIndex":
+                        depotIndex = Integer.parseInt(content);
+                        break;
+                }
+            }
+        }
+        return new ArriveMessage(id, transporterId, depotIndex);
     }
 
     /**
