@@ -120,6 +120,9 @@ public class Simulation extends SimpleApplication {
             case Message.ARRIVE:
                 handleArriveMessage((ArriveMessage) message);
                 break;
+            default:
+                throw new IllegalArgumentException(message.getMessageType()
+                        + " is not a legal message type");
         }
     }
 
