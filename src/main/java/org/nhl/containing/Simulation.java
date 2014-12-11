@@ -390,9 +390,10 @@ public class Simulation extends SimpleApplication {
         agv2.setLocalTranslation(140, 0, -125);
         rootNode.attachChild(agv2);
         Container container1 = new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0);
-        container1.setLocalTranslation(120, 0, 0);
-        rootNode.attachChild(container1);
-        trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
+        container1.setLocalTranslation(0, 1, 0);
+        agv2.attachChild(container1);
+        trainStorageArea.getStorageCranes().get(0).agvToStorage(container1, new Vector3f(120,0,15));
+        //trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
         //TruckCrane
         Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
         lorry1.setLocalTranslation(300, 0, 170);

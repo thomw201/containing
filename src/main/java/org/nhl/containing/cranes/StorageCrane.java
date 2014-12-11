@@ -206,12 +206,14 @@ public class StorageCrane extends Crane {
                     detachChild(container);
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
+                    storageArea.removeContainer(container);
                     break;
                 case AGVTOSTORAGE:
                     Vector3f position = container.getWorldTranslation();
                     detachChild(container);
                     storageArea.attachChild(container);
                     container.setLocalTranslation(position.subtract(storageArea.getWorldTranslation()));
+                    storageArea.addContainer(container);
                     break;
             }
         }
