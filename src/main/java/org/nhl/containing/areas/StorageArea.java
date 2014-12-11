@@ -41,7 +41,7 @@ public class StorageArea extends Area {
         // Add crane rails.
         Spatial craneRails = assetManager.loadModel("Models/rails/stripRails.j3o");
         for (int i = 0; i < cranes; i++) {
-            for (int j = 0; j < 23; j++) {
+            for (int j = 0; j < 22; j++) {
                 Spatial nextRail = craneRails.clone();
                 nextRail.setLocalTranslation(craneRailsXAxis, 0, craneRailsZAxis);
                 this.attachChild(nextRail);
