@@ -18,12 +18,14 @@ public class Train extends Transporter {
     private float speed = 0.8f;
     private List<Container> trainContainerList;
     private MotionPath path;
-
+    private MotionEvent motionControl;
+    
     public Train(AssetManager assetManager, int id, List<Container> trainContainerList) {
         super(id);
         this.assetManager = assetManager;
         this.trainContainerList = trainContainerList;
         initTrain();
+        initMotionPaths();
         this.rotate(new Quaternion().fromAngleAxis(FastMath.PI * 3 / 2, new Vector3f(0, 1, 0)));
     }
 
@@ -49,27 +51,34 @@ public class Train extends Transporter {
             wagonZAxis -= 15;
         }
     }
-
     /**
-     * creates waypoints and lets the train drive over them direction TRUE = the
-     * train arrives direction FALSE = the train departs
+     * Initialize motionpath and motionevent
      */
-    public void move(boolean direction) {
-        path = new MotionPath();
-        MotionEvent motionControl = new MotionEvent(this, path);
-        //train arrives
-        if (direction) {
+    private void initMotionPaths(){
+            path = new MotionPath();
+            motionControl = new MotionEvent(this, path);
+            motionControl.setSpeed(speed);
+    }
+    /**
+     * Creates waypoints and lets the vehicle arrive at it's given location
+     * @param location not used
+     */
+    @Override
+    public void arrive(int location){
+            path.clearWayPoints();
             path.addWayPoint(new Vector3f(250, 0, -180));
             path.addWayPoint(new Vector3f(-200, 0, -180));
-        } //train leaves
-        else {
+            motionControl.play();
+    }
+    /**
+     * 
+     */
+    @Override
+    public void depart(){
+            path.clearWayPoints();
             path.addWayPoint(new Vector3f(-200, 0, -180));
             path.addWayPoint(new Vector3f(250, 0, -180));
-            //this.rotate(new Quaternion().fromAngleAxis(FastMath.PI*3/2, new Vector3f(0,1,0)));
-        }
-        motionControl.setInitialDuration(10f);
-        motionControl.setSpeed(speed);
-        motionControl.play();
+            motionControl.play();
     }
      /**
      * Debug method, displays object name, speed, amount of containers and it's waypoints.
@@ -88,7 +97,8 @@ public class Train extends Transporter {
      */
     public String getWaypoints() {
         String info = "\nTrain waypoints ";
-        move(true);
+        arrive(0);
+        depart();
         for (int j = 0; j < path.getNbWayPoints(); j++) {
         info += "Waypoint " + (j+1) + ": " + path.getWayPoint(j) + " ";
         }
