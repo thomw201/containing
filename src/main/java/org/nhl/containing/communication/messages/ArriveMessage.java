@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.nhl.containing.communication;
+package org.nhl.containing.communication.messages;
 
 /**
  * Data class that holds information pertaining the arrival of a transporter.

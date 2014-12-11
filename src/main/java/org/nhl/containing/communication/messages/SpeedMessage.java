@@ -2,7 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.nhl.containing.communication;
+package org.nhl.containing.communication.messages;
+
+import org.nhl.containing.communication.messages.Message;
 
 /**
  *
