@@ -8,6 +8,7 @@ public abstract class Message {
 
     public static final int CREATE = 1;
     public static final int ARRIVE = 2;
+    public static final int SPEED = 3;
     private final int messageType;
     private int id;
 

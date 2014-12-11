@@ -62,6 +62,11 @@ public class Xml {
             return parseArriveMessage(messageTypeNodes.item(0), id);
         }
 
+        messageTypeNodes = doc.getElementsByTagName("Speed");
+        if (messageTypeNodes.getLength() > 0) {
+            return parseSpeedMessage(messageTypeNodes.item(0), id);
+        }
+
         // etc etc etc. TODO
 
         throw new IllegalArgumentException("Could not find valid tag in " + xmlMessage);
@@ -149,6 +154,10 @@ public class Xml {
             }
         }
         return new ArriveMessage(id, transporterId, depotIndex);
+    }
+
+    private static SpeedMessage parseSpeedMessage(Node speedNode, int id) {
+        return new SpeedMessage(id, Float.parseFloat(speedNode.getTextContent()));
     }
 
     /**
