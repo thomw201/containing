@@ -1,18 +1,18 @@
 package org.nhl.containing;
 
-import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
-import com.jme3.cinematic.MotionPath;
-import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
+import com.jme3.texture.Texture;
 import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
@@ -382,6 +382,15 @@ public class Simulation extends SimpleApplication {
         //schuif platform op
         platform.setLocalTranslation(150, 0, 0);
         rootNode.attachChild(platform);
+        //water
+        Box waterplatform = new Box(1000f,1f,1000f); 
+        Geometry waterGeo = new Geometry("", waterplatform); 
+        Material boxMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"); 
+        Texture waterTexture = assetManager.loadTexture("/Models/platform/water.jpg"); 
+        boxMat.setTexture("ColorMap", waterTexture); 
+        waterGeo.setLocalTranslation(150, -1, 0);
+        waterGeo.setMaterial(boxMat); 
+        rootNode.attachChild(waterGeo); 
     }
 
     private void initUserInput() {
