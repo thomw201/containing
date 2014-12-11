@@ -32,7 +32,7 @@ public class StorageArea extends Area {
 
         // Add storage cranes to the list and scene.
         for (int i = 0; i < cranes; i++) {
-            storageCranes.add(new StorageCrane(assetManager));
+            storageCranes.add(new StorageCrane(assetManager, this));
             storageCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
             this.attachChild(storageCranes.get(i));
             craneXAxis += 50;
