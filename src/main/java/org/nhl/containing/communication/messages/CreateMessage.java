@@ -1,6 +1,7 @@
-package org.nhl.containing.communication;
+package org.nhl.containing.communication.messages;
 
 import java.util.List;
+import org.nhl.containing.communication.ContainerBean;
 
 /**
  * Data class that holds information pertaining the creation of a transporter.

@@ -22,11 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.PriorityQueue;
 import javax.xml.parsers.ParserConfigurationException;
-import org.nhl.containing.communication.ArriveMessage;
+import org.nhl.containing.communication.messages.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
-import org.nhl.containing.communication.CreateMessage;
-import org.nhl.containing.communication.Message;
-import org.nhl.containing.communication.SpeedMessage;
+import org.nhl.containing.communication.messages.CreateMessage;
+import org.nhl.containing.communication.messages.Message;
+import org.nhl.containing.communication.messages.SpeedMessage;
 import org.nhl.containing.communication.Xml;
 import org.xml.sax.SAXException;
 

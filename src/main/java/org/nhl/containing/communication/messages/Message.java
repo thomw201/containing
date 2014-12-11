@@ -1,4 +1,4 @@
-package org.nhl.containing.communication;
+package org.nhl.containing.communication.messages;
 
 
 /**

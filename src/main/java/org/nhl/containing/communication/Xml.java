@@ -1,5 +1,9 @@
 package org.nhl.containing.communication;
 
+import org.nhl.containing.communication.messages.SpeedMessage;
+import org.nhl.containing.communication.messages.Message;
+import org.nhl.containing.communication.messages.CreateMessage;
+import org.nhl.containing.communication.messages.ArriveMessage;
 import org.w3c.dom.*;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

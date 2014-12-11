@@ -1,5 +1,7 @@
 package org.nhl.containing.communication;
 
+import org.nhl.containing.communication.messages.Message;
+import org.nhl.containing.communication.messages.CreateMessage;
 import org.junit.*;
 import org.junit.rules.ExpectedException;
 
