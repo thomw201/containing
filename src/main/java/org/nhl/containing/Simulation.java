@@ -323,17 +323,17 @@ public class Simulation extends SimpleApplication {
 
         // Add the StorageArea for boat containers.
         boatStorageArea = new StorageArea(assetManager, 4);
-        boatStorageArea.setLocalTranslation(-150, 0, -130);
+        boatStorageArea.setLocalTranslation(-150, 0, -120);
         rootNode.attachChild(boatStorageArea);
 
         // Add the StorageArea for train containers.
         trainStorageArea = new StorageArea(assetManager, 4);
-        trainStorageArea.setLocalTranslation(130, 0, -130);
+        trainStorageArea.setLocalTranslation(130, 0, -120);
         rootNode.attachChild(trainStorageArea);
 
         // Add the StorageArea for lorry containers.
         lorryStorageArea = new StorageArea(assetManager, 4);
-        lorryStorageArea.setLocalTranslation(380, 0, -130);
+        lorryStorageArea.setLocalTranslation(380, 0, -120);
         rootNode.attachChild(lorryStorageArea);
     }
 
