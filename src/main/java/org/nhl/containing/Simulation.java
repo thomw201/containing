@@ -26,6 +26,7 @@ import org.nhl.containing.communication.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
 import org.nhl.containing.communication.CreateMessage;
 import org.nhl.containing.communication.Message;
+import org.nhl.containing.communication.SpeedMessage;
 import org.nhl.containing.communication.Xml;
 import org.xml.sax.SAXException;
 
@@ -120,6 +121,9 @@ public class Simulation extends SimpleApplication {
             case Message.ARRIVE:
                 handleArriveMessage((ArriveMessage) message);
                 break;
+            case Message.SPEED:
+                handleSpeedMessage((SpeedMessage) message);
+                break;
             default:
                 throw new IllegalArgumentException(message.getMessageType()
                         + " is not a legal message type");
@@ -202,6 +206,11 @@ public class Simulation extends SimpleApplication {
         // create. The reason we don't want to keep the transporter in the pool,
         // is because we want a way of discerning whether a transporter can
         // actually be interacted with.
+    }
+
+    private void handleSpeedMessage(SpeedMessage message) {
+        speed = message.getSpeed();
+        sendOkMessage(message);
     }
 
     /**
