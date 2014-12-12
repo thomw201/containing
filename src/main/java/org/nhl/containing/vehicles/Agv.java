@@ -91,12 +91,10 @@ public class Agv extends Vehicle {
         return info + "\n";
     }
         /**
-         * Creates all AGV waypoints and returns the coörds
+         * Gets all created waypoints
          * @return string with the waypoints
          */
         public String getWaypoints(){
-        char[] debugarr = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'};
-        move(debugarr);
         String info = "\nAGV Waypoints: ";
         for (int j = 0; j < path.getNbWayPoints(); j++) {
         info += "Waypoint " + (j+1) + ": " + path.getWayPoint(j) + " ";

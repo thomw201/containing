@@ -161,15 +161,13 @@ public class Simulation extends SimpleApplication {
                 transporterPool.add(train);
                 break;
             case "binnenschip":
-                Boat inland = new Boat(assetManager,
-                        message.getTransporterIdentifier(),
-                        Boat.ShipSize.INLANDSHIP, containers);
+                Inlandship inland = new Inlandship(assetManager,
+                        message.getTransporterIdentifier(), containers);
                 transporterPool.add(inland);
                 break;
             case "zeeschip":
-                Boat sea = new Boat(assetManager,
-                        message.getTransporterIdentifier(),
-                        Boat.ShipSize.SEASHIP, containers);
+                Seaship sea = new Seaship(assetManager,
+                        message.getTransporterIdentifier(), containers);
                 transporterPool.add(sea);
                 break;
             default:
@@ -406,6 +404,15 @@ public class Simulation extends SimpleApplication {
                 if (name.equals("debugmode") && keyPressed) {
                     if (!debug) {
                         debug = false;
+                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(test);
+                        test.arrive(0);
+                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(test2);
+                        test2.arrive(0);
+                        Train traintest = new Train(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(traintest);
+                        traintest.arrive(0);
                         //testing train code
                         createAGVPath();
                     } else {
