@@ -7,11 +7,15 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
+import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Box;
+import com.jme3.texture.Texture;
 import java.io.IOException;
 import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
@@ -53,6 +57,8 @@ public class Simulation extends SimpleApplication {
     private long sumTime = Integer.MAX_VALUE;
     private long lastTime;
     private final static int TIME_MULTIPLIER = 200;
+    private Inlandship ship1;
+    private Inlandship ship2;
 
     public Simulation() {
         client = new Client();
@@ -74,8 +80,6 @@ public class Simulation extends SimpleApplication {
             Thread.sleep(1000);
         } catch (Throwable e) {
         }
-        //createContainers();
-        createAGVPath();
     }
 
     @Override
@@ -241,49 +245,7 @@ public class Simulation extends SimpleApplication {
      */
     private Transporter createTransporterFromMessage(Message message) {
         return null;
-    }
-
-    /**
-     * This method creates waypoints on the AGV roads and lets an AGV drive over
-     * them
-     */
-    private void createAGVPath() {
-        Agv agv = new Agv(assetManager, -1);
-        rootNode.attachChild(agv);
-        MotionPath agvPath = new MotionPath();
-        MotionEvent agvmotionControl = new MotionEvent(agv, agvPath);
-        //Create the AGV waypoints
-        //waypoint A
-        agvPath.addWayPoint(new Vector3f(580, 0, -140));
-        //waypont C
-        agvPath.addWayPoint(new Vector3f(330, 0, -140));
-        //waypoint E
-        agvPath.addWayPoint(new Vector3f(70, 0, -140));
-        //waypoint G
-        agvPath.addWayPoint(new Vector3f(-210, 0, -140));
-        //waypoint H
-        agvPath.addWayPoint(new Vector3f(-210, 0, 135));
-        //waypoint F
-        agvPath.addWayPoint(new Vector3f(70, 0, 135));
-        //waypoint D
-        agvPath.addWayPoint(new Vector3f(330, 0, 136));
-        //waypoint B
-        agvPath.addWayPoint(new Vector3f(580, 0, 135));
-
-
-        agvPath.setCurveTension(0.1f);
-        // set the speed and direction of the AGV using motioncontrol
-        agvmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        agvmotionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        agvmotionControl.setInitialDuration(10f);
-        agvmotionControl.setSpeed(1f);
-        //make the vehicles start moving
-        //agvmotionControl.setLoopMode(LoopMode.Loop);
-        agvmotionControl.play();
-        //make waypoints visible
-        //agvPath.disableDebugShape();
-    }
-    
+    } 
     /**
      * Initialises the simulation date.
      */
@@ -395,6 +357,16 @@ public class Simulation extends SimpleApplication {
         //schuif platform op
         platform.setLocalTranslation(150, 0, 0);
         rootNode.attachChild(platform);
+        //create water
+        	    //water
+        Box waterplatform = new Box(1000f,1f,1000f); 
+        Geometry waterGeo = new Geometry("", waterplatform); 
+        Material boxMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"); 
+        Texture waterTexture = assetManager.loadTexture("/Models/platform/water.jpg"); 
+        boxMat.setTexture("ColorMap", waterTexture); 
+        waterGeo.setLocalTranslation(150, -17, 0);
+        waterGeo.setMaterial(boxMat); 
+        rootNode.attachChild(waterGeo); 
     }
 
     private void initUserInput() {
@@ -403,21 +375,32 @@ public class Simulation extends SimpleApplication {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
                     if (!debug) {
-                        debug = false;
-                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(test);
-                        test.arrive(0);
-                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(test2);
-                        test2.arrive(0);
-                        Train traintest = new Train(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(traintest);
-                        traintest.arrive(0);
-                        //testing train code
-                        createAGVPath();
+                        debug = !debug;
+//                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+//                        rootNode.attachChild(test);
+//                        test.arrive(0);
+//                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+//                        rootNode.attachChild(test2);
+//                        test2.arrive(0);
+//                        Train traintest = new Train(assetManager, 0, new ArrayList());
+//                        rootNode.attachChild(traintest);
+//                        traintest.arrive(0);
+                        ship1 = new Inlandship(assetManager, 0, new ArrayList());
+                        ship2 = new Inlandship(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(ship1);
+                        rootNode.attachChild(ship2);
+                        ship1.arrive(0);
+                        Agv agvtest = new Agv(assetManager, 0);
+                        rootNode.attachChild(agvtest);
+                        char[] testarr = {'A', 'B', 'D', 'C', 'E', 'F', 'H', 'G'};
+                        agvtest.move(testarr);
+                        
+                        ship2.arrive(1);
                     } else {
-                        debug = true;
-                        //testing train code
+                        //System.out.println(ship1.getLocalTranslation());
+                        debug = !debug;
+                        ship1.depart();
+                        ship2.depart();
                     }
                 }
             }

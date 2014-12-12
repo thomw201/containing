@@ -102,7 +102,7 @@ public class Inlandship extends Transporter {
     public void depart() {
         path.clearWayPoints();
         //if x coörd = -190 this inlandship is parked at the first(main) position
-        if (this.getLocalTranslation().x == -190) {
+        if ((int)this.getLocalTranslation().x == -190) {
             path.addWayPoint(new Vector3f(-200, 0, 220));
             path.addWayPoint(new Vector3f(-115, 0, 275));
             path.addWayPoint(new Vector3f(450, 0, 290));
