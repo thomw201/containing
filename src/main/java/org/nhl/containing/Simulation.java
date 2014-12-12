@@ -1,6 +1,5 @@
 package org.nhl.containing;
 
-import com.jme3.animation.LoopMode;
 import com.jme3.app.SimpleApplication;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
@@ -19,8 +18,9 @@ import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.PriorityQueue;
 import javax.xml.parsers.ParserConfigurationException;
 import org.nhl.containing.communication.messages.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
@@ -46,18 +46,27 @@ public class Simulation extends SimpleApplication {
     private StorageArea trainStorageArea;
     private StorageArea lorryStorageArea;
     private Client client;
+    private HUD HUD;
     private boolean debug;
+    private Calendar cal;
+    private Date currentDate;
+    private long sumTime = Integer.MAX_VALUE;
+    private long lastTime;
+    private final static int TIME_MULTIPLIER = 200;
 
     public Simulation() {
         client = new Client();
-        transporterPool = new ArrayList<Transporter>();
+        transporterPool = new ArrayList<>();
     }
-
+ 
     @Override
     public void simpleInitApp() {
+        guiFont = assetManager.loadFont("Interface/Fonts/TimesNewRoman.fnt");
         initCam();
         initUserInput();
         initScene();
+        initDate();
+        HUD = new HUD(this.guiNode, guiFont);
         Thread clientThread = new Thread(client);
         clientThread.setName("ClientThread");
         clientThread.start();
@@ -72,6 +81,7 @@ public class Simulation extends SimpleApplication {
     @Override
     public void simpleUpdate(float tpf) {
         handleMessages();
+        updateDate();
     }
 
     @Override
@@ -275,7 +285,40 @@ public class Simulation extends SimpleApplication {
         //make waypoints visible
         //agvPath.disableDebugShape();
     }
-
+    
+    /**
+     * Initialises the simulation date.
+     */
+    private void initDate() {
+        cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, 2004);
+        cal.set(Calendar.MONTH, 11);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        currentDate = cal.getTime();
+        lastTime = System.currentTimeMillis();
+    }
+    
+        /**
+     * Updates the simulation date.
+     * <p/>
+     * Compares the time since the last function call to the current time. This is the delta time.
+     * The delta time is added to the simulation date, multiplied by the specified TIME_MULTIPLIER.
+     */
+    private void updateDate() {
+        long curTime = System.currentTimeMillis();
+        int deltaTime = (int) (curTime - lastTime);
+        sumTime += deltaTime;
+        cal.add(Calendar.MILLISECOND, deltaTime * TIME_MULTIPLIER);
+        currentDate = cal.getTime();
+        lastTime = curTime;
+        
+        HUD.updateDateText(currentDate);
+    }
+ 
     /**
      * Camera settings of the scene.
      */
