@@ -8,12 +8,14 @@ import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.vehicles.Agv;
+import org.nhl.containing.vehicles.Boat;
 
 public class DockingCrane extends Crane {
 
     private AssetManager assetManager;
     private Agv agv;
     private Container container;
+    private Boat boat;
     private MotionPath containerPathUp = new MotionPath();
     private MotionPath containerPathDown = new MotionPath();
     private MotionPath cranePath = new MotionPath();
@@ -23,6 +25,7 @@ public class DockingCrane extends Crane {
     private int containerPathUpCounter;
     private int containerPathDownCounter;
     private BoatArea.AreaType type;
+    private CraneDirection direction;
 
     public DockingCrane(AssetManager assetManager, BoatArea.AreaType type) {
         this.assetManager = assetManager;
@@ -41,7 +44,7 @@ public class DockingCrane extends Crane {
     }
 
     /**
-     * Let the crane move to the container's position. And Put the container on
+     * Let the crane move to the container's position. And put the container on
      * the Agv.
      *
      * @param container Request a container.
@@ -50,9 +53,30 @@ public class DockingCrane extends Crane {
     public void boatToAgv(Container container, Agv agv) {
         this.container = container;
         this.agv = agv;
-
+        this.direction = CraneDirection.BOATTOAGV;
         initWaypoints();
+        moveToContainer();
+    }
 
+    /**
+     * Let the crane move to the container's position. And put the container on
+     * the boat.
+     *
+     * @param container Request a container.
+     * @param boat Boat that needs the container.
+     */
+    public void agvToBoat(Container container, Boat boat) {
+        this.container = container;
+        this.boat = boat;
+        this.direction = CraneDirection.AGVTOBOAT;
+        initWaypoints();
+        moveToContainer();
+    }
+
+    /**
+     * Move the crane to the container.
+     */
+    private void moveToContainer() {
         cranePathCounter = cranePath.getNbWayPoints();
         cranePath.setCurveTension(0.0f);
         cranePath.enableDebugShape(assetManager, this);
@@ -68,7 +92,7 @@ public class DockingCrane extends Crane {
      * Put the container on the crane.
      */
     private void moveContainer() {
-        container.rotate(container.getWorldRotation());
+        //container.rotate(container.getWorldRotation());
         containerPathUpCounter = containerPathUp.getNbWayPoints();
         containerPathUp.setCurveTension(0.0f);
         containerPathUp.enableDebugShape(assetManager, this);
@@ -116,38 +140,97 @@ public class DockingCrane extends Crane {
     private void initWaypoints() {
         switch (type) {
             case SEASHIP:
-                cranePath.addWayPoint(getLocalTranslation());
-                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-
-                containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 0, 0));
-                containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 22, 0));
-                containerPathUp.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 22, 0));
-
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-
-                containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 22, 0));
-                containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
-
-
+                seashipWaypoints();
                 break;
+
             case INLANDSHIP:
-                cranePath.addWayPoint(getLocalTranslation());
-                cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
-
-                containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 0, 0));
-                containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 22, 0));
-                containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z), 22, 0));
-
-                newCranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
-
-                containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z), 22, 0));
-                containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z), 1, 0));
-
+                inlandshipWaypoints();
                 break;
-
         }
+    }
+
+    private void seashipWaypoints() {
+        switch (direction) {
+            case BOATTOAGV:
+                seashipToAgvWaypoints();
+                break;
+            case AGVTOBOAT:
+                agvToSeashipWaypoints();
+                break;
+        }
+    }
+
+    private void inlandshipWaypoints() {
+        switch (direction) {
+            case BOATTOAGV:
+                inlandshipToAgvWaypoints();
+                break;
+            case AGVTOBOAT:
+                agvToInlandshipWaypoints();
+                break;
+        }
+    }
+
+    //done
+    private void seashipToAgvWaypoints() {
+        cranePath.addWayPoint(getLocalTranslation());
+        cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+
+        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 0, 0));
+        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 22, 0));
+        containerPathUp.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 22, 0));
+
+        newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+        newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+
+        containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 22, 0));
+        containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
+    }
+
+    private void agvToSeashipWaypoints() {
+        cranePath.addWayPoint(getLocalTranslation());
+        cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+
+        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 1, 0));
+        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 22, 0));
+        containerPathUp.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x), 22, 0));
+
+        newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+        newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (boat.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+
+        containerPathDown.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x), 22, 0));
+        containerPathDown.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x), 0, 0));
+    }
+
+    //done
+    private void inlandshipToAgvWaypoints() {
+        cranePath.addWayPoint(getLocalTranslation());
+        cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 0, 0));
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 22, 0));
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z), 22, 0));
+
+        newCranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+        newCranePath.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+
+        containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z), 22, 0));
+        containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z), 1, 0));
+    }
+
+    private void agvToInlandshipWaypoints() {
+        cranePath.addWayPoint(getLocalTranslation());
+        cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 1, 0));
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 22, 0));
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - boat.getWorldTranslation().z), 22, 0));
+
+        newCranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+        newCranePath.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+
+        containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - boat.getWorldTranslation().z), 22, 0));
+        containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - boat.getWorldTranslation().z), 0, 0));
     }
 
     /**
@@ -182,9 +265,23 @@ public class DockingCrane extends Crane {
         }
 
         if (containerPathDownCounter == wayPointIndex + 1) {
-            detachChild(container);
-            agv.attachChild(container);
-            container.setLocalTranslation(0, 1, 0);
+            switch (direction) {
+                case BOATTOAGV:
+                    detachChild(container);
+                    agv.attachChild(container);
+                    container.setLocalTranslation(0, 1, 0);
+                    break;
+                case AGVTOBOAT:
+                    detachChild(container);
+                    boat.attachChild(container);
+                    container.setLocalTranslation(0, 0, 0);
+                    break;
+            }
         }
+    }
+
+    private enum CraneDirection {
+
+        AGVTOBOAT, BOATTOAGV
     }
 }

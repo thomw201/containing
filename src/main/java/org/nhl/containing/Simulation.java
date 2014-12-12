@@ -411,7 +411,7 @@ public class Simulation extends SimpleApplication {
         agv3.rotate(0, 0, 0);
         agv3.setLocalTranslation(-285, 0, 20);
         rootNode.attachChild(agv3);
-        boatArea.dockingCranes.get(0).boatToAgv(container2, agv3);
+        boatArea.getDockingCranes().get(0).boatToAgv(container2, agv3);
 
         //DC
         Container container5 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
@@ -423,6 +423,6 @@ public class Simulation extends SimpleApplication {
         agv5.rotate(0, (float) Math.PI / 2, 0);
         agv5.setLocalTranslation(-180, 0, 140);
         rootNode.attachChild(agv5);
-        inlandBoatArea.dockingCranes.get(0).boatToAgv(container5, agv5);
+        inlandBoatArea.getDockingCranes().get(0).boatToAgv(container5, agv5);
     }
 }

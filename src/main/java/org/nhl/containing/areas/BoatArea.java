@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class BoatArea extends Area {
 
-    public List<DockingCrane> dockingCranes = new ArrayList();
+    private List<DockingCrane> dockingCranes = new ArrayList();
     private AssetManager assetManager;
     private int craneAxis = 0;
     private int craneRailsAxis = -30;
@@ -82,7 +82,7 @@ public class BoatArea extends Area {
         INLANDSHIP, SEASHIP
     }
 
-    public List<DockingCrane> getStorageCranes() {
+    public List<DockingCrane> getDockingCranes() {
         return dockingCranes;
     }
 }
