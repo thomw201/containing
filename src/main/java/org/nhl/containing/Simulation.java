@@ -474,14 +474,17 @@ public class Simulation extends SimpleApplication {
 
         //DC
         Container container5 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
-        container5.setLocalTranslation(-200, 0, 240);
-        container5.rotate(0, (float) Math.PI / 2, 0);
-        rootNode.attachChild(container5);
-
+        container5.setLocalTranslation(0, 1, 0);
+        //container5.rotate(0, (float) Math.PI / 2, 0);
+        //rootNode.attachChild(container5);
+        Inlandship testBoat = new Inlandship(assetManager, 34, new ArrayList());
+        testBoat.setLocalTranslation(-190, 0, 220);
+        rootNode.attachChild(testBoat);
         Agv agv5 = new Agv(assetManager, -1);
         agv5.rotate(0, (float) Math.PI / 2, 0);
-        agv5.setLocalTranslation(-180, 0, 140);
+        agv5.setLocalTranslation(-180, 0, 180);
         rootNode.attachChild(agv5);
-        inlandBoatArea.getDockingCranes().get(0).boatToAgv(container5, agv5);
+        agv5.attachChild(container5);
+        inlandBoatArea.getDockingCranes().get(0).agvToBoat(container5, testBoat);
     }
 }

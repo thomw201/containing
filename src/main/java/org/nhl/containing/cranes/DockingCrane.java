@@ -4,18 +4,18 @@ import com.jme3.asset.AssetManager;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.Container;
 import org.nhl.containing.areas.BoatArea;
 import org.nhl.containing.vehicles.Agv;
-import org.nhl.containing.vehicles.Boat;
 
 public class DockingCrane extends Crane {
 
     private AssetManager assetManager;
     private Agv agv;
     private Container container;
-    private Boat boat;
+    private Node boat;
     private MotionPath containerPathUp = new MotionPath();
     private MotionPath containerPathDown = new MotionPath();
     private MotionPath cranePath = new MotionPath();
@@ -65,7 +65,7 @@ public class DockingCrane extends Crane {
      * @param container Request a container.
      * @param boat Boat that needs the container.
      */
-    public void agvToBoat(Container container, Boat boat) {
+    public void agvToBoat(Container container, Node boat) {
         this.container = container;
         this.boat = boat;
         this.direction = CraneDirection.AGVTOBOAT;
