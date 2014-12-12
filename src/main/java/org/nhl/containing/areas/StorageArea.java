@@ -6,13 +6,15 @@ import org.nhl.containing.cranes.StorageCrane;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.nhl.containing.Container;
 
 /**
  * @author Jeroen
  */
 public class StorageArea extends Area {
 
-    public List<StorageCrane> storageCranes = new ArrayList();
+    private List<StorageCrane> storageCranes = new ArrayList();
+    private List<Container> containers = new ArrayList();
     private AssetManager assetManager;
     private int craneXAxis = 0;
     private float craneRailsXAxis = 2.5f;
@@ -32,7 +34,7 @@ public class StorageArea extends Area {
 
         // Add storage cranes to the list and scene.
         for (int i = 0; i < cranes; i++) {
-            storageCranes.add(new StorageCrane(assetManager));
+            storageCranes.add(new StorageCrane(assetManager, this));
             storageCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
             this.attachChild(storageCranes.get(i));
             craneXAxis += 50;
@@ -55,5 +57,13 @@ public class StorageArea extends Area {
     
     public List<StorageCrane> getStorageCranes(){
         return storageCranes;
+    }
+    
+    public void addContainer(Container container){
+        containers.add(container);
+    }
+    
+    public void removeContainer(Container container){
+        containers.remove(container);
     }
 }
