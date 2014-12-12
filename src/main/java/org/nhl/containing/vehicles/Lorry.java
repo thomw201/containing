@@ -92,7 +92,6 @@ public class Lorry extends Transporter {
      */
     public String getWaypoints(int place) {
         String info = "\nWaypoints truck #" + place + " : ";
-        this.arrive(0);
         for (int j = 0; j < path.getNbWayPoints(); j++) {
             info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }

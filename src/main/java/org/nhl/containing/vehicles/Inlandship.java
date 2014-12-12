@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.nhl.containing.vehicles;
 
 import com.jme3.asset.AssetManager;
@@ -15,10 +11,6 @@ import com.jme3.scene.Spatial;
 import java.util.List;
 import org.nhl.containing.Container;
 
-/**
- *
- * @author Thom
- */
 public class Inlandship extends Transporter {
 
     private AssetManager assetManager;
@@ -145,8 +137,6 @@ public class Inlandship extends Transporter {
      */
     public String getWaypoints() {
         String info = "\nInlandship's waypoints ";
-        arrive(0);
-        depart();
         for (int j = 0; j < path.getNbWayPoints(); j++) {
             info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }
