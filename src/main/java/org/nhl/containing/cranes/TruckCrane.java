@@ -7,20 +7,23 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import org.nhl.containing.vehicles.Agv;
+import org.nhl.containing.vehicles.Lorry;
 
 public class TruckCrane extends Crane {
 
     private AssetManager assetManager;
     private Agv agv;
+    private Lorry lorry;
     private Spatial container;
-    private MotionPath containerPathUp;
-    private MotionPath containerPathDown;
-    private MotionPath cranePath;
-    private MotionPath newCranePath;
+    private MotionPath containerPathUp = new MotionPath();
+    private MotionPath containerPathDown = new MotionPath();
+    private MotionPath cranePath = new MotionPath();
+    private MotionPath newCranePath = new MotionPath();
     private int cranePathCounter;
     private int newCranePathCounter;
     private int containerPathUpCounter;
     private int containerPathDownCounter;
+    private CraneDirection direction;
 
     public TruckCrane(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -38,7 +41,7 @@ public class TruckCrane extends Crane {
     }
 
     /**
-     * Let the crane move to the container's position. And Put the container on
+     * Let the crane move to the container's position. And put the container on
      * the Agv.
      *
      * @param container Request a container.
@@ -47,10 +50,30 @@ public class TruckCrane extends Crane {
     public void truckToAgv(Spatial container, Agv agv) {
         this.container = container;
         this.agv = agv;
+        this.direction = CraneDirection.LORRYTOAGV;
+        initWaypoints();
+        moveToContainer();
+    }
 
-        cranePath = new MotionPath();
-        cranePath.addWayPoint(getLocalTranslation());
-        cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+    /**
+     * Let the crane move to the container's position. And put the container on
+     * the lorry.
+     *
+     * @param container
+     * @param lorry
+     */
+    public void agvToTruck(Spatial container, Lorry lorry) {
+        this.container = container;
+        this.lorry = lorry;
+        this.direction = CraneDirection.AGVTOLORRY;
+        initWaypoints();
+        moveToContainer();
+    }
+
+    /**
+     * Move the crane to the container.
+     */
+    private void moveToContainer() {
         cranePathCounter = cranePath.getNbWayPoints();
         cranePath.setCurveTension(0.0f);
         cranePath.enableDebugShape(assetManager, this);
@@ -67,9 +90,7 @@ public class TruckCrane extends Crane {
      */
     private void moveContainer() {
         container.rotate(container.getWorldRotation());
-        containerPathUp = new MotionPath();
-        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 1, 0));
-        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 7, 0));
+
         containerPathUpCounter = containerPathUp.getNbWayPoints();
         containerPathUp.setCurveTension(0.0f);
         containerPathUp.enableDebugShape(assetManager, this);
@@ -82,12 +103,9 @@ public class TruckCrane extends Crane {
     }
 
     /**
-     * Move back to the Agv.
+     * Move back to the vehicle.
      */
-    private void createPathtoAgv() {
-        newCranePath = new MotionPath();
-        newCranePath.addWayPoint(getLocalTranslation());
-        newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+    private void createPathToVehicle() {
         newCranePathCounter = newCranePath.getNbWayPoints();
         newCranePath.setCurveTension(0.0f);
         newCranePath.enableDebugShape(assetManager, this);
@@ -99,13 +117,11 @@ public class TruckCrane extends Crane {
     }
 
     /**
-     * Put the container on the Agv.
+     * Put the container on the vehicle.
      */
-    private void putContainerOnAgv() {
+    private void putContainerOnVehicle() {
         container.rotate(container.getWorldRotation());
-        containerPathDown = new MotionPath();
-        containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
-        containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
+
         containerPathDownCounter = containerPathDown.getNbWayPoints();
         containerPathDown.setCurveTension(0.0f);
         containerPathDown.enableDebugShape(assetManager, this);
@@ -116,6 +132,36 @@ public class TruckCrane extends Crane {
         motionControl.play();
 
         motionControl.dispose();
+    }
+
+    /**
+     * Initialize the waypoints depending on the requested direction.
+     */
+    private void initWaypoints() {
+        switch (direction) {
+            case AGVTOLORRY:
+                cranePath.addWayPoint(getLocalTranslation());
+                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 1, 0));
+                containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 7, 0));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11));
+                containerPathDown.addWayPoint(new Vector3f((lorry.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
+                containerPathDown.addWayPoint(new Vector3f((lorry.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
+
+                break;
+            case LORRYTOAGV:
+                cranePath.addWayPoint(getLocalTranslation());
+                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 1, 0));
+                containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 7, 0));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
+                containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
+                break;
+
+        }
     }
 
     /**
@@ -132,24 +178,41 @@ public class TruckCrane extends Crane {
             wayPointIndex = 0;
             cranePathCounter = 0;
             this.attachChild(container);
+
         }
 
         if (containerPathUpCounter == wayPointIndex + 1) {
-            createPathtoAgv();
+            createPathToVehicle();
             wayPointIndex = 0;
             containerPathUpCounter = 0;
+
         }
 
         if (newCranePathCounter == wayPointIndex + 1) {
-            putContainerOnAgv();
+            putContainerOnVehicle();
             wayPointIndex = 0;
             newCranePathCounter = 0;
         }
 
         if (containerPathDownCounter == wayPointIndex + 1) {
-            detachChild(container);
-            agv.attachChild(container);
-            container.setLocalTranslation(0, 1, 0);
+            switch (direction) {
+                case LORRYTOAGV:
+                    detachChild(container);
+                    agv.attachChild(container);
+                    container.setLocalTranslation(0, 1, 0);
+                    break;
+                case AGVTOLORRY:
+                    detachChild(container);
+                    lorry.attachChild(container);
+                    container.setLocalTranslation(0, 1, 11);
+                    break;
+            }
+
         }
+    }
+
+    private enum CraneDirection {
+
+        AGVTOLORRY, LORRYTOAGV
     }
 }
