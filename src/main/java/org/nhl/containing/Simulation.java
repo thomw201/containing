@@ -356,9 +356,9 @@ public class Simulation extends SimpleApplication {
         // Platform for the scene.
         Spatial platform = assetManager.loadModel("Models/platform/platform.j3o");
         //vergroot platform
-        platform.scale(30, 1, 20);
+        platform.scale(30, 45, 20);
         //schuif platform op
-        platform.setLocalTranslation(150, 0, 0);
+        platform.setLocalTranslation(150, -9, 0);
         rootNode.attachChild(platform);
         //create water
         	    //water
