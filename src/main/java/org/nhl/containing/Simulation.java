@@ -1,21 +1,19 @@
 package org.nhl.containing;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.cinematic.MotionPath;
-import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
+import com.jme3.util.SkyFactory;
 import java.io.IOException;
 import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
@@ -293,11 +291,16 @@ public class Simulation extends SimpleApplication {
      */
     private void initScene() {
         initLighting();
+        initSky();
         initAreas();
         initPlatform();
         //testMethodCranes();
     }
 
+    private void initSky(){
+        rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Skybox/Skybox.dds", false));
+    }
+    
     private void initLighting() {
         // Light pointing diagonal from the top right to the bottom left.
         DirectionalLight light = new DirectionalLight();
