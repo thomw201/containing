@@ -42,7 +42,6 @@ public class Agv extends Vehicle {
         // set the speed and direction of the AGV using motioncontrol
         motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        motionControl.setSpeed(speed);
     }
 
     /**
@@ -51,8 +50,6 @@ public class Agv extends Vehicle {
      * @param path character arraylist filled with the waypoints
      */
     public void move(char[] route) {
-
-
         for (char waypoint : route) {
             switch (waypoint) {
                 case 'A':
@@ -79,6 +76,21 @@ public class Agv extends Vehicle {
                 case 'H':
                     path.addWayPoint(new Vector3f(-210, 0, 135));
                     break;
+                case 'I':
+                    path.addWayPoint(new Vector3f(60, 0, -171));
+                    path.addWayPoint(new Vector3f(30, 0, -171));
+                    break;
+                //Enter seaship path
+                case 'J':
+                    path.addWayPoint(new Vector3f(-240, 0, -150));
+                    path.addWayPoint(new Vector3f(-283, 0, -150));
+                    break;
+                //Enter inlandship path
+                case 'K':
+                    path.addWayPoint(new Vector3f(-230, 0, 162));
+                    path.addWayPoint(new Vector3f(-285, 0, 162));
+                    path.addWayPoint(new Vector3f(-285, 0, 177));
+                    break;
             }
         }
         path.setCurveTension(0.1f);
@@ -86,15 +98,73 @@ public class Agv extends Vehicle {
     }
 
     /**
-     * Makes the agv park on the trainplatform can be used from waypoint I
+     * Makes the agv park on the trainplatform AGV should be at location I
      *
      * @param location the parking place
      */
     public void parkAtTrainPlatform(int location) {
         path.clearWayPoints();
+        path.addWayPoint(new Vector3f(30, 0, -171));
         path.addWayPoint(new Vector3f(-175 + (20 * location), 0, -172));
         path.addWayPoint(new Vector3f(-188 + (20 * location), 0, -176));
         path.addWayPoint(new Vector3f(-190 + (20 * location), 0, -176));
+        path.setCurveTension(0.3f);
+        motionControl.play();
+    }
+
+    /**
+     * Makes the agv park on the seashipplatform AGV should be at location J
+     *
+     * @param location the parking place
+     */
+    public void parkAtSeashipPlatform(int location) {
+        path.clearWayPoints();
+        path.addWayPoint(new Vector3f(-284, 0, -184));
+        path.addWayPoint(new Vector3f(-284, 0, 80 - (20 * location)));
+        path.addWayPoint(new Vector3f(-289, 0, 135 - (20 * location)));
+        path.setCurveTension(0.3f);
+        motionControl.play();
+    }
+
+    /**
+     * Makes the agv park on the inlandshipplatform the AGV should be at
+     * location K
+     *
+     * @param location the parking place
+     */
+    public void parkAtInlandshipPlatform(int location) {
+        path.clearWayPoints();
+        path.addWayPoint(new Vector3f(-285, 0, 177));
+        path.addWayPoint(new Vector3f(130 - (20 * location), 0, 177));
+        path.addWayPoint(new Vector3f(145 - (20 * location), 0, 183));
+        path.addWayPoint(new Vector3f(147 - (20 * location), 0, 183));
+        path.setCurveTension(0.1f);
+        motionControl.play();
+    }
+
+    /**
+     * Method for making a parked AGV leave the Seashipplatform
+     */
+    public void leaveSeashipPlatform() {
+        path.clearWayPoints();
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x + 7, 0, this.getWorldTranslation().z + 5));
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x + 7, 0, 156));
+        path.addWayPoint(new Vector3f(-205, 0, 156));
+        path.setCurveTension(0.3f);
+        motionControl.play();
+    }
+
+    /**
+     * Method for making a parked AGV leave the inlandship platform
+     */
+    public void leaveInlandshipPlatform() {
+        path.clearWayPoints();
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x+15, 0, this.getWorldTranslation().z-7));
+        path.addWayPoint(new Vector3f(180, 0, 177));
+        path.addWayPoint(new Vector3f(180, 0, 140));
+        path.setCurveTension(0.1f);
         motionControl.play();
     }
 
