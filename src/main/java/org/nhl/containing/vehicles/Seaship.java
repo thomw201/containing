@@ -10,10 +10,6 @@ import com.jme3.scene.Spatial;
 import java.util.List;
 import org.nhl.containing.Container;
 
-/**
- *
- * @author Thom
- */
 public class Seaship extends Transporter {
 
     private AssetManager assetManager;
@@ -24,6 +20,10 @@ public class Seaship extends Transporter {
     private final int zexAs = -23;
     private final int zeyAs = 0;
     private final int zezAs = 160;
+    private int containerCounter = 0;
+    private float x  = -23;
+    private float y = 0;
+    private float z = 160;
     private Spatial boat;
     private MotionPath path;
     private MotionEvent motionControl;
@@ -38,7 +38,7 @@ public class Seaship extends Transporter {
     /**
      * Initialize a boat.
      */
-    public void initSeaship() {
+    private void initSeaship() {
         try {
             // Load a model.
             boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
@@ -114,5 +114,27 @@ public class Seaship extends Transporter {
             info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }
         return info + "\n";
+    }
+    
+    
+    
+    /**
+     * Get the next empty spot on the ship.
+     * @return Vector of next empty location
+     */
+    public Vector3f getNextSpot(){
+        x += 2.5f;
+        if(x >= 22){
+         x = -20.5f;
+         z -= 13.5f;
+        }
+        if(z <= -137){
+            x = -20.5f;
+            z = 160;
+            y += 2.9f;
+        }
+        containerCounter++;
+        return new Vector3f(x,y,z);
+        
     }
 }

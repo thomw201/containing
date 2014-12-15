@@ -13,6 +13,7 @@ import org.nhl.containing.Container;
 
 public class Inlandship extends Transporter {
 
+    public int containerCounter = 0;
     private AssetManager assetManager;
     private float speed = 0.5f;
     private List<Container> containerList;
@@ -20,6 +21,9 @@ public class Inlandship extends Transporter {
     private Spatial boat;
     private MotionPath path;
     private MotionEvent motionControl;
+    private float x  = -11.5f;
+    private float y = 0;
+    private float z = 104;
 
     public Inlandship(AssetManager assetManager, int id, List<Container> containerList) {
         super(id);
@@ -32,7 +36,7 @@ public class Inlandship extends Transporter {
     /**
      * Initialize the inlandship
      */
-    public void initInlandship() {
+    private void initInlandship() {
         try {
             // Load a model.
             boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
@@ -141,5 +145,25 @@ public class Inlandship extends Transporter {
             info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }
         return info + "\n";
+    }
+
+    /**
+     * Get the next empty spot on the ship.
+     * @return Vector of next empty location
+     */
+    public Vector3f getNextSpot(){
+        x += 2.5f;
+        if(x >= 11){
+         x = -9f;
+         z -= 13.5f;
+        }
+        if(z <= -85){
+            x = -9;
+            z = 104;
+            y += 2.9f;
+        }
+        containerCounter++;
+        return new Vector3f(x,y,z);
+        
     }
 }
