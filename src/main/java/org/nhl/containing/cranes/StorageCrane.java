@@ -271,6 +271,7 @@ public class StorageCrane extends Crane {
             detachChild(container);
             agv.attachChild(container);
             container.setLocalTranslation(0, 1, 0);
+            resetCrane();
             setArrived(true);
      }
     }

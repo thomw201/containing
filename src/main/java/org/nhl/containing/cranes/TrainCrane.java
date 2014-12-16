@@ -263,13 +263,13 @@ public class TrainCrane extends Crane {
             returnToStart();
 
             container.setLocalTranslation(0, 1, 0);
-            setArrived(true);
 
         }
 
         if (cranePathBackCounter == wayPointIndex + 1) {
             wayPointIndex = 0;
             resetCrane();
+            setArrived(true);
         }
     }
 
