@@ -62,7 +62,7 @@ public class Simulation extends SimpleApplication {
         client = new Client();
         transporterPool = new ArrayList<>();
     }
- 
+
     @Override
     public void simpleInitApp() {
         guiFont = assetManager.loadFont("Interface/Fonts/TimesNewRoman.fnt");
@@ -243,7 +243,8 @@ public class Simulation extends SimpleApplication {
      */
     private Transporter createTransporterFromMessage(Message message) {
         return null;
-    } 
+    }
+
     /**
      * Initialises the simulation date.
      */
@@ -259,12 +260,13 @@ public class Simulation extends SimpleApplication {
         currentDate = cal.getTime();
         lastTime = System.currentTimeMillis();
     }
-    
-        /**
+
+    /**
      * Updates the simulation date.
      * <p/>
-     * Compares the time since the last function call to the current time. This is the delta time.
-     * The delta time is added to the simulation date, multiplied by the specified TIME_MULTIPLIER.
+     * Compares the time since the last function call to the current time. This
+     * is the delta time. The delta time is added to the simulation date,
+     * multiplied by the specified TIME_MULTIPLIER.
      */
     private void updateDate() {
         long curTime = System.currentTimeMillis();
@@ -273,10 +275,10 @@ public class Simulation extends SimpleApplication {
         cal.add(Calendar.MILLISECOND, deltaTime * TIME_MULTIPLIER);
         currentDate = cal.getTime();
         lastTime = curTime;
-        
+
         HUD.updateDateText(currentDate);
     }
- 
+
     /**
      * Camera settings of the scene.
      */
@@ -294,13 +296,16 @@ public class Simulation extends SimpleApplication {
         initSky();
         initAreas();
         initPlatform();
+        initAgvLorry();
+        initAgvTrain();
+        initAgvShip();
         //testMethodCranes();
     }
 
-    private void initSky(){
+    private void initSky() {
         rootNode.attachChild(SkyFactory.createSky(assetManager, "Textures/Skybox/Skybox.dds", false));
     }
-    
+
     private void initLighting() {
         // Light pointing diagonal from the top right to the bottom left.
         DirectionalLight light = new DirectionalLight();
@@ -361,15 +366,15 @@ public class Simulation extends SimpleApplication {
         platform.setLocalTranslation(150, -9, 0);
         rootNode.attachChild(platform);
         //create water
-        	    //water
-        Box waterplatform = new Box(1000f,1f,1000f); 
-        Geometry waterGeo = new Geometry("", waterplatform); 
-        Material boxMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md"); 
-        Texture waterTexture = assetManager.loadTexture("/Models/platform/water.jpg"); 
-        boxMat.setTexture("ColorMap", waterTexture); 
+        //water
+        Box waterplatform = new Box(1000f, 1f, 1000f);
+        Geometry waterGeo = new Geometry("", waterplatform);
+        Material boxMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
+        Texture waterTexture = assetManager.loadTexture("/Models/platform/water.jpg");
+        boxMat.setTexture("ColorMap", waterTexture);
         waterGeo.setLocalTranslation(150, -17, 0);
-        waterGeo.setMaterial(boxMat); 
-        rootNode.attachChild(waterGeo); 
+        waterGeo.setMaterial(boxMat);
+        rootNode.attachChild(waterGeo);
     }
 
     private void initUserInput() {
@@ -397,7 +402,7 @@ public class Simulation extends SimpleApplication {
                         rootNode.attachChild(agvtest);
                         char[] testarr = {'A', 'B', 'D', 'C', 'E', 'F', 'H', 'G'};
                         agvtest.move(testarr);
-                        
+
                         ship2.arrive(1);
                     } else {
                         //System.out.println(ship1.getLocalTranslation());
@@ -409,6 +414,45 @@ public class Simulation extends SimpleApplication {
             }
         };
         inputManager.addListener(acl, "debugmode");
+    }
+
+    private void initAgvShip() {
+        int agvStartPoint = -167;
+        for (int i = 1; i < 29; i++) {
+            if (i % 7 != 0) {
+                Agv agv = new Agv(assetManager, i);
+                agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
+                rootNode.attachChild(agv);
+            } else {
+                agvStartPoint += 17;
+            }
+        }
+    }
+
+    private void initAgvTrain() {
+        int agvStartPoint = -18;
+        for (int i = 29; i < 57; i++) {
+            if (i % 7 != 0) {
+                Agv agv = new Agv(assetManager, i);
+                agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
+                rootNode.attachChild(agv);
+            } else {
+                agvStartPoint += 17;
+            }
+        }
+    }
+
+    private void initAgvLorry() {
+        int agvStartPoint = 100;
+        for (int i = 57; i < 85; i++) {
+            if (i % 7 != 0) {
+                Agv agv = new Agv(assetManager, i);
+                agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
+                rootNode.attachChild(agv);
+            } else {
+                agvStartPoint += 17;
+            }
+        }
     }
 
     /**
@@ -437,7 +481,7 @@ public class Simulation extends SimpleApplication {
         Container container1 = new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0);
         container1.setLocalTranslation(0, 1, 0);
         agv2.attachChild(container1);
-        trainStorageArea.getStorageCranes().get(0).agvToStorage(container1, new Vector3f(120,0,15));
+        trainStorageArea.getStorageCranes().get(0).agvToStorage(container1, new Vector3f(120, 0, 15));
         //trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
         //TruckCrane
         Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
