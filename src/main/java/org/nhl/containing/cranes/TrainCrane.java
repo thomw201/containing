@@ -153,6 +153,9 @@ public class TrainCrane extends Crane {
 
                 containerPathDown.addWayPoint(new Vector3f(0, 5, 0));
                 containerPathDown.addWayPoint(new Vector3f(0, 1, 0));
+                
+                cranePathBack.addWayPoint(new Vector3f((wagon.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
+                cranePathBack.addWayPoint(getLocalTranslation());
                 break;
 
             case TRAINTOAGV:
@@ -168,6 +171,9 @@ public class TrainCrane extends Crane {
 
                 containerPathDown.addWayPoint(new Vector3f(0, 5, 6));
                 containerPathDown.addWayPoint(new Vector3f(0, 1, 6));
+                
+                cranePathBack.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
+                cranePathBack.addWayPoint(getLocalTranslation());
                 break;
         }
     }
