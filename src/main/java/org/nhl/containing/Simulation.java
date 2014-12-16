@@ -47,6 +47,7 @@ public class Simulation extends SimpleApplication {
     private StorageArea boatStorageArea;
     private StorageArea trainStorageArea;
     private StorageArea lorryStorageArea;
+    private List<Agv> agvList;
     private Client client;
     private HUD HUD;
     private boolean debug;
@@ -61,6 +62,7 @@ public class Simulation extends SimpleApplication {
     public Simulation() {
         client = new Client();
         transporterPool = new ArrayList<>();
+        agvList = new ArrayList<>();
     }
 
     @Override
@@ -298,7 +300,7 @@ public class Simulation extends SimpleApplication {
         initPlatform();
         initAgvLorry();
         initAgvTrain();
-        initAgvShip();
+        initAgvShip();        
         //testMethodCranes();
     }
 
@@ -415,6 +417,9 @@ public class Simulation extends SimpleApplication {
         };
         inputManager.addListener(acl, "debugmode");
     }
+    /*
+     * Spawn avg on ship storage deck
+     */
 
     private void initAgvShip() {
         int agvStartPoint = -167;
@@ -423,11 +428,15 @@ public class Simulation extends SimpleApplication {
                 Agv agv = new Agv(assetManager, i);
                 agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
                 rootNode.attachChild(agv);
+                agvList.add(agv);
             } else {
                 agvStartPoint += 17;
             }
         }
     }
+    /*
+     * Spawn avg on train storage deck
+     */
 
     private void initAgvTrain() {
         int agvStartPoint = -18;
@@ -436,11 +445,15 @@ public class Simulation extends SimpleApplication {
                 Agv agv = new Agv(assetManager, i);
                 agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
                 rootNode.attachChild(agv);
+                agvList.add(agv);
             } else {
                 agvStartPoint += 17;
             }
         }
     }
+    /*
+     * Spawn avg on lorry storage deck
+     */
 
     private void initAgvLorry() {
         int agvStartPoint = 100;
@@ -449,6 +462,7 @@ public class Simulation extends SimpleApplication {
                 Agv agv = new Agv(assetManager, i);
                 agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
                 rootNode.attachChild(agv);
+                agvList.add(agv);
             } else {
                 agvStartPoint += 17;
             }
