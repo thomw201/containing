@@ -32,6 +32,7 @@ public class StorageCrane extends Crane {
     public StorageCrane(AssetManager assetManager, StorageArea storageArea) {
         this.assetManager = assetManager;
         this.storageArea = storageArea;
+        this.name = "StorageCrane";
         initStorageCrane();
     }
 
