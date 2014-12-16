@@ -19,10 +19,12 @@ public class TruckCrane extends Crane {
     private MotionPath containerPathDown = new MotionPath();
     private MotionPath cranePath = new MotionPath();
     private MotionPath newCranePath = new MotionPath();
+    private MotionPath cranePathBack = new MotionPath();
     private int cranePathCounter;
     private int newCranePathCounter;
     private int containerPathUpCounter;
     private int containerPathDownCounter;
+    private int cranePathBackCounter;
     private CraneDirection direction;
 
     public TruckCrane(AssetManager assetManager) {
@@ -148,7 +150,8 @@ public class TruckCrane extends Crane {
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11));
                 containerPathDown.addWayPoint(new Vector3f((lorry.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
                 containerPathDown.addWayPoint(new Vector3f((lorry.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
-
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11));
+                cranePathBack.addWayPoint(getLocalTranslation());
                 break;
             case LORRYTOAGV:
                 cranePath.addWayPoint(getLocalTranslation());
@@ -159,9 +162,46 @@ public class TruckCrane extends Crane {
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
                 containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
                 containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePathBack.addWayPoint(getLocalTranslation());
                 break;
 
         }
+    }
+    
+    /**
+     * Move back to the start location.
+     */
+    private void returnToStart() {
+        cranePathBackCounter = cranePathBack.getNbWayPoints();
+        cranePathBack.setCurveTension(0.0f);
+        cranePathBack.enableDebugShape(assetManager, this);
+        cranePathBack.addListener(this);
+        MotionEvent motionControl = new MotionEvent(this, cranePathBack);
+        motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.play();
+        motionControl.dispose();
+    }
+    
+    /**
+     * Completely reset the crane.
+     */
+    private void resetCrane() {
+            containerPathUp.clearWayPoints();
+            containerPathDown.clearWayPoints();
+            cranePath.clearWayPoints();
+            newCranePath.clearWayPoints();
+            cranePathBack.clearWayPoints();
+            cranePathCounter = 0;
+            newCranePathCounter = 0;
+            containerPathUpCounter = 0;
+            containerPathDownCounter = 0;
+            cranePathBackCounter = 0;
+            containerPathUp = new MotionPath();
+            containerPathDown = new MotionPath();
+            cranePath = new MotionPath();
+            newCranePath = new MotionPath();
+            cranePathBack = new MotionPath();
     }
 
     /**
@@ -207,7 +247,14 @@ public class TruckCrane extends Crane {
                     container.setLocalTranslation(0, 1, 11);
                     break;
             }
-
+            containerPathDownCounter = 0;
+            wayPointIndex = 0;
+            returnToStart();
+        }
+        
+        if (cranePathBackCounter == wayPointIndex + 1) {
+            wayPointIndex = 0;
+            resetCrane();
         }
     }
 
