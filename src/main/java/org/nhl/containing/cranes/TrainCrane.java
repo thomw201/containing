@@ -6,8 +6,8 @@ import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import org.nhl.containing.Container;
 import org.nhl.containing.vehicles.Agv;
 
 public class TrainCrane extends Crane {
@@ -15,9 +15,17 @@ public class TrainCrane extends Crane {
     private static final Quaternion YAW090 = new Quaternion().fromAngleAxis(FastMath.PI / 2, new Vector3f(0, 1, 0));
     private AssetManager assetManager;
     private Agv agv;
-    private Container container;
-    private MotionPath containerPath;
-    private MotionPath cranePath;
+    private Node wagon;
+    private Spatial container;
+    private MotionPath containerPathUp = new MotionPath();
+    private MotionPath containerPathDown = new MotionPath();
+    private MotionPath cranePath = new MotionPath();
+    private MotionPath newCranePath = new MotionPath();
+    private int cranePathCounter;
+    private int newCranePathCounter;
+    private int containerPathUpCounter;
+    private int containerPathDownCounter;
+    private CraneDirection direction;
 
     public TrainCrane(AssetManager assetManager) {
         this.assetManager = assetManager;
@@ -42,15 +50,34 @@ public class TrainCrane extends Crane {
      * @param container Request a container.
      * @param agv Agv that needs the container.
      */
-    public void trainToAgv(Container container, Agv agv) {
-
+    public void trainToAgv(Spatial container, Agv agv) {
         this.container = container;
         this.agv = agv;
+        this.direction = CraneDirection.TRAINTOAGV;
+        initWaypoints();
+        moveToContainer();
+    }
 
-        // Crane movement.
-        cranePath = new MotionPath();
-        cranePath.addWayPoint(getLocalTranslation());
-        cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, 0));
+    /**
+     * Let the crane move to the container's posisition. And put the container
+     * on the train.
+     *
+     * @param container Request a container.
+     * @param wagon Wagon that needs the container.
+     */
+    public void agvToTrain(Spatial container, Node wagon) {
+        this.container = container;
+        this.wagon = wagon;
+        this.direction = CraneDirection.AGVTOTRAIN;
+        initWaypoints();
+        moveToContainer();
+    }
+
+    /**
+     * Move the crane to the container.
+     */
+    private void moveToContainer() {
+        cranePathCounter = cranePath.getNbWayPoints();
         cranePath.setCurveTension(0.0f);
         cranePath.enableDebugShape(assetManager, this);
         cranePath.addListener(this);
@@ -62,43 +89,136 @@ public class TrainCrane extends Crane {
     }
 
     /**
-     * Move a container to the Agv.
+     * Put the container on the crane.
      */
     private void moveContainer() {
         attachChild(container);
         container.rotate(0, (float) Math.PI / 2, 0);
-        containerPath = new MotionPath();
-        containerPath.addWayPoint(new Vector3f(0, 1, 0));
-        containerPath.addWayPoint(new Vector3f(0, 5, 0));
-        containerPath.addWayPoint(new Vector3f(0, 5, 6));
-        containerPath.addWayPoint(new Vector3f(0, 1, 6));
-        containerPath.setCurveTension(0.0f);
-        containerPath.enableDebugShape(assetManager, this);
-        containerPath.addListener(this);
-        
-        MotionEvent motionControl = new MotionEvent(getChild(2), containerPath);
+
+        containerPathUpCounter = containerPathUp.getNbWayPoints();
+        containerPathUp.setCurveTension(0.0f);
+        containerPathUp.enableDebugShape(assetManager, this);
+        containerPathUp.addListener(this);
+
+        MotionEvent motionControl = new MotionEvent(getChild(2), containerPathUp);
         motionControl.setDirectionType(MotionEvent.Direction.None);
         motionControl.play();
     }
 
     /**
+     * Move back to the vehicle.
+     */
+    private void createPathToVehicle() {
+        newCranePathCounter = newCranePath.getNbWayPoints();
+        newCranePath.setCurveTension(0.0f);
+        newCranePath.enableDebugShape(assetManager, this);
+        newCranePath.addListener(this);
+        MotionEvent motionControl = new MotionEvent(this, newCranePath);
+        motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.play();
+        motionControl.dispose();
+    }
+
+    /**
+     * Put the container on the vehicle.
+     */
+    private void putContainerOnVehicle() {
+        containerPathDownCounter = containerPathDown.getNbWayPoints();
+        containerPathDown.setCurveTension(0.0f);
+        containerPathDown.enableDebugShape(assetManager, this);
+        containerPathDown.addListener(this);
+        MotionEvent motionControl = new MotionEvent(container, containerPathDown);
+        motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.play();
+        motionControl.dispose();
+    }
+
+    /**
+     * Initialize the waypoints depending on the requested direction.
+     */
+    private void initWaypoints() {
+        switch (direction) {
+            case AGVTOTRAIN:
+                cranePath.addWayPoint(getLocalTranslation());
+                cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, 0));
+
+                containerPathUp.addWayPoint(new Vector3f(0, 1, 6));
+                containerPathUp.addWayPoint(new Vector3f(0, 5, 6));
+                containerPathUp.addWayPoint(new Vector3f(0, 5, 0));
+
+                newCranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f((wagon.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
+
+                containerPathDown.addWayPoint(new Vector3f(0, 5, 0));
+                containerPathDown.addWayPoint(new Vector3f(0, 1, 0));
+                break;
+
+            case TRAINTOAGV:
+                cranePath.addWayPoint(getLocalTranslation());
+                cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, 0));
+
+                containerPathUp.addWayPoint(new Vector3f(0, 1, 0));
+                containerPathUp.addWayPoint(new Vector3f(0, 5, 0));
+                containerPathUp.addWayPoint(new Vector3f(0, 5, 6));
+
+                newCranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x, 0, getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
+
+                containerPathDown.addWayPoint(new Vector3f(0, 5, 6));
+                containerPathDown.addWayPoint(new Vector3f(0, 1, 6));
+                break;
+        }
+    }
+
+    /**
      * Method gets automatically called everytime a waypoint is reached.
+     *
      * @param motionControl motioncontrol of the path.
      * @param wayPointIndex Index of the current waypoint.
      */
     @Override
     public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
-        if (cranePath.getNbWayPoints() == wayPointIndex + 1) {
+        if (cranePathCounter == wayPointIndex + 1) {
             cranePath.clearWayPoints();
             moveContainer();
+            wayPointIndex = 0;
+            cranePathCounter = 0;
         }
 
-        if (containerPath.getNbWayPoints() == wayPointIndex + 1) {
-            detachChild(getChild(1));
-            agv.attachChild(container);
-            container.rotate(0, (float) Math.PI / 2, 0);
-            container.setLocalTranslation(0, 1, 0);
+        if (containerPathUpCounter == wayPointIndex + 1) {
+            createPathToVehicle();
+            wayPointIndex = 0;
+            containerPathUpCounter = 0;
         }
-        
+
+        if (newCranePathCounter == wayPointIndex + 1) {
+            putContainerOnVehicle();
+            wayPointIndex = 0;
+            newCranePathCounter = 0;
+        }
+
+        if (containerPathDownCounter == wayPointIndex + 1) {
+            switch (direction) {
+                case TRAINTOAGV:
+                    detachChild(container);
+                    agv.attachChild(container);
+                    container.setLocalTranslation(0, 1, 0);
+                    break;
+                case AGVTOTRAIN:
+                    detachChild(container);
+                    wagon.attachChild(container);
+                    container.setLocalTranslation(0, 1, 0);
+                    break;
+            }
+
+            container.rotate(0, (float) Math.PI / 2, 0);
+            wayPointIndex = 0;
+            containerPathDownCounter = 0;
+        }
+    }
+
+    private enum CraneDirection {
+
+        AGVTOTRAIN, TRAINTOAGV
     }
 }

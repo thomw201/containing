@@ -7,9 +7,9 @@ import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import org.nhl.containing.Container;
-
+import java.util.ArrayList;
 import java.util.List;
+import org.nhl.containing.Container;
 
 public class Train extends Transporter {
 
@@ -17,6 +17,7 @@ public class Train extends Transporter {
     private int wagonZAxis = -11;
     private float speed = 0.8f;
     private List<Container> trainContainerList;
+    private ArrayList<Node> trainWagons = new ArrayList();
     private MotionPath path;
     private MotionEvent motionControl;
     
@@ -32,7 +33,7 @@ public class Train extends Transporter {
     /**
      * Initialize a train.
      */
-    public void initTrain() {
+    private void initTrain() {
         // Load a model.
         Node train = (Node)assetManager.loadModel("Models/low/train/train.j3o");
         this.attachChild(train);
@@ -42,12 +43,11 @@ public class Train extends Transporter {
 
         for (int i = 0; i < trainContainerList.size(); i++) {
             Node nextWagon = (Node) wagon.clone();
-            nextWagon.setLocalTranslation(0, 0, wagonZAxis);
+            trainWagons.add(nextWagon);
+            trainWagons.get(i).setLocalTranslation(0, 0, wagonZAxis);
             trainContainerList.get(i).setLocalTranslation(0, 1, 0);
-            nextWagon.attachChild(trainContainerList.get(i));
-
-            this.attachChild(nextWagon);
-
+            trainWagons.get(i).attachChild(trainContainerList.get(i));
+            this.attachChild(trainWagons.get(i));
             wagonZAxis -= 15;
         }
     }
@@ -101,5 +101,9 @@ public class Train extends Transporter {
         info += "Waypoint " + (j+1) + ": " + path.getWayPoint(j) + " ";
         }
         return info + "\n";
+    }
+    
+    public ArrayList<Node> getTrainWagons(){
+        return trainWagons;
     }
 }
