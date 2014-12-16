@@ -6,14 +6,18 @@ public class CraneMessage extends Message{
     private String transporterType;
     private int transporterIdentifier;
     private int agvIdentifier;
+    private int storageIdentifier;
+    private int containerNumber;
 
-    public CraneMessage(int id, String craneType , int craneIdentifier ,String transporterType, int transporterIdentifier, int agvIdentifier) {
+    public CraneMessage(int id, String craneType , int craneIdentifier ,String transporterType, int transporterIdentifier, int agvIdentifier, int storageIdentifier, int containerNumber) {
         super(id, Message.CRANE);
         this.craneType = craneType;
         this.craneIdentifier = craneIdentifier;
         this.transporterType = transporterType;
         this.transporterIdentifier = transporterIdentifier;
         this.agvIdentifier = agvIdentifier;
+        this.storageIdentifier = storageIdentifier;
+        this.containerNumber = containerNumber;
     }
 
     public String getCraneType() {
@@ -35,6 +39,12 @@ public class CraneMessage extends Message{
     public int getAgvIdentifier() {
         return agvIdentifier;
     }
-    
-    
+
+    public int getStorageIdentifier() {
+        return storageIdentifier;
+    }
+
+    public int getContainerNumber() {
+        return containerNumber;
+    }
 }

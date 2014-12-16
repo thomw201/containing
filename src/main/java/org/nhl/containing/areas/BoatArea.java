@@ -39,6 +39,7 @@ public class BoatArea extends Area {
                 for (int i = 0; i < cranes; i++) {
                     dockingCranes.add(new DockingCrane(assetManager, this.type));
                     dockingCranes.get(i).setLocalTranslation(0, 0, craneAxis);
+                    dockingCranes.get(i).setId(i);
                     this.attachChild(dockingCranes.get(i));
                     craneAxis += 18;
                 }
@@ -59,6 +60,7 @@ public class BoatArea extends Area {
                     dockingCranes.add(new DockingCrane(assetManager, this.type));
                     dockingCranes.get(i).setLocalTranslation(craneAxis, 0, 0);
                     dockingCranes.get(i).rotate(0, (float) Math.PI / 2, 0);
+                    dockingCranes.get(i).setId(i);
                     this.attachChild(dockingCranes.get(i));
                     craneAxis += 18;
                 }

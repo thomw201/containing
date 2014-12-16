@@ -30,6 +30,7 @@ public class LorryArea extends Area {
         for (int i = 0; i < cranes; i++) {
             truckCranes.add(new TruckCrane(assetManager));
             truckCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
+            truckCranes.get(i).setId(i);
             this.attachChild(truckCranes.get(i));
             craneXAxis += 14;
         }

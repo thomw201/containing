@@ -40,6 +40,7 @@ public class TrainArea extends Area {
         for (int i = 0; i < cranes; i++) {
             trainCranes.add(new TrainCrane(assetManager));
             trainCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
+            trainCranes.get(i).setId(i);
             this.attachChild(trainCranes.get(i));
             craneXAxis += 30;
         }

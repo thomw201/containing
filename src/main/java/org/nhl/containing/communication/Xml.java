@@ -176,23 +176,45 @@ public class Xml {
         String transporterType = "";
         int transporterIdentifier = -1;
         int agvIdentifier = -1;
-        Node firstNode = craneNode.getFirstChild();
-        craneIdentifier = Integer.parseInt(firstNode.getAttributes().
-                getNamedItem("identifier").getNodeValue());
-        craneType = firstNode.getAttributes().getNamedItem("type").
-                getNodeValue();
-        
-        Node transporterNode = craneNode.getChildNodes().item(1);
-        transporterIdentifier = Integer.parseInt(transporterNode.getAttributes().
-                getNamedItem("identifier").getNodeValue());
-        transporterType = transporterNode.getAttributes().getNamedItem("type").
-                getNodeValue();
+        int storageIdentifier = -1;
+        int containerNumber = -1;
         
         
-        Node agvNode = craneNode.getChildNodes().item(2);
-        agvIdentifier = Integer.parseInt(agvNode.getAttributes().getNamedItem("AgvId").getTextContent());
+        NodeList craneNodes = craneNode.getChildNodes();
         
-        return new CraneMessage(id, craneType , craneIdentifier ,transporterType, transporterIdentifier, agvIdentifier);
+        for (int i = 0; i < craneNodes.getLength(); i++) {
+            Node node = craneNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String content = node.getTextContent();
+                switch (node.getNodeName()) {
+                    case "CraneType":
+                        craneType = content;
+                        break;
+                    case "CraneId":
+                        craneIdentifier = Integer.parseInt(content);
+                        break;
+                    case "TransporterType":
+                        transporterType = content;
+                        break;
+                    case "TransporterId":
+                        transporterIdentifier = Integer.parseInt(content);
+                        break;
+                    case "Storage":
+                        storageIdentifier = Integer.parseInt(content);
+                        break;
+                    case "AgvId":
+                        agvIdentifier = Integer.parseInt(content);
+                        break;
+                    case "Container":
+                        containerNumber = Integer.parseInt(content);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(node.getNodeName()
+                                + " is not a legal node name");
+                }
+            }
+        }
+        return new CraneMessage(id, craneType , craneIdentifier ,transporterType, transporterIdentifier, agvIdentifier, storageIdentifier, containerNumber);
     }
 
     /**

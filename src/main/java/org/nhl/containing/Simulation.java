@@ -36,6 +36,10 @@ import org.nhl.containing.communication.messages.SpeedMessage;
 import org.nhl.containing.communication.Xml;
 import org.nhl.containing.communication.messages.CraneMessage;
 import org.nhl.containing.cranes.Crane;
+import org.nhl.containing.cranes.DockingCrane;
+import org.nhl.containing.cranes.StorageCrane;
+import org.nhl.containing.cranes.TrainCrane;
+import org.nhl.containing.cranes.TruckCrane;
 import org.xml.sax.SAXException;
 
 /**
@@ -47,7 +51,10 @@ public class Simulation extends SimpleApplication {
 
     private List<Transporter> transporterPool;
     private List<Transporter> transporters;
-    private List<Message> arriveMessages;
+    private List<ArriveMessage> arriveMessages;
+    private List<CraneMessage> craneMessages;
+    private List<Crane> craneList;
+    private List<Container> containerList;
     private TrainArea trainArea;
     private LorryArea lorryArea;
     private BoatArea boatArea;
@@ -61,7 +68,6 @@ public class Simulation extends SimpleApplication {
     private boolean debug;
     private Calendar cal;
     private Date currentDate;
-    private long sumTime = Integer.MAX_VALUE;
     private long lastTime;
     private final static int TIME_MULTIPLIER = 200;
     private Inlandship ship1;
@@ -72,11 +78,12 @@ public class Simulation extends SimpleApplication {
     public Simulation() {
         client = new Client();
         transporterPool = new ArrayList<>();
-
+        craneMessages = new ArrayList<>();
         agvList = new ArrayList<>();
-
+        craneList = new ArrayList<>();
         arriveMessages = new ArrayList<>();
         transporters = new ArrayList<>();
+        containerList = new ArrayList<>();
     }
 
     @Override
@@ -100,7 +107,7 @@ public class Simulation extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         handleMessages();
         updateDate();
-        handleArrival();
+        handleProcessingMessage();
     }
 
     @Override
@@ -196,6 +203,7 @@ public class Simulation extends SimpleApplication {
                 throw new IllegalArgumentException(message.getTransporterType()
                         + " is not a legal transporter type");
         }
+        containerList.addAll(containers);
         sendOkMessage(message);
     }
 
@@ -245,8 +253,124 @@ public class Simulation extends SimpleApplication {
         // actually be interacted with.
     }
 
+    /**
+     * Checks the incoming CraneMessage which cranetype we are talking about
+     * with which ID and sets the processingMessageId of that crane to the
+     * messageID
+     *
+     * @param message the incoming craneMessage object that is being analyzed
+     */
     private void handleCraneMessage(CraneMessage message) {
-        sendOkMessage(message);
+        DockingCrane dockingCrane = null;
+        StorageCrane storageCrane = null;
+        TrainCrane trainCrane = null;
+        TruckCrane truckCrane = null;
+
+        craneMessages.add(message);
+
+        for (Crane crane : craneList) {
+            //Get the crane with the correct type and ID
+            if (crane.getName().equals(message.getCraneType()) && crane.getId() == message.getCraneIdentifier()) {
+
+                if (message.getTransporterType().equals("")) {
+                    //if there isnt a transportertype then we will always be dealing with a storageCrane
+                    storageCrane = (StorageCrane) crane;
+                    storageCrane.setProcessingMessageId(message.getId());
+                    //TODO:    STORAGE CRANE LOGIC HERE
+                    break;
+                } else {
+                    //if there is a transporter type check which crane we are dealing with
+                    switch (message.getCraneType()) {
+                        case "DockingCrane":
+                            dockingCrane = (DockingCrane) crane;
+                            dockingCrane.setProcessingMessageId(message.getId());
+                            dockingCrane.boatToAgv(findContainer(message.getContainerNumber()), findAGV(message.getAgvIdentifier()));
+                            break;
+                        case "TrainCrane":
+                            trainCrane = (TrainCrane) crane;
+                            trainCrane.setProcessingMessageId(message.getId());
+                            trainCrane.trainToAgv(findContainer(message.getContainerNumber()), findAGV(message.getAgvIdentifier()));
+                            break;
+                        case "TruckCrane":
+                            truckCrane = (TruckCrane) crane;
+                            truckCrane.setProcessingMessageId(message.getId());
+                            truckCrane.truckToAgv(findContainer(message.getContainerNumber()), findAGV(message.getAgvIdentifier()));
+                            break;
+                        default:
+                            throw new IllegalArgumentException(message.getCraneType()
+                                    + " is not a legal crane type");
+                    }
+                }
+            }
+        }
+
+    }
+
+    /**
+     * Tries to find a AGV by the given input
+     *
+     * @param id An ID of the AGV we are going to search for
+     * @return returns null if the agv is not found
+     */
+    private Agv findAGV(int id) {
+
+        for (Agv AGV : agvList) {
+            if (AGV.getId() == id) {
+                return AGV;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tries to find a transporter by the given input
+     *
+     * @param transporterType A transporter type where we are going to search
+     * for
+     * @param id An ID of the tranposporter we are going to search for
+     * @return
+     */
+    private Transporter findTransporter(String transporterType, int id) {
+
+        for (Transporter transporter : transporters) {
+            if (transporter.getId() == id) {
+                switch (transporterType) {
+                    case "vrachtauto":
+                        Lorry lorry = (Lorry) transporter;
+                        return lorry;
+                    case "trein":
+                        Train train = (Train) transporter;
+                        return train;
+                    case "binnenschip":
+                        Inlandship inlandship = (Inlandship) transporter;
+                        return inlandship;
+                    case "zeeschip":
+                        Seaship seaship = (Seaship) transporter;
+                        return seaship;
+                    default:
+                        throw new IllegalArgumentException(transporterType
+                                + " is not a legal transporter type");
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Tries to find a container by the given input
+     *
+     * @param containerNumber A number of the container we are going to search
+     * for
+     * @return returns null if nothing is found.
+     */
+    private Container findContainer(int containerNumber) {
+
+        for (Container container : containerList) {
+            if (container.getContainerID() == containerNumber) {
+                return container;
+            }
+        }
+        return null;
     }
 
     private void handleSpeedMessage(SpeedMessage message) {
@@ -257,15 +381,17 @@ public class Simulation extends SimpleApplication {
     }
 
     /**
-     * Checks wether a transporter has arrived and sends back an OK-message to
-     * the backend system.
+     * Checks wether a transporter or a crane is ready for a new job and sends
+     * back an OK-message to the backend system.
      */
-    private void handleArrival() {
+    private void handleProcessingMessage() {
+
+        //Loop through all transporters and send an OK message when a transporter has arrived to its destination
         Iterator<Transporter> itrTransporter = transporterPool.iterator();
         while (itrTransporter.hasNext()) {
             Transporter poolTransporter = itrTransporter.next();
             if (poolTransporter.isArrived()) {
-                Iterator<Message> itrMessage = arriveMessages.iterator();
+                Iterator<ArriveMessage> itrMessage = arriveMessages.iterator();
                 while (itrMessage.hasNext()) {
                     Message msg = itrMessage.next();
                     if (msg.getId() == poolTransporter.getProcessingMessageId()) {
@@ -279,6 +405,23 @@ public class Simulation extends SimpleApplication {
             }
 
         }
+
+        Iterator<Crane> itrCrane = craneList.iterator();
+        while (itrCrane.hasNext()) {
+            Crane crane = itrCrane.next();
+            if (crane.isArrived()) {
+                Iterator<CraneMessage> itrMessage = craneMessages.iterator();
+                while (itrMessage.hasNext()) {
+                    Message msg = itrMessage.next();
+                    if (msg.getId() == crane.getProcessingMessageId()) {
+                        sendOkMessage(msg);
+                        itrMessage.remove();
+                    }
+                }
+            }
+        }
+
+
     }
 
     /**
@@ -379,7 +522,6 @@ public class Simulation extends SimpleApplication {
     private void updateDate() {
         long curTime = System.currentTimeMillis();
         int deltaTime = (int) (curTime - lastTime);
-        sumTime += deltaTime;
         cal.add(Calendar.MILLISECOND, deltaTime * (int) timeMultiplier);
         currentDate = cal.getTime();
         lastTime = curTime;
@@ -463,6 +605,15 @@ public class Simulation extends SimpleApplication {
         lorryStorageArea = new StorageArea(assetManager, 4);
         lorryStorageArea.setLocalTranslation(380, 0, -120);
         rootNode.attachChild(lorryStorageArea);
+
+        //Add all the cranes to a list for easier accesability
+        craneList.addAll(lorryArea.getTruckCranes());
+        craneList.addAll(trainArea.getTrainCranes());
+        craneList.addAll(boatArea.getDockingCranes());
+        craneList.addAll(inlandBoatArea.getDockingCranes());
+        craneList.addAll(boatStorageArea.getStorageCranes());
+        craneList.addAll(trainStorageArea.getStorageCranes());
+        craneList.addAll(lorryStorageArea.getStorageCranes());
     }
 
     private void initPlatform() {
@@ -649,7 +800,7 @@ public class Simulation extends SimpleApplication {
         Inlandship testBoat = new Inlandship(assetManager, 34, new ArrayList());
         testBoat.setLocalTranslation(-190, 0, 220);
         rootNode.attachChild(testBoat);
-         container5 = new Container(assetManager, "TEST CONTAINER", 5, 0, 0, 0);
+        container5 = new Container(assetManager, "TEST CONTAINER", 5, 0, 0, 0);
         container5.setLocalTranslation(-200, 0, 240);
         container5.rotate(0, (float) Math.PI / 2, 0);
         rootNode.attachChild(container5);

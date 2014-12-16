@@ -31,6 +31,7 @@ public class TrainCrane extends Crane {
 
     public TrainCrane(AssetManager assetManager) {
         this.assetManager = assetManager;
+        this.name = "TrainCrane";
         initTrainCrane();
     }
 

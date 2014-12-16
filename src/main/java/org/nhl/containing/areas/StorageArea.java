@@ -36,6 +36,7 @@ public class StorageArea extends Area {
         for (int i = 0; i < cranes; i++) {
             storageCranes.add(new StorageCrane(assetManager, this));
             storageCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
+            storageCranes.get(i).setId(i);
             this.attachChild(storageCranes.get(i));
             craneXAxis += 50;
         }

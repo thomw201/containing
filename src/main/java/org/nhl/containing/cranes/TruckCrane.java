@@ -29,6 +29,7 @@ public class TruckCrane extends Crane {
 
     public TruckCrane(AssetManager assetManager) {
         this.assetManager = assetManager;
+        this.name = "TruckCrane";
         initTruckCrane();
     }
 
