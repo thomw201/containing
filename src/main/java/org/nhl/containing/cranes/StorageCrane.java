@@ -268,10 +268,9 @@ public class StorageCrane extends Crane {
             returnToStart();
         }
         
-        if (containerPathDownCounter == wayPointIndex + 1){
-            detachChild(container);
-            agv.attachChild(container);
-            container.setLocalTranslation(0, 1, 0);
+        if (cranePathBackCounter == wayPointIndex + 1){
+            cranePathBackCounter = 0;
+            wayPointIndex = 0;
             resetCrane();
             setArrived(true);
      }

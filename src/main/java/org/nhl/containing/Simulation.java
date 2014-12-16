@@ -772,7 +772,7 @@ public class Simulation extends SimpleApplication {
         container1 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
         container1.setLocalTranslation(120, 0, 0);
         rootNode.attachChild(container1);
-        trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
+        
         //TruckCrane
         Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0));
         lorry1.setLocalTranslation(300, 0, 170);
@@ -801,8 +801,7 @@ public class Simulation extends SimpleApplication {
         testBoat.setLocalTranslation(-190, 0, 220);
         rootNode.attachChild(testBoat);
         container5 = new Container(assetManager, "TEST CONTAINER", 5, 0, 0, 0);
-        container5.setLocalTranslation(-200, 0, 240);
-        container5.rotate(0, (float) Math.PI / 2, 0);
+        container5.setLocalTranslation(0, 1, 0);
         rootNode.attachChild(container5);
 
         Agv agv5 = new Agv(assetManager, -1);
