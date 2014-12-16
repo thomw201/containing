@@ -259,13 +259,13 @@ public class TruckCrane extends Crane {
             detachChild(container);
             agv.attachChild(container);
             container.setLocalTranslation(0, 1, 0);
-            setArrived(true);
 
         }
 
         if (cranePathBackCounter == wayPointIndex + 1) {
             wayPointIndex = 0;
             resetCrane();
+            setArrived(true);
         }
     }
 
