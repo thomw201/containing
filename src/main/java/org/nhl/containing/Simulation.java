@@ -1,12 +1,15 @@
 package org.nhl.containing;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.cinematic.MotionPath;
+import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
@@ -22,6 +25,7 @@ import org.nhl.containing.vehicles.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.nhl.containing.communication.messages.ArriveMessage;
@@ -30,6 +34,8 @@ import org.nhl.containing.communication.messages.CreateMessage;
 import org.nhl.containing.communication.messages.Message;
 import org.nhl.containing.communication.messages.SpeedMessage;
 import org.nhl.containing.communication.Xml;
+import org.nhl.containing.communication.messages.CraneMessage;
+import org.nhl.containing.cranes.Crane;
 import org.xml.sax.SAXException;
 
 /**
@@ -40,6 +46,8 @@ import org.xml.sax.SAXException;
 public class Simulation extends SimpleApplication {
 
     private List<Transporter> transporterPool;
+    private List<Transporter> transporters;
+    private List<Message> arriveMessages;
     private TrainArea trainArea;
     private LorryArea lorryArea;
     private BoatArea boatArea;
@@ -58,11 +66,17 @@ public class Simulation extends SimpleApplication {
     private final static int TIME_MULTIPLIER = 200;
     private Inlandship ship1;
     private Inlandship ship2;
+    private float speedMultiplier;
+    private float timeMultiplier = 1;
 
     public Simulation() {
         client = new Client();
         transporterPool = new ArrayList<>();
+
         agvList = new ArrayList<>();
+
+        arriveMessages = new ArrayList<>();
+        transporters = new ArrayList<>();
     }
 
     @Override
@@ -86,6 +100,7 @@ public class Simulation extends SimpleApplication {
     public void simpleUpdate(float tpf) {
         handleMessages();
         updateDate();
+        handleArrival();
     }
 
     @Override
@@ -138,6 +153,9 @@ public class Simulation extends SimpleApplication {
             case Message.SPEED:
                 handleSpeedMessage((SpeedMessage) message);
                 break;
+            case Message.CRANE:
+                handleCraneMessage((CraneMessage) message);
+                break;
             default:
                 throw new IllegalArgumentException(message.getMessageType()
                         + " is not a legal message type");
@@ -148,7 +166,7 @@ public class Simulation extends SimpleApplication {
         List<Container> containers = new ArrayList<Container>();
         for (ContainerBean containerBean : message.getContainerBeans()) {
             Container container = new Container(assetManager, containerBean.getOwner(),
-                    containerBean.getIso(), containerBean.getxLoc(),
+                    containerBean.getContainerNr(), containerBean.getxLoc(),
                     containerBean.getyLoc(), containerBean.getzLoc());
             containers.add(container);
         }
@@ -182,20 +200,27 @@ public class Simulation extends SimpleApplication {
     }
 
     private void handleArriveMessage(ArriveMessage message) {
-        Transporter transporter = null;
-        boolean nobreak = true;
+        boolean exists = false;
 
         for (Transporter poolTransporter : transporterPool) {
             if (poolTransporter.getId() == message.getTransporterId()) {
-                transporter = poolTransporter;
-                nobreak = false;
+                poolTransporter.setProcessingMessageId(message.getId());
+                rootNode.attachChild(poolTransporter);
+                poolTransporter.multiplySpeed(speedMultiplier);
+                poolTransporter.arrive(message.getDepotIndex());
+                arriveMessages.add(message);
+
+                exists = true;
                 break;
             }
         }
-        if (nobreak) {
+        if (!exists) {
             throw new IllegalArgumentException("Transporter " + message.getTransporterId()
                     + " does not exist");
         }
+
+
+
         // Tell transporter to *arrive*. Rename move() to arrive(). move() is
         // too ambiguous. move() should probably be an *abstract* method within
         // Transporter, to be actually defined within each of the subclasses.
@@ -220,9 +245,40 @@ public class Simulation extends SimpleApplication {
         // actually be interacted with.
     }
 
-    private void handleSpeedMessage(SpeedMessage message) {
-        speed = message.getSpeed();
+    private void handleCraneMessage(CraneMessage message) {
         sendOkMessage(message);
+    }
+
+    private void handleSpeedMessage(SpeedMessage message) {
+        speedMultiplier = message.getSpeed();
+        timeMultiplier = message.getSpeed();
+        changeCraneSpeed();
+        sendOkMessage(message);
+    }
+
+    /**
+     * Checks wether a transporter has arrived and sends back an OK-message to
+     * the backend system.
+     */
+    private void handleArrival() {
+        Iterator<Transporter> itrTransporter = transporterPool.iterator();
+        while (itrTransporter.hasNext()) {
+            Transporter poolTransporter = itrTransporter.next();
+            if (poolTransporter.isArrived()) {
+                Iterator<Message> itrMessage = arriveMessages.iterator();
+                while (itrMessage.hasNext()) {
+                    Message msg = itrMessage.next();
+                    if (msg.getId() == poolTransporter.getProcessingMessageId()) {
+                        sendOkMessage(msg);
+                        transporters.add(poolTransporter);
+                        itrTransporter.remove();
+                        itrMessage.remove();
+                    }
+                }
+
+            }
+
+        }
     }
 
     /**
@@ -247,6 +303,43 @@ public class Simulation extends SimpleApplication {
         return null;
     }
 
+    private void createAGVPath() {
+        Agv agv = new Agv(assetManager, -1);
+        rootNode.attachChild(agv);
+        MotionPath agvPath = new MotionPath();
+        MotionEvent agvmotionControl = new MotionEvent(agv, agvPath);
+        //Create the AGV waypoints
+        //waypoint A
+        agvPath.addWayPoint(new Vector3f(580, 0, -140));
+        //waypont C
+        agvPath.addWayPoint(new Vector3f(330, 0, -140));
+        //waypoint E
+        agvPath.addWayPoint(new Vector3f(70, 0, -140));
+        //waypoint G
+        agvPath.addWayPoint(new Vector3f(-210, 0, -140));
+        //waypoint H
+        agvPath.addWayPoint(new Vector3f(-210, 0, 135));
+        //waypoint F
+        agvPath.addWayPoint(new Vector3f(70, 0, 135));
+        //waypoint D
+        agvPath.addWayPoint(new Vector3f(330, 0, 136));
+        //waypoint B
+        agvPath.addWayPoint(new Vector3f(580, 0, 135));
+
+
+        agvPath.setCurveTension(0.1f);
+        // set the speed and direction of the AGV using motioncontrol
+        agvmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        agvmotionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
+        agvmotionControl.setInitialDuration(10f);
+        agvmotionControl.setSpeed(1f);
+        //make the vehicles start moving
+        //agvmotionControl.setLoopMode(LoopMode.Loop);
+        agvmotionControl.play();
+        //make waypoints visible
+        //agvPath.disableDebugShape();
+    }
+
     /**
      * Initialises the simulation date.
      */
@@ -263,6 +356,19 @@ public class Simulation extends SimpleApplication {
         lastTime = System.currentTimeMillis();
     }
 
+    private void changeCraneSpeed() {
+        List<Crane> dockingCranes = new ArrayList<>();
+        dockingCranes.addAll(boatArea.getDockingCranes());
+        dockingCranes.addAll(lorryArea.getTruckCranes());
+        dockingCranes.addAll(trainArea.getTrainCranes());
+        dockingCranes.addAll(boatStorageArea.getStorageCranes());
+        dockingCranes.addAll(lorryStorageArea.getStorageCranes());
+        dockingCranes.addAll(trainStorageArea.getStorageCranes());
+        for (Crane crane : dockingCranes) {
+            crane.multiplySpeed(speedMultiplier);
+        }
+    }
+
     /**
      * Updates the simulation date.
      * <p/>
@@ -274,7 +380,7 @@ public class Simulation extends SimpleApplication {
         long curTime = System.currentTimeMillis();
         int deltaTime = (int) (curTime - lastTime);
         sumTime += deltaTime;
-        cal.add(Calendar.MILLISECOND, deltaTime * TIME_MULTIPLIER);
+        cal.add(Calendar.MILLISECOND, deltaTime * (int) timeMultiplier);
         currentDate = cal.getTime();
         lastTime = curTime;
 
@@ -300,7 +406,7 @@ public class Simulation extends SimpleApplication {
         initPlatform();
         initAgvLorry();
         initAgvTrain();
-        initAgvShip();        
+        initAgvShip();
         //testMethodCranes();
     }
 
@@ -406,6 +512,21 @@ public class Simulation extends SimpleApplication {
                         agvtest.move(testarr);
 
                         ship2.arrive(1);
+                        debug = false;
+                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(test);
+                        test.multiplySpeed(speedMultiplier);
+                        test.arrive(0);
+                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(test2);
+                        test2.multiplySpeed(speedMultiplier);
+                        test2.arrive(0);
+                        Train traintest = new Train(assetManager, 0, new ArrayList());
+                        rootNode.attachChild(traintest);
+                        traintest.multiplySpeed(speedMultiplier);
+                        traintest.arrive(0);
+                        //testing train code
+                        createAGVPath();
                     } else {
                         //System.out.println(ship1.getLocalTranslation());
                         debug = !debug;
@@ -476,7 +597,7 @@ public class Simulation extends SimpleApplication {
         //TC test
         List<Container> containers = new ArrayList<Container>();
         for (int i = 0; i < 15; i++) {
-            containers.add(new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
+            containers.add(new Container(assetManager, "TEST CONTAINER", 1, 0, 0, 0));
         }
         Train t = new Train(assetManager, -1, containers);
         t.setLocalTranslation(-180, 0, -180);
@@ -492,13 +613,17 @@ public class Simulation extends SimpleApplication {
         agv2.rotate(0, 0, 0);
         agv2.setLocalTranslation(140, 0, -125);
         rootNode.attachChild(agv2);
-        Container container1 = new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0);
+        Container container1 = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
         container1.setLocalTranslation(0, 1, 0);
         agv2.attachChild(container1);
         trainStorageArea.getStorageCranes().get(0).agvToStorage(container1, new Vector3f(120, 0, 15));
         //trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
+        container1 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
+        container1.setLocalTranslation(120, 0, 0);
+        rootNode.attachChild(container1);
+        trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
         //TruckCrane
-        Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", "8-9912", 0, 0, 0));
+        Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0));
         lorry1.setLocalTranslation(300, 0, 170);
         rootNode.attachChild(lorry1);
         Agv agv4 = new Agv(assetManager, -1);
@@ -507,7 +632,7 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(agv4);
         lorryArea.getTruckCranes().get(0).truckToAgv(lorry1.getChild(1), agv4);
         //DC test
-        Container container2 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
+        Container container2 = new Container(assetManager, "TEST CONTAINER", 4, 0, 0, 0);
         container2.setLocalTranslation(-325, 0, 0);
         rootNode.attachChild(container2);
         Agv agv3 = new Agv(assetManager, -1);
@@ -517,13 +642,18 @@ public class Simulation extends SimpleApplication {
         boatArea.getDockingCranes().get(0).boatToAgv(container2, agv3);
 
         //DC
-        Container container5 = new Container(assetManager, "TEST CONTAINER", "8-0002", 0, 0, 0);
+        Container container5 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
         container5.setLocalTranslation(0, 1, 0);
         //container5.rotate(0, (float) Math.PI / 2, 0);
         //rootNode.attachChild(container5);
         Inlandship testBoat = new Inlandship(assetManager, 34, new ArrayList());
         testBoat.setLocalTranslation(-190, 0, 220);
         rootNode.attachChild(testBoat);
+         container5 = new Container(assetManager, "TEST CONTAINER", 5, 0, 0, 0);
+        container5.setLocalTranslation(-200, 0, 240);
+        container5.rotate(0, (float) Math.PI / 2, 0);
+        rootNode.attachChild(container5);
+
         Agv agv5 = new Agv(assetManager, -1);
         agv5.rotate(0, (float) Math.PI / 2, 0);
         agv5.setLocalTranslation(-180, 0, 180);

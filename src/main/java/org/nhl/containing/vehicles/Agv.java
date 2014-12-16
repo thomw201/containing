@@ -12,13 +12,14 @@ public class Agv extends Vehicle {
 
     private AssetManager assetManager;
     private Container container;
-    private float speed = 0.5f;
     private MotionPath path;
+
     MotionEvent motionControl;
 
     public Agv(AssetManager assetManager, int id) {
         super(id);
         this.assetManager = assetManager;
+        speed = 0.5f;
         initAgv();
         initMotionPaths();
     }
@@ -32,7 +33,7 @@ public class Agv extends Vehicle {
         this.attachChild(agv);
     }
 
-    /**
+   /**
      * Initialize motionpath and motionevent
      */
     private void initMotionPaths() {
@@ -44,13 +45,15 @@ public class Agv extends Vehicle {
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
     }
 
-    /**
+   /**
      * Method that moves this agv over the given path
      *
      * @param path character arraylist filled with the waypoints
      */
     public void move(char[] route) {
-        for (char waypoint : route) {
+        path = new MotionPath();
+        MotionEvent motionControl = new MotionEvent(this, path);
+      for (char waypoint : route) {
             switch (waypoint) {
                 case 'A':
                     path.addWayPoint(new Vector3f(580, 0, -140));
@@ -94,7 +97,7 @@ public class Agv extends Vehicle {
             }
         }
         path.setCurveTension(0.1f);
-        motionControl.play();
+       motionControl.play();
     }
 
     /**
@@ -182,6 +185,15 @@ public class Agv extends Vehicle {
     }
 
     /**
+        path.addListener(this);
+        // set the speed and direction of the AGV using motioncontrol
+        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
+        motionControl.setSpeed(speed);
+        motionControl.play();
+    }
+
+    /**
      * Debug method, displays object name, speed, amount of containers and it's
      * waypoints.
      *
@@ -212,5 +224,12 @@ public class Agv extends Vehicle {
             info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }
         return info + "\n";
+    }
+
+    @Override
+    public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
+        if (wayPointIndex + 1 == path.getNbWayPoints()) {
+            setArrived(true);
+        }
     }
 }

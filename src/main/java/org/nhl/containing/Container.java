@@ -17,13 +17,13 @@ public class Container extends Node {
 
     private AssetManager assetManager;
     private String owner;
-    private String containerID;
+    private int containerID;
     private int spawnX;
     private int spawnY;
     private int spawnZ;
     private BoundingBox boundingBox;
 
-    public Container(AssetManager assetManager, String owner, String containerID, int spawnX, int spawnY, int spawnZ) {
+    public Container(AssetManager assetManager, String owner, int containerID, int spawnX, int spawnY, int spawnZ) {
         this.assetManager = assetManager;
         this.owner = owner;
         this.containerID = containerID;
@@ -70,7 +70,7 @@ public class Container extends Node {
         this.attachChild(companyText);
     }
 
-    public String getContainerID() {
+    public int getContainerID() {
         return containerID;
     }
 

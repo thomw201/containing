@@ -10,7 +10,6 @@ import org.nhl.containing.Container;
 public class Lorry extends Transporter {
 
     private AssetManager assetManager;
-    private float speed = 1f;
     private int lorryZAxis = 11;
     private Container container;
     private MotionPath path;
@@ -20,6 +19,7 @@ public class Lorry extends Transporter {
         super(id);
         this.assetManager = assetManager;
         this.container = c;
+        speed = 1f;
         initLorry();
         initMotionPaths();
     }
@@ -42,7 +42,6 @@ public class Lorry extends Transporter {
     private void initMotionPaths() {
         path = new MotionPath();
         motionControl = new MotionEvent(this, path);
-        motionControl.setSpeed(speed);
     }
     /**
      * makes the lorrys arrive at the given position
@@ -50,9 +49,11 @@ public class Lorry extends Transporter {
      */
     @Override
     public void arrive(int location) {
+        motionControl.setSpeed(speed);
         path.clearWayPoints();
         path.addWayPoint(new Vector3f(566 - (14 * location), 0, 185));
         path.addWayPoint(new Vector3f(566 - (14 * location), 0, 159));
+        path.addListener(this);
         motionControl.play();
     }
     /**
@@ -60,9 +61,11 @@ public class Lorry extends Transporter {
      */
     @Override
     public void depart() {
+        motionControl.setSpeed(speed);
         path.clearWayPoints();
         path.addWayPoint(new Vector3f(this.getLocalTranslation().x, 0, 159));
         path.addWayPoint(new Vector3f(this.getLocalTranslation().x, 0, 185));
+        path.addListener(this);
         motionControl.play();
     }
     /**
@@ -96,5 +99,13 @@ public class Lorry extends Transporter {
             info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
         }
         return info + "\n";
+    }
+    
+    @Override
+    public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
+        if( wayPointIndex + 1 == path.getNbWayPoints())
+        {
+            setArrived(true);
+        }
     }
 }

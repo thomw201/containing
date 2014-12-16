@@ -13,7 +13,7 @@ package org.nhl.containing.communication;
  */
 public class ContainerBean {
 
-    private String iso;
+    private int containerNr;
     private String owner;
     private int xLoc;
     private int yLoc;
@@ -22,12 +22,12 @@ public class ContainerBean {
     public ContainerBean() {
     }
 
-    public String getIso() {
-        return iso;
+    public int getContainerNr() {
+        return containerNr;
     }
 
-    public void setIso(String iso) {
-        this.iso = iso;
+    public void setContainerNr(int containerNr) {
+        this.containerNr = containerNr;
     }
 
     public String getOwner() {

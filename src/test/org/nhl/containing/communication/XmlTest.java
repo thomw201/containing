@@ -39,7 +39,7 @@ public class XmlTest {
                     + "type=\"vrachtauto\""
                     + " identifier=\"1\">"
                     + "<Container>"
-                    + "<iso>a</iso>"
+                    + "<containerNr>1</containerNr>"
                     + "<owner>b</owner>"
                     + "<xLoc>0</xLoc>"
                     + "<yLoc>0</yLoc>"
@@ -53,7 +53,7 @@ public class XmlTest {
             assertEquals(1, createResult.getTransporterIdentifier());
             assertEquals("vrachtauto", createResult.getTransporterType());
             ContainerBean containerBeanResult = createResult.getContainerBeans().get(0);
-            assertEquals("a", containerBeanResult.getIso());
+            assertEquals(1, containerBeanResult.getContainerNr());
             assertEquals("b", containerBeanResult.getOwner());
             assertEquals(0, containerBeanResult.getxLoc());
             assertEquals(0, containerBeanResult.getyLoc());

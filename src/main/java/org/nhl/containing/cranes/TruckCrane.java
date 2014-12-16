@@ -83,6 +83,7 @@ public class TruckCrane extends Crane {
 
         MotionEvent motionControl = new MotionEvent(this, cranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.setSpeed(speed);
         motionControl.play();
         motionControl.dispose();
     }
@@ -100,6 +101,7 @@ public class TruckCrane extends Crane {
 
         MotionEvent motionControl = new MotionEvent(container, containerPathUp);
         motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.setSpeed(speed);
         motionControl.play();
         motionControl.dispose();
     }
@@ -114,6 +116,7 @@ public class TruckCrane extends Crane {
         newCranePath.addListener(this);
         MotionEvent motionControl = new MotionEvent(this, newCranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.setSpeed(speed);
         motionControl.play();
         motionControl.dispose();
     }
@@ -131,6 +134,7 @@ public class TruckCrane extends Crane {
 
         MotionEvent motionControl = new MotionEvent(container, containerPathDown);
         motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.setSpeed(speed);
         motionControl.play();
 
         motionControl.dispose();
@@ -168,7 +172,7 @@ public class TruckCrane extends Crane {
 
         }
     }
-    
+
     /**
      * Move back to the start location.
      */
@@ -182,26 +186,26 @@ public class TruckCrane extends Crane {
         motionControl.play();
         motionControl.dispose();
     }
-    
+
     /**
      * Completely reset the crane.
      */
     private void resetCrane() {
-            containerPathUp.clearWayPoints();
-            containerPathDown.clearWayPoints();
-            cranePath.clearWayPoints();
-            newCranePath.clearWayPoints();
-            cranePathBack.clearWayPoints();
-            cranePathCounter = 0;
-            newCranePathCounter = 0;
-            containerPathUpCounter = 0;
-            containerPathDownCounter = 0;
-            cranePathBackCounter = 0;
-            containerPathUp = new MotionPath();
-            containerPathDown = new MotionPath();
-            cranePath = new MotionPath();
-            newCranePath = new MotionPath();
-            cranePathBack = new MotionPath();
+        containerPathUp.clearWayPoints();
+        containerPathDown.clearWayPoints();
+        cranePath.clearWayPoints();
+        newCranePath.clearWayPoints();
+        cranePathBack.clearWayPoints();
+        cranePathCounter = 0;
+        newCranePathCounter = 0;
+        containerPathUpCounter = 0;
+        containerPathDownCounter = 0;
+        cranePathBackCounter = 0;
+        containerPathUp = new MotionPath();
+        containerPathDown = new MotionPath();
+        cranePath = new MotionPath();
+        newCranePath = new MotionPath();
+        cranePathBack = new MotionPath();
     }
 
     /**
@@ -235,6 +239,7 @@ public class TruckCrane extends Crane {
         }
 
         if (containerPathDownCounter == wayPointIndex + 1) {
+
             switch (direction) {
                 case LORRYTOAGV:
                     detachChild(container);
@@ -250,8 +255,14 @@ public class TruckCrane extends Crane {
             containerPathDownCounter = 0;
             wayPointIndex = 0;
             returnToStart();
+
+            detachChild(container);
+            agv.attachChild(container);
+            container.setLocalTranslation(0, 1, 0);
+            setArrived(true);
+
         }
-        
+
         if (cranePathBackCounter == wayPointIndex + 1) {
             wayPointIndex = 0;
             resetCrane();

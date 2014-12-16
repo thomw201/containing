@@ -1,7 +1,6 @@
 package org.nhl.containing.vehicles;
 
 import com.jme3.asset.AssetManager;
-import com.jme3.bounding.BoundingBox;
 import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Quaternion;
@@ -13,7 +12,6 @@ import org.nhl.containing.Container;
 public class Seaship extends Transporter {
 
     private AssetManager assetManager;
-    private float speed = 0.5f;
     private List<Container> containerList;
     // zeeship Dit is x=0 Y=0 Z=0, links onderin ( als je vanaf de achterkant kijkt ) 
     // Hier passen op de x as 16 containers op
@@ -21,7 +19,7 @@ public class Seaship extends Transporter {
     private final int zeyAs = 0;
     private final int zezAs = 160;
     private int containerCounter = 0;
-    private float x  = -23;
+    private float x = -23;
     private float y = 0;
     private float z = 160;
     private Spatial boat;
@@ -32,9 +30,11 @@ public class Seaship extends Transporter {
         super(id);
         this.assetManager = assetManager;
         this.containerList = containerList;
+        speed = 0.5f;
         initSeaship();
         initMotionPaths();
     }
+
     /**
      * Initialize a boat.
      */
@@ -56,39 +56,47 @@ public class Seaship extends Transporter {
             e.printStackTrace();
         }
     }
-        /**
+
+    /**
      * Initialize motionpath and motionevent
      */
     private void initMotionPaths() {
         path = new MotionPath();
         motionControl = new MotionEvent(this, path);
-        motionControl.setSpeed(speed);
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis((float) Math.PI, Vector3f.UNIT_Y));
     }
+
     /**
      * Lets the seaship arrive
+     *
      * @param location not used
      */
     @Override
     public void arrive(int location) {
+        motionControl.setSpeed(speed);
         path.clearWayPoints();
         path.addWayPoint(new Vector3f(-750, 0, 500));
         path.addWayPoint(new Vector3f(-330, 0, -20));
         path.setCurveTension(0.3f);
+        path.addListener(this);
         motionControl.play();
     }
+
     /**
      * Makes this seaship depart
      */
     @Override
     public void depart() {
+        motionControl.setSpeed(speed);
         path.clearWayPoints();
         path.addWayPoint(new Vector3f(-330, 0, -20));
         path.addWayPoint(new Vector3f(-345, 0, -300));
         path.setCurveTension(0.3f);
+        path.addListener(this);
         motionControl.play();
     }
-        /**
+
+    /**
      * Debug method, displays object name, speed, amount of containers and it's
      * waypoints.
      *
@@ -115,26 +123,32 @@ public class Seaship extends Transporter {
         }
         return info + "\n";
     }
-    
-    
-    
+
     /**
      * Get the next empty spot on the ship.
+     *
      * @return Vector of next empty location
      */
-    public Vector3f getNextSpot(){
+    public Vector3f getNextSpot() {
         x += 2.5f;
-        if(x >= 22){
-         x = -20.5f;
-         z -= 13.5f;
+        if (x >= 22) {
+            x = -20.5f;
+            z -= 13.5f;
         }
-        if(z <= -137){
+        if (z <= -137) {
             x = -20.5f;
             z = 160;
             y += 2.9f;
         }
         containerCounter++;
-        return new Vector3f(x,y,z);
-        
+        return new Vector3f(x, y, z);
+
+    }
+
+    @Override
+    public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
+        if (wayPointIndex + 1 == path.getNbWayPoints()) {
+            setArrived(true);
+        }
     }
 }

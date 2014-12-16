@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import org.nhl.containing.communication.messages.CraneMessage;
 
 /**
  * Parses provided XML files and returns Containers.
@@ -70,6 +71,11 @@ public class Xml {
         if (messageTypeNodes.getLength() > 0) {
             return parseSpeedMessage(messageTypeNodes.item(0), id);
         }
+        
+        messageTypeNodes = doc.getElementsByTagName("Crane");
+        if (messageTypeNodes.getLength() > 0) {
+            return parseCraneMessage(messageTypeNodes.item(0), id);
+        }
 
         // etc etc etc. TODO
 
@@ -109,8 +115,8 @@ public class Xml {
                 String content = node.getTextContent();
 
                 switch (node.getNodeName()) {
-                    case "iso":
-                        containerBean.setIso(content);
+                    case "containernr":
+                        containerBean.setContainerNr(Integer.parseInt(content));
                         break;
                     case "owner":
                         containerBean.setOwner(content);
@@ -162,6 +168,31 @@ public class Xml {
 
     private static SpeedMessage parseSpeedMessage(Node speedNode, int id) {
         return new SpeedMessage(id, Float.parseFloat(speedNode.getTextContent()));
+    }
+    
+    private static CraneMessage parseCraneMessage(Node craneNode, int id) {
+        String craneType = "";
+        int craneIdentifier = -1;
+        String transporterType = "";
+        int transporterIdentifier = -1;
+        int agvIdentifier = -1;
+        Node firstNode = craneNode.getFirstChild();
+        craneIdentifier = Integer.parseInt(firstNode.getAttributes().
+                getNamedItem("identifier").getNodeValue());
+        craneType = firstNode.getAttributes().getNamedItem("type").
+                getNodeValue();
+        
+        Node transporterNode = craneNode.getChildNodes().item(1);
+        transporterIdentifier = Integer.parseInt(transporterNode.getAttributes().
+                getNamedItem("identifier").getNodeValue());
+        transporterType = transporterNode.getAttributes().getNamedItem("type").
+                getNodeValue();
+        
+        
+        Node agvNode = craneNode.getChildNodes().item(2);
+        agvIdentifier = Integer.parseInt(agvNode.getAttributes().getNamedItem("AgvId").getTextContent());
+        
+        return new CraneMessage(id, craneType , craneIdentifier ,transporterType, transporterIdentifier, agvIdentifier);
     }
 
     /**

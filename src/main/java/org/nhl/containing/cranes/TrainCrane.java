@@ -86,6 +86,7 @@ public class TrainCrane extends Crane {
 
         MotionEvent motionControl = new MotionEvent(this, cranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.setSpeed(speed);
         motionControl.play();
         motionControl.dispose();
     }
@@ -117,6 +118,7 @@ public class TrainCrane extends Crane {
         newCranePath.addListener(this);
         MotionEvent motionControl = new MotionEvent(this, newCranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
+        motionControl.setSpeed(speed);
         motionControl.play();
         motionControl.dispose();
     }
@@ -153,7 +155,7 @@ public class TrainCrane extends Crane {
 
                 containerPathDown.addWayPoint(new Vector3f(0, 5, 0));
                 containerPathDown.addWayPoint(new Vector3f(0, 1, 0));
-                
+
                 cranePathBack.addWayPoint(new Vector3f((wagon.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
                 cranePathBack.addWayPoint(getLocalTranslation());
                 break;
@@ -171,7 +173,7 @@ public class TrainCrane extends Crane {
 
                 containerPathDown.addWayPoint(new Vector3f(0, 5, 6));
                 containerPathDown.addWayPoint(new Vector3f(0, 1, 6));
-                
+
                 cranePathBack.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
                 cranePathBack.addWayPoint(getLocalTranslation());
                 break;
@@ -191,28 +193,28 @@ public class TrainCrane extends Crane {
         motionControl.play();
         motionControl.dispose();
     }
-    
+
     /**
      * Completely reset the crane.
      */
     private void resetCrane() {
-            containerPathUp.clearWayPoints();
-            containerPathDown.clearWayPoints();
-            cranePath.clearWayPoints();
-            newCranePath.clearWayPoints();
-            cranePathBack.clearWayPoints();
-            cranePathCounter = 0;
-            newCranePathCounter = 0;
-            containerPathUpCounter = 0;
-            containerPathDownCounter = 0;
-            cranePathBackCounter = 0;
-            containerPathUp = new MotionPath();
-            containerPathDown = new MotionPath();
-            cranePath = new MotionPath();
-            newCranePath = new MotionPath();
-            cranePathBack = new MotionPath();
+        containerPathUp.clearWayPoints();
+        containerPathDown.clearWayPoints();
+        cranePath.clearWayPoints();
+        newCranePath.clearWayPoints();
+        cranePathBack.clearWayPoints();
+        cranePathCounter = 0;
+        newCranePathCounter = 0;
+        containerPathUpCounter = 0;
+        containerPathDownCounter = 0;
+        cranePathBackCounter = 0;
+        containerPathUp = new MotionPath();
+        containerPathDown = new MotionPath();
+        cranePath = new MotionPath();
+        newCranePath = new MotionPath();
+        cranePathBack = new MotionPath();
     }
-    
+
     /**
      * Method gets automatically called everytime a waypoint is reached.
      *
@@ -255,11 +257,16 @@ public class TrainCrane extends Crane {
             }
 
             container.rotate(0, (float) Math.PI / 2, 0);
+
             wayPointIndex = 0;
             containerPathDownCounter = 0;
             returnToStart();
+
+            container.setLocalTranslation(0, 1, 0);
+            setArrived(true);
+
         }
-        
+
         if (cranePathBackCounter == wayPointIndex + 1) {
             wayPointIndex = 0;
             resetCrane();
