@@ -264,6 +264,7 @@ public class TruckCrane extends Crane {
         }
 
         if (cranePathBackCounter == wayPointIndex + 1) {
+            cranePathBackCounter = 0;
             wayPointIndex = 0;
             resetCrane();
             setArrived(true);

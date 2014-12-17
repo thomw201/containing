@@ -380,12 +380,9 @@ public class DockingCrane extends Crane {
         }
 
         if (cranePathBackCounter == wayPointIndex + 1) {
+            cranePathBackCounter = 0;
             wayPointIndex = 0;
             resetCrane();
-
-            detachChild(container);
-            agv.attachChild(container);
-            container.setLocalTranslation(0, 1, 0);
             setArrived(true);
 
         }
