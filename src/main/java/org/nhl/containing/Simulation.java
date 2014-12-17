@@ -621,9 +621,10 @@ public class Simulation extends SimpleApplication {
                         ship1.arrive(0);
                         Agv agvtest = new Agv(assetManager, 0);
                         rootNode.attachChild(agvtest);
-                        char[] testarr = {'D', 'F', 'E', 'I'};
+                        //char[] testarr = {'D', 'F', 'E', 'I'};
+                        char[] testarr = {'P', 'Q'};
                         agvtest.move(testarr);
-                        agvtest.parkAtTrainPlatform(0);
+                        //
                         ship2.arrive(1);
                         debug = false;
                         Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
