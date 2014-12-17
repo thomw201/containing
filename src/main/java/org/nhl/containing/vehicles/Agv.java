@@ -51,8 +51,9 @@ public class Agv extends Vehicle {
      * @param path character arraylist filled with the waypoints
      */
     public void move(char[] route) {
-        path = new MotionPath();
-        MotionEvent motionControl = new MotionEvent(this, path);
+        path.clearWayPoints();
+        //make the first waypoint it's current location
+        path.addWayPoint(this.getWorldTranslation());
       for (char waypoint : route) {
             switch (waypoint) {
                 case 'A':
@@ -106,13 +107,14 @@ public class Agv extends Vehicle {
      * @param location the parking place
      */
     public void parkAtTrainPlatform(int location) {
-        path.clearWayPoints();
+        //make the first waypoint it's current location
+        //path.addWayPoint(this.getWorldTranslation());
         path.addWayPoint(new Vector3f(30, 0, -171));
         path.addWayPoint(new Vector3f(-175 + (20 * location), 0, -172));
         path.addWayPoint(new Vector3f(-188 + (20 * location), 0, -176));
         path.addWayPoint(new Vector3f(-190 + (20 * location), 0, -176));
-        path.setCurveTension(0.3f);
-        motionControl.play();
+        //path.setCurveTension(0.3f);
+        //motionControl.play();
     }
 
     /**
@@ -121,12 +123,12 @@ public class Agv extends Vehicle {
      * @param location the parking place
      */
     public void parkAtSeashipPlatform(int location) {
-        path.clearWayPoints();
+//        path.clearWayPoints();
         path.addWayPoint(new Vector3f(-284, 0, -184));
         path.addWayPoint(new Vector3f(-284, 0, 80 - (20 * location)));
         path.addWayPoint(new Vector3f(-289, 0, 135 - (20 * location)));
-        path.setCurveTension(0.3f);
-        motionControl.play();
+//        path.setCurveTension(0.3f);
+//        motionControl.play();
     }
 
     /**
@@ -136,13 +138,13 @@ public class Agv extends Vehicle {
      * @param location the parking place
      */
     public void parkAtInlandshipPlatform(int location) {
-        path.clearWayPoints();
+//        path.clearWayPoints();
         path.addWayPoint(new Vector3f(-285, 0, 177));
         path.addWayPoint(new Vector3f(130 - (20 * location), 0, 177));
         path.addWayPoint(new Vector3f(145 - (20 * location), 0, 183));
         path.addWayPoint(new Vector3f(147 - (20 * location), 0, 183));
-        path.setCurveTension(0.1f);
-        motionControl.play();
+//        path.setCurveTension(0.1f);
+//        motionControl.play();
     }
 
     /**

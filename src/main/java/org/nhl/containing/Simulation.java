@@ -445,44 +445,6 @@ public class Simulation extends SimpleApplication {
     private Transporter createTransporterFromMessage(Message message) {
         return null;
     }
-
-    private void createAGVPath() {
-        Agv agv = new Agv(assetManager, -1);
-        rootNode.attachChild(agv);
-        MotionPath agvPath = new MotionPath();
-        MotionEvent agvmotionControl = new MotionEvent(agv, agvPath);
-        //Create the AGV waypoints
-        //waypoint A
-        agvPath.addWayPoint(new Vector3f(580, 0, -140));
-        //waypont C
-        agvPath.addWayPoint(new Vector3f(330, 0, -140));
-        //waypoint E
-        agvPath.addWayPoint(new Vector3f(70, 0, -140));
-        //waypoint G
-        agvPath.addWayPoint(new Vector3f(-210, 0, -140));
-        //waypoint H
-        agvPath.addWayPoint(new Vector3f(-210, 0, 135));
-        //waypoint F
-        agvPath.addWayPoint(new Vector3f(70, 0, 135));
-        //waypoint D
-        agvPath.addWayPoint(new Vector3f(330, 0, 136));
-        //waypoint B
-        agvPath.addWayPoint(new Vector3f(580, 0, 135));
-
-
-        agvPath.setCurveTension(0.1f);
-        // set the speed and direction of the AGV using motioncontrol
-        agvmotionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        agvmotionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        agvmotionControl.setInitialDuration(10f);
-        agvmotionControl.setSpeed(1f);
-        //make the vehicles start moving
-        //agvmotionControl.setLoopMode(LoopMode.Loop);
-        agvmotionControl.play();
-        //make waypoints visible
-        //agvPath.disableDebugShape();
-    }
-
     /**
      * Initialises the simulation date.
      */
@@ -659,9 +621,9 @@ public class Simulation extends SimpleApplication {
                         ship1.arrive(0);
                         Agv agvtest = new Agv(assetManager, 0);
                         rootNode.attachChild(agvtest);
-                        char[] testarr = {'A', 'B', 'D', 'C', 'E', 'F', 'H', 'G'};
+                        char[] testarr = {'D', 'F', 'E', 'I'};
                         agvtest.move(testarr);
-
+                        agvtest.parkAtTrainPlatform(0);
                         ship2.arrive(1);
                         debug = false;
                         Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
@@ -676,8 +638,7 @@ public class Simulation extends SimpleApplication {
                         rootNode.attachChild(traintest);
                         traintest.multiplySpeed(speedMultiplier);
                         traintest.arrive(0);
-                        //testing train code
-                        createAGVPath();
+                        
                     } else {
                         //System.out.println(ship1.getLocalTranslation());
                         debug = !debug;
