@@ -50,8 +50,8 @@ public class TruckCrane extends Crane {
      * @param container Request a container.
      * @param agv Agv that needs the container.
      */
-    public void truckToAgv(Spatial container, Agv agv) {
-        this.container = container;
+    public void truckToAgv(Lorry lorry, Agv agv) {
+        this.container = lorry.getContainer();
         this.agv = agv;
         this.direction = CraneDirection.LORRYTOAGV;
         initWaypoints();

@@ -38,6 +38,7 @@ import org.nhl.containing.communication.messages.Message;
 import org.nhl.containing.communication.messages.SpeedMessage;
 import org.nhl.containing.communication.Xml;
 import org.nhl.containing.communication.messages.CraneMessage;
+import org.nhl.containing.communication.messages.DepartMessage;
 import org.nhl.containing.cranes.Crane;
 import org.nhl.containing.cranes.DockingCrane;
 import org.nhl.containing.cranes.StorageCrane;
@@ -55,6 +56,7 @@ public class Simulation extends SimpleApplication {
     private List<Transporter> transporterPool;
     private List<Transporter> transporters;
     private List<ArriveMessage> arriveMessages;
+    private List<DepartMessage> departMessages;
     private List<CraneMessage> craneMessages;
     private List<Crane> craneList;
     private List<Container> containerList;
@@ -89,6 +91,7 @@ public class Simulation extends SimpleApplication {
         agvList = new ArrayList<>();
         craneList = new ArrayList<>();
         arriveMessages = new ArrayList<>();
+        departMessages = new ArrayList<>();
         transporters = new ArrayList<>();
         containerList = new ArrayList<>();
         countAgv = new ArrayList<>();
@@ -167,6 +170,9 @@ public class Simulation extends SimpleApplication {
             case Message.ARRIVE:
                 handleArriveMessage((ArriveMessage) message);
                 break;
+            case Message.DEPART:
+                handleDepartMessage((DepartMessage) message);
+                break;
             case Message.SPEED:
                 handleSpeedMessage((SpeedMessage) message);
                 break;
@@ -236,9 +242,6 @@ public class Simulation extends SimpleApplication {
             throw new IllegalArgumentException("Transporter " + message.getTransporterId()
                     + " does not exist");
         }
-
-
-
         // Tell transporter to *arrive*. Rename move() to arrive(). move() is
         // too ambiguous. move() should probably be an *abstract* method within
         // Transporter, to be actually defined within each of the subclasses.
@@ -261,6 +264,25 @@ public class Simulation extends SimpleApplication {
         // create. The reason we don't want to keep the transporter in the pool,
         // is because we want a way of discerning whether a transporter can
         // actually be interacted with.
+    }
+    
+    private void handleDepartMessage(DepartMessage message) {
+        boolean exists = false;
+
+        for (Transporter transporter : transporters) {
+            if (transporter.getId() == message.getTransporterId()) {
+                transporter.setProcessingMessageId(message.getId());
+                transporter.multiplySpeed(speedMultiplier);
+                transporter.depart();
+                departMessages.add(message);
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            throw new IllegalArgumentException("Transporter " + message.getTransporterId()
+                    + " does not exist");
+        }
     }
 
     /**
@@ -304,7 +326,8 @@ public class Simulation extends SimpleApplication {
                         case "TruckCrane":
                             truckCrane = (TruckCrane) crane;
                             truckCrane.setProcessingMessageId(message.getId());
-                            truckCrane.truckToAgv(findContainer(message.getContainerNumber()), findAGV(message.getAgvIdentifier()));
+                            Lorry lorry = (Lorry) findTransporter(message.getTransporterType(),message.getTransporterIdentifier());
+                            truckCrane.truckToAgv(lorry, findAGV(message.getAgvIdentifier()));
                             break;
                         default:
                             throw new IllegalArgumentException(message.getCraneType()
@@ -397,6 +420,8 @@ public class Simulation extends SimpleApplication {
     private void handleProcessingMessage() {
 
         //Loop through all transporters and send an OK message when a transporter has arrived to its destination
+        if(!arriveMessages.isEmpty())
+        {
         Iterator<Transporter> itrTransporter = transporterPool.iterator();
         while (itrTransporter.hasNext()) {
             Transporter poolTransporter = itrTransporter.next();
@@ -409,13 +434,36 @@ public class Simulation extends SimpleApplication {
                         transporters.add(poolTransporter);
                         itrTransporter.remove();
                         itrMessage.remove();
+                        }
                     }
                 }
-
             }
-
         }
-
+        
+        //Loop through all transporters and send an OK message when a transporter has departed
+        if(!departMessages.isEmpty())
+        {
+        Iterator<Transporter> itrDepartingTransporter = transporters.iterator();
+        while (itrDepartingTransporter.hasNext()) {
+            Transporter transporter = itrDepartingTransporter.next();
+            if (transporter.isArrived()) {
+                Iterator<DepartMessage> itrMessage = departMessages.iterator();
+                while (itrMessage.hasNext()) {
+                    Message msg = itrMessage.next();
+                    if (msg.getId() == transporter.getProcessingMessageId()) {
+                        sendOkMessage(msg);
+                        rootNode.detachChild(transporter);
+                        itrDepartingTransporter.remove();
+                        itrMessage.remove();
+                        }
+                    }
+                }
+            }
+        }
+        
+        //Loop through all cranes and send an OK message when a crane is ready
+        if(!craneMessages.isEmpty())
+        {
         Iterator<Crane> itrCrane = craneList.iterator();
         while (itrCrane.hasNext()) {
             Crane crane = itrCrane.next();
@@ -426,12 +474,12 @@ public class Simulation extends SimpleApplication {
                     if (msg.getId() == crane.getProcessingMessageId()) {
                         sendOkMessage(msg);
                         itrMessage.remove();
+                        }
                     }
                 }
             }
         }
-
-
+        
     }
 
     /**
@@ -817,7 +865,7 @@ public class Simulation extends SimpleApplication {
         agv4.rotate(0, 0, 0);
         agv4.setLocalTranslation(300, 0, 150);
         rootNode.attachChild(agv4);
-        lorryArea.getTruckCranes().get(0).truckToAgv(lorry1.getChild(1), agv4);
+        lorryArea.getTruckCranes().get(0).truckToAgv(lorry1, agv4);
         //DC test
         Container container2 = new Container(assetManager, "TEST CONTAINER", 4, 0, 0, 0);
         container2.setLocalTranslation(-325, 0, 0);
