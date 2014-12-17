@@ -26,7 +26,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import org.nhl.containing.communication.messages.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
@@ -74,6 +77,10 @@ public class Simulation extends SimpleApplication {
     private Inlandship ship2;
     private float speedMultiplier;
     private float timeMultiplier = 1;
+    private final int MAXAGV = 144;
+    private List<Integer> countAgv;
+    private List<Float> agvParkingX;
+    private List<Float> agvParkingY;
 
     public Simulation() {
         client = new Client();
@@ -84,6 +91,9 @@ public class Simulation extends SimpleApplication {
         arriveMessages = new ArrayList<>();
         transporters = new ArrayList<>();
         containerList = new ArrayList<>();
+        countAgv = new ArrayList<>();
+        agvParkingX = new ArrayList<>();
+        agvParkingY = new ArrayList<>();
     }
 
     @Override
@@ -546,9 +556,10 @@ public class Simulation extends SimpleApplication {
         initSky();
         initAreas();
         initPlatform();
-        initAgvLorry();
-        initAgvTrain();
-        initAgvShip();
+        initAgvParkingShip();
+        initAgvParkingTrain();
+        initAgvParkingLorry();
+        placeAgv();
         //testMethodCranes();
     }
 
@@ -689,55 +700,118 @@ public class Simulation extends SimpleApplication {
         };
         inputManager.addListener(acl, "debugmode");
     }
-    /*
-     * Spawn avg on ship storage deck
-     */
 
-    private void initAgvShip() {
+    /**
+     * Initializes the agv parking on the ship storage platform.
+     * The X and Y locations are storred in an ArrayList.
+     * To trigger the 6th parking spot, pull the 6th element from both array's
+     * agvParkingX.pull(5);
+     * agvParkingY.pull(5);
+     * 
+     * 144 parking places
+     */
+    private void initAgvParkingShip() {
+        // Parking id 0 till 23
         int agvStartPoint = -167;
         for (int i = 1; i < 29; i++) {
             if (i % 7 != 0) {
-                Agv agv = new Agv(assetManager, i);
-                agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
-                rootNode.attachChild(agv);
-                agvList.add(agv);
+                agvParkingX.add((agvStartPoint + (4.7f * i)));
+                agvParkingY.add(-122f);
             } else {
                 agvStartPoint += 17;
             }
         }
-    }
-    /*
-     * Spawn avg on train storage deck
-     */
-
-    private void initAgvTrain() {
-        int agvStartPoint = -18;
+        
+        // Parking on the opposite side
+        // Parking id 24 till 47
+        int agvOpositeStartPoint = -298;
         for (int i = 29; i < 57; i++) {
             if (i % 7 != 0) {
-                Agv agv = new Agv(assetManager, i);
-                agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
-                rootNode.attachChild(agv);
-                agvList.add(agv);
+                agvParkingX.add((agvOpositeStartPoint + (4.7f * i)));
+                agvParkingY.add(113f);
+            } else {
+                agvOpositeStartPoint += 17;
+            }
+        }
+    }
+
+    /**
+     * Initializes the agv parking on the train storage platform.
+     */
+    private void initAgvParkingTrain() {
+        // Parking id 48 till 71
+        int agvStartPoint = -149;
+        for (int i = 57; i < 85; i++) {
+            if (i % 7 != 0) {
+                agvParkingX.add((agvStartPoint + (4.7f * i)));
+                agvParkingY.add(-122f);
             } else {
                 agvStartPoint += 17;
             }
         }
-    }
-    /*
-     * Spawn avg on lorry storage deck
-     */
-
-    private void initAgvLorry() {
-        int agvStartPoint = 100;
-        for (int i = 57; i < 85; i++) {
+        
+        // Parking on the opposite side
+        // Parking id 72 till 95
+        int agvOpositeStartPoint = -281;
+        for (int i = 85; i < 113; i++) {
             if (i % 7 != 0) {
-                Agv agv = new Agv(assetManager, i);
-                agv.setLocalTranslation(agvStartPoint + (4.7f * i), 0, -122);
-                rootNode.attachChild(agv);
-                agvList.add(agv);
+                agvParkingX.add((agvOpositeStartPoint + (4.7f * i)));
+                agvParkingY.add(113f);
+            } else {
+                agvOpositeStartPoint += 17;
+            }
+        }
+        
+    }
+
+    /**
+     * Initializes the agv parking on the lorry storage platform.
+     */
+    private void initAgvParkingLorry() {
+        // Parking id 96 till 119
+        int agvStartPoint = -163;
+        for (int i = 113; i < 141; i++) {
+            if (i % 7 != 0) {
+                agvParkingX.add((agvStartPoint + (4.7f * i)));
+                agvParkingY.add(-122f);
             } else {
                 agvStartPoint += 17;
             }
+        }
+        
+        // Parking on the opposite side
+        // Parking id 120 till 143
+        int agvOpositeStartPoint = -295;
+        for (int i = 141; i < 169; i++) {
+            if (i % 7 != 0) {
+                agvParkingX.add((agvOpositeStartPoint + (4.7f * i)));
+                agvParkingY.add(113f);
+            } else {
+                agvOpositeStartPoint += 17;
+            }
+        }
+    }
+    
+    /**
+     * Spawn agv on given parkingspace and add it to agv list
+     * @param id used to place agv on the given parkingspace
+     */
+    private void agvToParking(int id) {
+        try {
+            Agv agv = new Agv(assetManager, id);
+            float agvX = agvParkingX.get(id);
+            float agvY = agvParkingY.get(id);
+            agv.setLocalTranslation(agvX, 0, agvY);
+            rootNode.attachChild(agv);
+            agvList.add(agv);
+        } catch(IndexOutOfBoundsException e) {
+            System.out.println("Error: Max parking id is 143, you used " + id);
+        }
+    }
+    
+    private void placeAgv() {
+        for (int i = 0; i < MAXAGV; i++) {
+            agvToParking(i);
         }
     }
 
@@ -772,7 +846,7 @@ public class Simulation extends SimpleApplication {
         container1 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
         container1.setLocalTranslation(120, 0, 0);
         rootNode.attachChild(container1);
-        
+
         //TruckCrane
         Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0));
         lorry1.setLocalTranslation(300, 0, 170);
