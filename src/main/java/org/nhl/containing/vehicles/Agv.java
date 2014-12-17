@@ -80,6 +80,7 @@ public class Agv extends Vehicle {
                 case 'H':
                     path.addWayPoint(new Vector3f(-210, 0, 135));
                     break;
+                    //Enter trainplatform path
                 case 'I':
                     path.addWayPoint(new Vector3f(60, 0, -171));
                     path.addWayPoint(new Vector3f(30, 0, -171));
@@ -94,6 +95,24 @@ public class Agv extends Vehicle {
                     path.addWayPoint(new Vector3f(-230, 0, 162));
                     path.addWayPoint(new Vector3f(-285, 0, 162));
                     path.addWayPoint(new Vector3f(-285, 0, 177));
+                    break;
+                case 'L':
+                    path.addWayPoint(new Vector3f(455, 0, -140));
+                    break;
+                case 'M':
+                    path.addWayPoint(new Vector3f(455, 0, 135));
+                        break;
+                case 'N':
+                    path.addWayPoint(new Vector3f(200, 0, 135));
+                    break;
+                case 'O':
+                    path.addWayPoint(new Vector3f(200, 0, -140));
+                    break;
+                case 'P':
+                    path.addWayPoint(new Vector3f(-70, 0, -140));
+                    break;
+                case 'Q':
+                    path.addWayPoint(new Vector3f(-70, 0, 135));
                     break;
             }
         }
