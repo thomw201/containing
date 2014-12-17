@@ -16,6 +16,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import org.nhl.containing.communication.messages.CraneMessage;
+import org.nhl.containing.communication.messages.DepartMessage;
 
 /**
  * Parses provided XML files and returns Containers.
@@ -67,11 +68,16 @@ public class Xml {
             return parseArriveMessage(messageTypeNodes.item(0), id);
         }
 
+        messageTypeNodes = doc.getElementsByTagName("Depart");
+        if (messageTypeNodes.getLength() > 0) {
+            return parseDepartMessage(messageTypeNodes.item(0), id);
+        }
+
         messageTypeNodes = doc.getElementsByTagName("Speed");
         if (messageTypeNodes.getLength() > 0) {
             return parseSpeedMessage(messageTypeNodes.item(0), id);
         }
-        
+
         messageTypeNodes = doc.getElementsByTagName("Crane");
         if (messageTypeNodes.getLength() > 0) {
             return parseCraneMessage(messageTypeNodes.item(0), id);
@@ -166,10 +172,33 @@ public class Xml {
         return new ArriveMessage(id, transporterId, depotIndex);
     }
 
+    private static DepartMessage parseDepartMessage(Node arriveNode, int id) {
+        int transporterId = -1;
+
+        NodeList departNodes = arriveNode.getChildNodes();
+
+        for (int i = 0; i < departNodes.getLength(); i++) {
+            Node node = departNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String content = node.getTextContent();
+
+                switch (node.getNodeName()) {
+                    case "transporterId":
+                        transporterId = Integer.parseInt(content);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(node.getNodeName()
+                                + " is not a legal node name");
+                }
+            }
+        }
+        return new DepartMessage(id, transporterId);
+    }
+
     private static SpeedMessage parseSpeedMessage(Node speedNode, int id) {
         return new SpeedMessage(id, Float.parseFloat(speedNode.getTextContent()));
     }
-    
+
     private static CraneMessage parseCraneMessage(Node craneNode, int id) {
         String craneType = "";
         int craneIdentifier = -1;
@@ -178,10 +207,10 @@ public class Xml {
         int agvIdentifier = -1;
         int storageIdentifier = -1;
         int containerNumber = -1;
-        
-        
+
+
         NodeList craneNodes = craneNode.getChildNodes();
-        
+
         for (int i = 0; i < craneNodes.getLength(); i++) {
             Node node = craneNodes.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -214,7 +243,7 @@ public class Xml {
                 }
             }
         }
-        return new CraneMessage(id, craneType , craneIdentifier ,transporterType, transporterIdentifier, agvIdentifier, storageIdentifier, containerNumber);
+        return new CraneMessage(id, craneType, craneIdentifier, transporterType, transporterIdentifier, agvIdentifier, storageIdentifier, containerNumber);
     }
 
     /**

@@ -24,6 +24,9 @@ public class Lorry extends Transporter {
         initMotionPaths();
     }
 
+    public Container getContainer() {
+        return container;
+    }
     /**
      * Initialize a lorry.
      */
