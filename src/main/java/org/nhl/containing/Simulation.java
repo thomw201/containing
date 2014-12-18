@@ -78,6 +78,8 @@ public class Simulation extends SimpleApplication {
     private List<Integer> countAgv;
     private List<Float> agvParkingX;
     private List<Float> agvParkingY;
+    int i = 19;
+    Agv agvtest;
 
     public Simulation() {
         client = new Client();
@@ -260,7 +262,7 @@ public class Simulation extends SimpleApplication {
         // is because we want a way of discerning whether a transporter can
         // actually be interacted with.
     }
-    
+
     private void handleDepartMessage(DepartMessage message) {
         boolean exists = false;
 
@@ -321,7 +323,7 @@ public class Simulation extends SimpleApplication {
                         case "TruckCrane":
                             truckCrane = (TruckCrane) crane;
                             truckCrane.setProcessingMessageId(message.getId());
-                            Lorry lorry = (Lorry) findTransporter(message.getTransporterType(),message.getTransporterIdentifier());
+                            Lorry lorry = (Lorry) findTransporter(message.getTransporterType(), message.getTransporterIdentifier());
                             truckCrane.truckToAgv(lorry, findAGV(message.getAgvIdentifier()));
                             break;
                         default:
@@ -415,66 +417,63 @@ public class Simulation extends SimpleApplication {
     private void handleProcessingMessage() {
 
         //Loop through all transporters and send an OK message when a transporter has arrived to its destination
-        if(!arriveMessages.isEmpty())
-        {
-        Iterator<Transporter> itrTransporter = transporterPool.iterator();
-        while (itrTransporter.hasNext()) {
-            Transporter poolTransporter = itrTransporter.next();
-            if (poolTransporter.isArrived()) {
-                Iterator<ArriveMessage> itrMessage = arriveMessages.iterator();
-                while (itrMessage.hasNext()) {
-                    Message msg = itrMessage.next();
-                    if (msg.getId() == poolTransporter.getProcessingMessageId()) {
-                        sendOkMessage(msg);
-                        transporters.add(poolTransporter);
-                        itrTransporter.remove();
-                        itrMessage.remove();
+        if (!arriveMessages.isEmpty()) {
+            Iterator<Transporter> itrTransporter = transporterPool.iterator();
+            while (itrTransporter.hasNext()) {
+                Transporter poolTransporter = itrTransporter.next();
+                if (poolTransporter.isArrived()) {
+                    Iterator<ArriveMessage> itrMessage = arriveMessages.iterator();
+                    while (itrMessage.hasNext()) {
+                        Message msg = itrMessage.next();
+                        if (msg.getId() == poolTransporter.getProcessingMessageId()) {
+                            sendOkMessage(msg);
+                            transporters.add(poolTransporter);
+                            itrTransporter.remove();
+                            itrMessage.remove();
                         }
                     }
                 }
             }
         }
-        
+
         //Loop through all transporters and send an OK message when a transporter has departed
-        if(!departMessages.isEmpty())
-        {
-        Iterator<Transporter> itrDepartingTransporter = transporters.iterator();
-        while (itrDepartingTransporter.hasNext()) {
-            Transporter transporter = itrDepartingTransporter.next();
-            if (transporter.isArrived()) {
-                Iterator<DepartMessage> itrMessage = departMessages.iterator();
-                while (itrMessage.hasNext()) {
-                    Message msg = itrMessage.next();
-                    if (msg.getId() == transporter.getProcessingMessageId()) {
-                        sendOkMessage(msg);
-                        rootNode.detachChild(transporter);
-                        itrDepartingTransporter.remove();
-                        itrMessage.remove();
+        if (!departMessages.isEmpty()) {
+            Iterator<Transporter> itrDepartingTransporter = transporters.iterator();
+            while (itrDepartingTransporter.hasNext()) {
+                Transporter transporter = itrDepartingTransporter.next();
+                if (transporter.isArrived()) {
+                    Iterator<DepartMessage> itrMessage = departMessages.iterator();
+                    while (itrMessage.hasNext()) {
+                        Message msg = itrMessage.next();
+                        if (msg.getId() == transporter.getProcessingMessageId()) {
+                            sendOkMessage(msg);
+                            rootNode.detachChild(transporter);
+                            itrDepartingTransporter.remove();
+                            itrMessage.remove();
                         }
                     }
                 }
             }
         }
-        
+
         //Loop through all cranes and send an OK message when a crane is ready
-        if(!craneMessages.isEmpty())
-        {
-        Iterator<Crane> itrCrane = craneList.iterator();
-        while (itrCrane.hasNext()) {
-            Crane crane = itrCrane.next();
-            if (crane.isArrived()) {
-                Iterator<CraneMessage> itrMessage = craneMessages.iterator();
-                while (itrMessage.hasNext()) {
-                    Message msg = itrMessage.next();
-                    if (msg.getId() == crane.getProcessingMessageId()) {
-                        sendOkMessage(msg);
-                        itrMessage.remove();
+        if (!craneMessages.isEmpty()) {
+            Iterator<Crane> itrCrane = craneList.iterator();
+            while (itrCrane.hasNext()) {
+                Crane crane = itrCrane.next();
+                if (crane.isArrived()) {
+                    Iterator<CraneMessage> itrMessage = craneMessages.iterator();
+                    while (itrMessage.hasNext()) {
+                        Message msg = itrMessage.next();
+                        if (msg.getId() == crane.getProcessingMessageId()) {
+                            sendOkMessage(msg);
+                            itrMessage.remove();
                         }
                     }
                 }
             }
         }
-        
+
     }
 
     /**
@@ -498,6 +497,7 @@ public class Simulation extends SimpleApplication {
     private Transporter createTransporterFromMessage(Message message) {
         return null;
     }
+
     /**
      * Initialises the simulation date.
      */
@@ -565,7 +565,7 @@ public class Simulation extends SimpleApplication {
         initAgvParkingTrain();
         initAgvParkingLorry();
         placeAgv();
-        
+
         //testMethodCranes();
     }
 
@@ -611,8 +611,8 @@ public class Simulation extends SimpleApplication {
         // Add the StorageArea for boat containers.
         boatStorageArea = new StorageArea(assetManager, 4);
         boatStorageArea.setLocalTranslation(-150, 0, -120);
-        rootNode.attachChild(boatStorageArea);        
-        
+        rootNode.attachChild(boatStorageArea);
+
         // Add the StorageArea for train containers.
         trainStorageArea = new StorageArea(assetManager, 4);
         trainStorageArea.setLocalTranslation(130, 0, -120);
@@ -655,139 +655,129 @@ public class Simulation extends SimpleApplication {
 
     private void initUserInput() {
         inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
+        inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    for(Vector3f item : boatStorageArea.getStorageLanes().get(0)){
+                    for (Vector3f item : boatStorageArea.getStorageLanes().get(0)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         boatStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : boatStorageArea.getStorageLanes().get(1)){
+
+                    for (Vector3f item : boatStorageArea.getStorageLanes().get(1)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         boatStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : boatStorageArea.getStorageLanes().get(2)){
+
+                    for (Vector3f item : boatStorageArea.getStorageLanes().get(2)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         boatStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : boatStorageArea.getStorageLanes().get(3)){
+
+                    for (Vector3f item : boatStorageArea.getStorageLanes().get(3)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         boatStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : trainStorageArea.getStorageLanes().get(0)){
+
+                    for (Vector3f item : trainStorageArea.getStorageLanes().get(0)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         trainStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : trainStorageArea.getStorageLanes().get(1)){
+
+                    for (Vector3f item : trainStorageArea.getStorageLanes().get(1)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         trainStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : trainStorageArea.getStorageLanes().get(2)){
+
+                    for (Vector3f item : trainStorageArea.getStorageLanes().get(2)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         trainStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : trainStorageArea.getStorageLanes().get(3)){
+
+                    for (Vector3f item : trainStorageArea.getStorageLanes().get(3)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         trainStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : lorryStorageArea.getStorageLanes().get(0)){
+
+                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(0)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         lorryStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : lorryStorageArea.getStorageLanes().get(1)){
+
+                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(1)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         lorryStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : lorryStorageArea.getStorageLanes().get(2)){
+
+                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(2)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         lorryStorageArea.attachChild(containertje);
                     }
-                    
-                    for(Vector3f item : lorryStorageArea.getStorageLanes().get(3)){
+
+                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(3)) {
                         Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
                         containertje.setLocalTranslation(item);
                         lorryStorageArea.attachChild(containertje);
                     }
-//                    Container containertje =  new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-//                    containertje.setLocalTranslation(boatStorageArea.getNextSpot());
-//                    boatStorageArea.attachChild(containertje);
-                    //if (!debug) {
-//                        debug = !debug;
-////                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-////                        rootNode.attachChild(test);
-////                        test.arrive(0);
-////                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-////                        rootNode.attachChild(test2);
-////                        test2.arrive(0);
-////                        Train traintest = new Train(assetManager, 0, new ArrayList());
-////                        rootNode.attachChild(traintest);
-////                        traintest.arrive(0);
-//                        ship1 = new Inlandship(assetManager, 0, new ArrayList());
-//                        ship2 = new Inlandship(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(ship1);
-//                        rootNode.attachChild(ship2);
-//                        ship1.arrive(0);
-//                        Agv agvtest = new Agv(assetManager, 0);
-//                        rootNode.attachChild(agvtest);
-//                        //char[] testarr = {'D', 'F', 'E', 'I'};
-//                        char[] testarr = {'P', 'Q'};
-//                        agvtest.move(testarr);
-//                        //
-//                        ship2.arrive(1);
-//                        debug = false;
-//                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(test);
-//                        test.multiplySpeed(speedMultiplier);
-//                        test.arrive(0);
-//                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(test2);
-//                        test2.multiplySpeed(speedMultiplier);
-//                        test2.arrive(0);
-//                        Train traintest = new Train(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(traintest);
-//                        traintest.multiplySpeed(speedMultiplier);
-//                        traintest.arrive(0);
-                        
-                    //} else {
-                        //System.out.println(ship1.getLocalTranslation());
-//                        debug = !debug;
-//                        ship1.depart();
-//                        ship2.depart();
-                    //}
+                    agvtest = new Agv(assetManager, 0);
+                    ship1 = new Inlandship(assetManager, 0, new ArrayList());
+                    ship2 = new Inlandship(assetManager, 0, new ArrayList());
+                    rootNode.attachChild(ship1);
+                    rootNode.attachChild(ship2);
+                    ship1.arrive(0);
+                    rootNode.attachChild(agvtest);
+                    char[] testarr = {'F', 'N'};
+                    agvtest.move(testarr);
+                    Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
+                    rootNode.attachChild(l);
+                    l.arrive(i);
+                    agvtest.parkAtLorryPlatform(i);
+                    i -= 1;
+                    ship2.arrive(1);
+                    debug = false;
+                    Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+                    rootNode.attachChild(test);
+                    test.multiplySpeed(speedMultiplier);
+                    test.arrive(0);
+                    Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+                    rootNode.attachChild(test2);
+                    test2.multiplySpeed(speedMultiplier);
+                    test2.arrive(0);
+                    Train traintest = new Train(assetManager, 0, new ArrayList());
+                    rootNode.attachChild(traintest);
+                    traintest.multiplySpeed(speedMultiplier);
+                    traintest.arrive(0);
+
+
+                } else if (name.equals("debugmode2") && keyPressed) {
+                    //System.out.println(ship1.getLocalTranslation());
+                    ship1.depart();
+                    ship2.depart();
+                    agvtest.leaveLorryPlatform();
                 }
             }
         };
         inputManager.addListener(acl, "debugmode");
+        inputManager.addListener(acl, "debugmode2");
     }
 
     /**
-     * Initializes the agv parking on the ship storage platform.
-     * The X and Y locations are storred in an ArrayList.
-     * To trigger the 6th parking spot, pull the 6th element from both array's
-     * agvParkingX.pull(5);
+     * Initializes the agv parking on the ship storage platform. The X and Y
+     * locations are storred in an ArrayList. To trigger the 6th parking spot,
+     * pull the 6th element from both array's agvParkingX.pull(5);
      * agvParkingY.pull(5);
-     * 
+     *
      * 144 parking places
      */
     private void initAgvParkingShip() {
@@ -801,7 +791,7 @@ public class Simulation extends SimpleApplication {
                 agvStartPoint += 17;
             }
         }
-        
+
         // Parking on the opposite side
         // Parking id 24 till 47
         int agvOpositeStartPoint = -298;
@@ -829,7 +819,7 @@ public class Simulation extends SimpleApplication {
                 agvStartPoint += 17;
             }
         }
-        
+
         // Parking on the opposite side
         // Parking id 72 till 95
         int agvOpositeStartPoint = -281;
@@ -841,7 +831,7 @@ public class Simulation extends SimpleApplication {
                 agvOpositeStartPoint += 17;
             }
         }
-        
+
     }
 
     /**
@@ -858,7 +848,7 @@ public class Simulation extends SimpleApplication {
                 agvStartPoint += 17;
             }
         }
-        
+
         // Parking on the opposite side
         // Parking id 120 till 143
         int agvOpositeStartPoint = -295;
@@ -871,9 +861,10 @@ public class Simulation extends SimpleApplication {
             }
         }
     }
-    
+
     /**
      * Spawn agv on given parkingspace and add it to agv list
+     *
      * @param id used to place agv on the given parkingspace
      */
     private void agvToParking(int id) {
@@ -884,11 +875,12 @@ public class Simulation extends SimpleApplication {
             agv.setLocalTranslation(agvX, 0, agvY);
             rootNode.attachChild(agv);
             agvList.add(agv);
-        } catch(IndexOutOfBoundsException e) {
+            System.out.println(agv.getWorldTranslation());
+        } catch (IndexOutOfBoundsException e) {
             System.out.println("Error: Max parking id is 143, you used " + id);
         }
     }
-    
+
     private void placeAgv() {
         for (int i = 0; i < MAXAGV; i++) {
             agvToParking(i);
