@@ -13,7 +13,6 @@ public class Agv extends Vehicle {
     private AssetManager assetManager;
     private Container container;
     private MotionPath path;
-
     MotionEvent motionControl;
 
     public Agv(AssetManager assetManager, int id) {
@@ -33,7 +32,7 @@ public class Agv extends Vehicle {
         this.attachChild(agv);
     }
 
-   /**
+    /**
      * Initialize motionpath and motionevent
      */
     private void initMotionPaths() {
@@ -45,7 +44,7 @@ public class Agv extends Vehicle {
         motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
     }
 
-   /**
+    /**
      * Method that moves this agv over the given path
      *
      * @param path character arraylist filled with the waypoints
@@ -54,7 +53,7 @@ public class Agv extends Vehicle {
         path.clearWayPoints();
         //make the first waypoint it's current location
         path.addWayPoint(this.getWorldTranslation());
-      for (char waypoint : route) {
+        for (char waypoint : route) {
             switch (waypoint) {
                 case 'A':
                     path.addWayPoint(new Vector3f(580, 0, -140));
@@ -80,7 +79,7 @@ public class Agv extends Vehicle {
                 case 'H':
                     path.addWayPoint(new Vector3f(-210, 0, 135));
                     break;
-                    //Enter trainplatform path
+                //Enter trainplatform path
                 case 'I':
                     path.addWayPoint(new Vector3f(60, 0, -171));
                     path.addWayPoint(new Vector3f(30, 0, -171));
@@ -101,7 +100,7 @@ public class Agv extends Vehicle {
                     break;
                 case 'M':
                     path.addWayPoint(new Vector3f(455, 0, 135));
-                        break;
+                    break;
                 case 'N':
                     path.addWayPoint(new Vector3f(200, 0, 135));
                     break;
@@ -117,7 +116,7 @@ public class Agv extends Vehicle {
             }
         }
         path.setCurveTension(0.1f);
-       motionControl.play();
+        motionControl.play();
     }
 
     /**
@@ -167,6 +166,42 @@ public class Agv extends Vehicle {
     }
 
     /**
+     * Determine in which storagearea this AGV is parked and send the AGV to the
+     * nearby waypoint
+     */
+    public void leaveStoragePlatform() {
+        char[] gotowaypoint = new char[1];
+        float west = -122f;
+        float east = 113f;
+        //western ship platform -> goto waypoint P
+        if (this.getLocalTranslation().x < 12 && this.getLocalTranslation().z == west) {
+            gotowaypoint[0] = 'P';
+        } //eastern ship platform -> goto waypoint Q
+        else if (this.getLocalTranslation().x < 12 && this.getLocalTranslation().z == east) {
+            gotowaypoint[0] = 'Q';
+        } //western train platform -> goto waypoint O
+        else if (this.getLocalTranslation().x > 110f && this.getLocalTranslation().x < 300 && this.getLocalTranslation().z == west) {
+            gotowaypoint[0] = 'O';
+        } //eastern train platform -> goto waypoint N
+        else if (this.getLocalTranslation().x > 110f && this.getLocalTranslation().x < 300 && this.getLocalTranslation().z == east) {
+            gotowaypoint[0] = 'N';
+        } //western lorry platform -> goto waypoint L
+        else if (this.getLocalTranslation().x > 365f && this.getLocalTranslation().x < 550 && this.getLocalTranslation().z == west) {
+            gotowaypoint[0] = 'L';
+        } else if (this.getLocalTranslation().x > 365f && this.getLocalTranslation().x < 550 && this.getLocalTranslation().z == east) {
+            gotowaypoint[0] = 'M';
+        } //AGV is not in any of the storage area's, send a msg and add 0
+        else {
+            System.out.println("Cannot leave storage area because this AGV is not in any storage area");
+            gotowaypoint[0] = '0';
+        }
+        //only call move method when there's a valid waypoint in the char[] to avoid exception
+        if (gotowaypoint[0] != '0') {
+            move(gotowaypoint);
+        }
+    }
+
+    /**
      * Method for making a parked AGV leave the Seashipplatform
      */
     public void leaveSeashipPlatform() {
@@ -185,7 +220,7 @@ public class Agv extends Vehicle {
     public void leaveInlandshipPlatform() {
         path.clearWayPoints();
         path.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x+15, 0, this.getWorldTranslation().z-7));
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x + 15, 0, this.getWorldTranslation().z - 7));
         path.addWayPoint(new Vector3f(180, 0, 177));
         path.addWayPoint(new Vector3f(180, 0, 140));
         path.setCurveTension(0.1f);
@@ -205,24 +240,22 @@ public class Agv extends Vehicle {
         motionControl.play();
     }
 
-    public void addContainer(Container container){
+    public void addContainer(Container container) {
         this.container = container;
     }
-    
-    public void removeContainer(){
+
+    public void removeContainer() {
         this.container = null;
-    }
-    
-    /**
-        path.addListener(this);
-        // set the speed and direction of the AGV using motioncontrol
-        motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
-        motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0, Vector3f.UNIT_Y));
-        motionControl.setSpeed(speed);
-        motionControl.play();
     }
 
     /**
+     * path.addListener(this); // set the speed and direction of the AGV using
+     * motioncontrol
+     * motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
+     * motionControl.setRotation(new Quaternion().fromAngleNormalAxis(0,
+     * Vector3f.UNIT_Y)); motionControl.setSpeed(speed); motionControl.play(); }
+     *
+     * /**
      * Debug method, displays object name, speed, amount of containers and it's
      * waypoints.
      *
