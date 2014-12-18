@@ -90,6 +90,14 @@ public class Lorry extends Transporter {
         return info + "\n";
     }
 
+    public void addContainer(Container container){
+        this.container = container;
+    }
+    
+    public void removeContainer(){
+        this.container = null;
+    }
+    
     /**
      * debug method that returns the waypoints of the given truck
      *

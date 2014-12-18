@@ -6,6 +6,7 @@ import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import org.nhl.containing.Container;
 import org.nhl.containing.vehicles.Agv;
 import org.nhl.containing.vehicles.Lorry;
 
@@ -246,19 +247,20 @@ public class TruckCrane extends Crane {
                     detachChild(container);
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
+                    lorry.removeContainer();
+                    agv.addContainer((Container)container);
                     break;
                 case AGVTOLORRY:
                     detachChild(container);
                     lorry.attachChild(container);
                     container.setLocalTranslation(0, 1, 11);
+                    agv.removeContainer();
+                    lorry.addContainer((Container)container);
                     break;
             }
             containerPathDownCounter = 0;
             wayPointIndex = 0;
             returnToStart();
-
-            detachChild(container);
-            agv.attachChild(container);
             container.setLocalTranslation(0, 1, 0);
 
         }

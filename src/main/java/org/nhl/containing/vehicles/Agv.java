@@ -205,6 +205,14 @@ public class Agv extends Vehicle {
         motionControl.play();
     }
 
+    public void addContainer(Container container){
+        this.container = container;
+    }
+    
+    public void removeContainer(){
+        this.container = null;
+    }
+    
     /**
         path.addListener(this);
         // set the speed and direction of the AGV using motioncontrol

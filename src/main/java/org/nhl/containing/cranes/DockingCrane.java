@@ -349,11 +349,15 @@ public class DockingCrane extends Crane {
                             detachChild(container);
                             agv.attachChild(container);
                             container.setLocalTranslation(0, 1, 0);
+                            ((Seaship)boat).removeContainer(container);
+                            agv.addContainer(container);
                             break;
                         case AGVTOBOAT:
                             detachChild(container);
                             boat.attachChild(container);
                             container.setLocalTranslation(nextContainerSpot);
+                            ((Seaship)boat).addContainer(container);
+                            agv.removeContainer();
                             break;
                     }
                     break;
@@ -364,11 +368,15 @@ public class DockingCrane extends Crane {
                             detachChild(container);
                             agv.attachChild(container);
                             container.setLocalTranslation(0, 1, 0);
+                            ((Inlandship)boat).removeContainer(container);
+                            agv.addContainer(container);
                             break;
                         case AGVTOBOAT:
                             detachChild(container);
                             boat.attachChild(container);
                             container.setLocalTranslation(nextContainerSpot);
+                            ((Inlandship)boat).addContainer(container);
+                            agv.removeContainer();
                             break;
                     }
                     break;

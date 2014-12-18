@@ -121,6 +121,14 @@ public class Inlandship extends Transporter {
         motionControl.play();
     }
 
+    public void addContainer(Container container){
+        this.containerList.add(container);
+    }
+    
+    public void removeContainer(Container container){
+        this.containerList.remove(container);
+    }
+    
     /**
      * Debug method, displays object name, speed, amount of containers and it's
      * waypoints.
