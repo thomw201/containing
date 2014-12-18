@@ -148,37 +148,37 @@ public class StorageCrane extends Crane {
         switch (direction) {
             case AGVTOSTORAGE:
                 cranePath.addWayPoint(getLocalTranslation());
-                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
 
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, container.getWorldTranslation().y, 0));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 24, 0));
-                containerPathUp.addWayPoint(new Vector3f((containerLocation.x - getWorldTranslation().x), 24, 0));
+                containerPathUp.addWayPoint(new Vector3f((containerLocation.x - getWorldTranslation().x) + 0.01f, 24, 0));
 
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (containerLocation.z - getWorldTranslation().z) + getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (containerLocation.z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
 
                 containerPathDown.addWayPoint(new Vector3f((containerLocation.x - getWorldTranslation().x), 24, 0));
-                containerPathDown.addWayPoint(new Vector3f((containerLocation.x - getWorldTranslation().x), containerLocation.y, 0));
+                containerPathDown.addWayPoint(new Vector3f((containerLocation.x - getWorldTranslation().x), containerLocation.y + 0.01f, 0));
 
-                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (containerLocation.z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (containerLocation.z - getWorldTranslation().z) + getLocalTranslation().z + 0.009f));
                 cranePathBack.addWayPoint(getLocalTranslation());
                 
                 break;
             case STORAGETOAGV:
                 cranePath.addWayPoint(getLocalTranslation());
-                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
 
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 1, 0));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 24, 0));
-                containerPathUp.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 24, 0));
+                containerPathUp.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + 0.01f, 24, 0));
 
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
 
                 containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 24, 0));
                 containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
 
-                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.009f));
                 cranePathBack.addWayPoint(getLocalTranslation());
                 break;
         }

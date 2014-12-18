@@ -149,26 +149,26 @@ public class TruckCrane extends Crane {
         switch (direction) {
             case AGVTOLORRY:
                 cranePath.addWayPoint(getLocalTranslation());
-                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation(). z+ 0.01f));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 1, 0));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 7, 0));
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11 + 0.01f));
                 containerPathDown.addWayPoint(new Vector3f((lorry.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
                 containerPathDown.addWayPoint(new Vector3f((lorry.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
-                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11));
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (lorry.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 11 + 0.009f));
                 cranePathBack.addWayPoint(getLocalTranslation());
                 break;
             case LORRYTOAGV:
                 cranePath.addWayPoint(getLocalTranslation());
-                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 1, 0));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 7, 0));
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
                 containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 7, 0));
                 containerPathDown.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x), 1, 0));
-                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (agv.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.009f));
                 cranePathBack.addWayPoint(getLocalTranslation());
                 break;
 
