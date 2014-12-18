@@ -1,15 +1,12 @@
 package org.nhl.containing;
 
 import com.jme3.app.SimpleApplication;
-import com.jme3.cinematic.MotionPath;
-import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
-import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.scene.Geometry;
@@ -26,10 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
-import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import org.nhl.containing.communication.messages.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
@@ -83,6 +77,8 @@ public class Simulation extends SimpleApplication {
     private List<Integer> countAgv;
     private List<Float> agvParkingX;
     private List<Float> agvParkingY;
+    int i = 19;
+    Agv agvtest;
 
     public Simulation() {
         client = new Client();
@@ -659,11 +655,10 @@ public class Simulation extends SimpleApplication {
 
     private void initUserInput() {
         inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
+        inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    if (!debug) {
-                        debug = !debug;
 //                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
 //                        rootNode.attachChild(test);
 //                        test.arrive(0);
@@ -673,17 +668,20 @@ public class Simulation extends SimpleApplication {
 //                        Train traintest = new Train(assetManager, 0, new ArrayList());
 //                        rootNode.attachChild(traintest);
 //                        traintest.arrive(0);
+                                agvtest = new Agv(assetManager, 0);
                         ship1 = new Inlandship(assetManager, 0, new ArrayList());
                         ship2 = new Inlandship(assetManager, 0, new ArrayList());
                         rootNode.attachChild(ship1);
                         rootNode.attachChild(ship2);
                         ship1.arrive(0);
-                        Agv agvtest = new Agv(assetManager, 0);
                         rootNode.attachChild(agvtest);
-                        //char[] testarr = {'D', 'F', 'E', 'I'};
-                        char[] testarr = {'P', 'Q'};
+                        char[] testarr = {'F', 'N'};
                         agvtest.move(testarr);
-                        //
+                        Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0,0,0,0));
+                        rootNode.attachChild(l);
+                        l.arrive(i);
+                        agvtest.parkAtLorryPlatform(i);
+                        i -= 1;
                         ship2.arrive(1);
                         debug = false;
                         Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
@@ -699,16 +697,18 @@ public class Simulation extends SimpleApplication {
                         traintest.multiplySpeed(speedMultiplier);
                         traintest.arrive(0);
                         
-                    } else {
+                        
+                    }
+                else if (name.equals("debugmode2") && keyPressed) {
                         //System.out.println(ship1.getLocalTranslation());
-                        debug = !debug;
                         ship1.depart();
                         ship2.depart();
+                        agvtest.leaveLorryPlatform();
                     }
                 }
-            }
         };
         inputManager.addListener(acl, "debugmode");
+        inputManager.addListener(acl, "debugmode2");
     }
 
     /**
@@ -814,6 +814,7 @@ public class Simulation extends SimpleApplication {
             agv.setLocalTranslation(agvX, 0, agvY);
             rootNode.attachChild(agv);
             agvList.add(agv);
+            System.out.println(agv.getWorldTranslation());
         } catch(IndexOutOfBoundsException e) {
             System.out.println("Error: Max parking id is 143, you used " + id);
         }
