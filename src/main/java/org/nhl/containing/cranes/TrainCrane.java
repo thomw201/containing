@@ -8,7 +8,9 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import org.nhl.containing.Container;
 import org.nhl.containing.vehicles.Agv;
+import org.nhl.containing.vehicles.Train;
 
 public class TrainCrane extends Crane {
 
@@ -16,6 +18,7 @@ public class TrainCrane extends Crane {
     private AssetManager assetManager;
     private Agv agv;
     private Node wagon;
+    private Train train;
     private Spatial container;
     private MotionPath containerPathUp = new MotionPath();
     private MotionPath containerPathDown = new MotionPath();
@@ -53,9 +56,10 @@ public class TrainCrane extends Crane {
      * @param container Request a container.
      * @param agv Agv that needs the container.
      */
-    public void trainToAgv(Spatial container, Agv agv) {
+    public void trainToAgv(Spatial container, Agv agv , Train train) {
         this.container = container;
         this.agv = agv;
+        this.train = train;
         this.direction = CraneDirection.TRAINTOAGV;
         initWaypoints();
         moveToContainer();
@@ -68,9 +72,10 @@ public class TrainCrane extends Crane {
      * @param container Request a container.
      * @param wagon Wagon that needs the container.
      */
-    public void agvToTrain(Spatial container, Node wagon) {
+    public void agvToTrain(Spatial container, Node wagon, Train train) {
         this.container = container;
         this.wagon = wagon;
+        this.train = train;
         this.direction = CraneDirection.AGVTOTRAIN;
         initWaypoints();
         moveToContainer();
@@ -249,11 +254,16 @@ public class TrainCrane extends Crane {
                     detachChild(container);
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
+                    train.removeContainer((Container) container);
+                    agv.addContainer((Container) container);
+                    
                     break;
                 case AGVTOTRAIN:
                     detachChild(container);
                     wagon.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
+                    agv.removeContainer();
+                    train.addContainer((Container) container);
                     break;
             }
 

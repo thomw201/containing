@@ -87,6 +87,14 @@ public class Train extends Transporter {
         path.addListener(this);
         motionControl.play();
     }
+    
+    public void removeContainer(Container container){
+        this.trainContainerList.add(container);
+    }
+    
+    public void addContainer(Container container){
+        this.trainContainerList.add(container);
+    }
 
     /**
      * Debug method, displays object name, speed, amount of containers and it's
