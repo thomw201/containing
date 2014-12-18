@@ -166,8 +166,7 @@ public class Agv extends Vehicle {
 
     /**
      * Makes AGV park under a crane on the lorryplatform The given location
-     * determines which crane it will park under
-     * AGV should be at location N
+     * determines which crane it will park under AGV should be at location N
      *
      * @param location the crane and parking spot
      */
@@ -175,6 +174,42 @@ public class Agv extends Vehicle {
         path.addWayPoint(new Vector3f(566 - (14 * location), 0, 135));
         path.addWayPoint(new Vector3f(566 - (14 * location), 0, 145));
         path.addWayPoint(new Vector3f(566 - (14 * location), 0, 156));
+    }
+
+    /**
+     * Determine in which storagearea this AGV is parked and send the AGV to the
+     * nearby waypoint
+     */
+    public void leaveStoragePlatform() {
+        char[] gotowaypoint = new char[1];
+        float west = -122f;
+        float east = 113f;
+        //western ship platform -> goto waypoint P
+        if (this.getLocalTranslation().x < 12 && this.getLocalTranslation().z == west) {
+            gotowaypoint[0] = 'P';
+        } //eastern ship platform -> goto waypoint Q
+        else if (this.getLocalTranslation().x < 12 && this.getLocalTranslation().z == east) {
+            gotowaypoint[0] = 'Q';
+        } //western train platform -> goto waypoint O
+        else if (this.getLocalTranslation().x > 110f && this.getLocalTranslation().x < 300 && this.getLocalTranslation().z == west) {
+            gotowaypoint[0] = 'O';
+        } //eastern train platform -> goto waypoint N
+        else if (this.getLocalTranslation().x > 110f && this.getLocalTranslation().x < 300 && this.getLocalTranslation().z == east) {
+            gotowaypoint[0] = 'N';
+        } //western lorry platform -> goto waypoint L
+        else if (this.getLocalTranslation().x > 365f && this.getLocalTranslation().x < 550 && this.getLocalTranslation().z == west) {
+            gotowaypoint[0] = 'L';
+        } else if (this.getLocalTranslation().x > 365f && this.getLocalTranslation().x < 550 && this.getLocalTranslation().z == east) {
+            gotowaypoint[0] = 'M';
+        } //AGV is not in any of the storage area's, send a msg and add 0
+        else {
+            System.out.println("Cannot leave storage area because this AGV is not in any storage area");
+            gotowaypoint[0] = '0';
+        }
+        //only call move method when there's a valid waypoint in the char[] to avoid exception
+        if (gotowaypoint[0] != '0') {
+            move(gotowaypoint);
+        }
     }
 
     /**
@@ -196,18 +231,13 @@ public class Agv extends Vehicle {
     public void leaveLorryPlatform() {
         path.clearWayPoints();
         path.addWayPoint(new Vector3f(this.getWorldTranslation()));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-20));
+        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z - 20));
         path.addWayPoint(new Vector3f(330, 0, 136));
         path.setCurveTension(0.1f);
         path.addListener(this);
         motionControl.play();
     }
-    public void leaveStoragePlatform(){
-        if (this.getLocalTranslation().x < 0 && this.getLocalTranslation().z == 122f) {
-            
-        }
-    }
-
+    
     /**
      * Method for making a parked AGV leave the inlandship platform
      */
@@ -234,14 +264,14 @@ public class Agv extends Vehicle {
         motionControl.play();
     }
 
-    public void addContainer(Container container){
+    public void addContainer(Container container) {
         this.container = container;
     }
-    
-    public void removeContainer(){
+
+    public void removeContainer() {
         this.container = null;
     }
-    
+
     /**
      * path.addListener(this); // set the speed and direction of the AGV using
      * motioncontrol
