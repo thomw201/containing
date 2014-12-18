@@ -18,7 +18,6 @@ import java.io.IOException;
 import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,8 +42,8 @@ import org.xml.sax.SAXException;
 
 /**
  * test
- *
- * @author normenhansen
+ * 
+* @author normenhansen
  */
 public class Simulation extends SimpleApplication {
 
@@ -105,7 +104,7 @@ public class Simulation extends SimpleApplication {
     public void simpleInitApp() {
         guiFont = assetManager.loadFont("Interface/Fonts/TimesNewRoman.fnt");
         initCam();
-        //initUserInput();
+//initUserInput();
         initScene();
         initDate();
         HUD = new HUD(this.guiNode, guiFont);
@@ -128,7 +127,7 @@ public class Simulation extends SimpleApplication {
 
     @Override
     public void simpleRender(RenderManager rm) {
-        //TODO: add render code
+//TODO: add render code
     }
 
     @Override
@@ -143,8 +142,7 @@ public class Simulation extends SimpleApplication {
             while (itrMoveMessage.hasNext()) {
                 MoveMessage moveMsg = itrMoveMessage.next();
                 Agv agv = findAGV(moveMsg.getAgvIdentifier());
-
-                //If we have found an Agv & it's at the end of his Dijkstra path
+//If we have found an Agv & it's at the end of his Dijkstra path
                 if (agv != null && agv.isArrived()) {
                     Crane crane = findCrane(moveMsg.getEndLocationId(), moveMsg.getEndLocationType());
                     if (crane != null) {
@@ -171,7 +169,6 @@ public class Simulation extends SimpleApplication {
                         }
                     }
                 }
-                
             }
         }
     }
@@ -185,7 +182,6 @@ public class Simulation extends SimpleApplication {
             }
             xmlMessages.add(xmlMessage);
         }
-
         for (String xmlMessage : xmlMessages) {
             handleMessage(xmlMessage);
         }
@@ -198,13 +194,12 @@ public class Simulation extends SimpleApplication {
         } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         } catch (IllegalArgumentException e) {
-            // Maybe just stacktrace here? Depends on how robust we want this to
-            // be. With the current code, it just discards the erroneous
-            // message.
+// Maybe just stacktrace here? Depends on how robust we want this to
+// be. With the current code, it just discards the erroneous
+// message.
             System.out.println(xmlMessage + " is not a valid message");
             return;
         }
-
         switch (message.getMessageType()) {
             case Message.CREATE:
                 handleCreateMessage((CreateMessage) message);
@@ -238,7 +233,6 @@ public class Simulation extends SimpleApplication {
                     containerBean.getyLoc(), containerBean.getzLoc());
             containers.add(container);
         }
-
         switch (message.getTransporterType()) {
             case "vrachtauto":
                 Lorry lorry = new Lorry(assetManager,
@@ -270,7 +264,6 @@ public class Simulation extends SimpleApplication {
 
     private void handleArriveMessage(ArriveMessage message) {
         boolean exists = false;
-
         for (Transporter poolTransporter : transporterPool) {
             if (poolTransporter.getId() == message.getTransporterId()) {
                 poolTransporter.setProcessingMessageId(message.getId());
@@ -278,7 +271,6 @@ public class Simulation extends SimpleApplication {
                 poolTransporter.multiplySpeed(speedMultiplier);
                 poolTransporter.arrive(message.getDepotIndex());
                 arriveMessages.add(message);
-
                 exists = true;
                 break;
             }
@@ -287,33 +279,32 @@ public class Simulation extends SimpleApplication {
             throw new IllegalArgumentException("Transporter " + message.getTransporterId()
                     + " does not exist");
         }
-        // Tell transporter to *arrive*. Rename move() to arrive(). move() is
-        // too ambiguous. move() should probably be an *abstract* method within
-        // Transporter, to be actually defined within each of the subclasses.
-        //
-        // Set `processingMessageId` within the Transporter/Vehicle/Object to
-        // this message ID. Once the Transporter has arrived at its destination,
-        // check for this in a separate function in simpleUpdate(), and then
-        // send an OK message for the Transporter/Vehicle/Object's
-        // `processingMessageId`.
-        //
-        // The `processingMesageId` also applies to cranes and AGVs. Cranes,
-        // AGVs and transporters should all therefore be subclassed from the
-        // same class, OR all implement the same interface (ProcessesMessage).
-        // An interface is the cleanest solution, and can be found within the
-        // backend. The default value should be -1 (i.e., not processing any
-        // messages).
-        //
-        // Finally, pop transporter from transporterPool, and add it to
-        // `transporters`. This list doesn't exist yet, but is trivial to
-        // create. The reason we don't want to keep the transporter in the pool,
-        // is because we want a way of discerning whether a transporter can
-        // actually be interacted with.
+// Tell transporter to *arrive*. Rename move() to arrive(). move() is
+// too ambiguous. move() should probably be an *abstract* method within
+// Transporter, to be actually defined within each of the subclasses.
+//
+// Set `processingMessageId` within the Transporter/Vehicle/Object to
+// this message ID. Once the Transporter has arrived at its destination,
+// check for this in a separate function in simpleUpdate(), and then
+// send an OK message for the Transporter/Vehicle/Object's
+// `processingMessageId`.
+//
+// The `processingMesageId` also applies to cranes and AGVs. Cranes,
+// AGVs and transporters should all therefore be subclassed from the
+// same class, OR all implement the same interface (ProcessesMessage).
+// An interface is the cleanest solution, and can be found within the
+// backend. The default value should be -1 (i.e., not processing any
+// messages).
+//
+// Finally, pop transporter from transporterPool, and add it to
+// `transporters`. This list doesn't exist yet, but is trivial to
+// create. The reason we don't want to keep the transporter in the pool,
+// is because we want a way of discerning whether a transporter can
+// actually be interacted with.
     }
 
     private void handleDepartMessage(DepartMessage message) {
         boolean exists = false;
-
         for (Transporter transporter : transporters) {
             if (transporter.getId() == message.getTransporterId()) {
                 transporter.setProcessingMessageId(message.getId());
@@ -334,24 +325,21 @@ public class Simulation extends SimpleApplication {
      * Checks the incoming CraneMessage which cranetype we are talking about
      * with which ID and sets the processingMessageId of that crane to the
      * messageID
-     *
-     * @param message the incoming craneMessage object that is being analyzed
+     *     
+* @param message the incoming craneMessage object that is being analyzed
      */
     private void handleCraneMessage(CraneMessage message) {
-
         craneMessages.add(message);
-
         Crane crane = findCrane(message.getCraneIdentifier(), message.getCraneType());
-        //Get the crane with the correct type and ID
+//Get the crane with the correct type and ID
         if (crane.getName().equals(message.getCraneType()) && crane.getId() == message.getCraneIdentifier()) {
-
             if (message.getTransporterType().equals("")) {
-                //if there isnt a transportertype then we will always be dealing with a storageCrane
+//if there isnt a transportertype then we will always be dealing with a storageCrane
                 StorageCrane storageCrane = (StorageCrane) crane;
                 storageCrane.setProcessingMessageId(message.getId());
-                //TODO:    STORAGE CRANE LOGIC HERE
+//TODO: STORAGE CRANE LOGIC HERE
             } else {
-                //if there is a transporter type check which crane we are dealing with
+//if there is a transporter type check which crane we are dealing with
                 switch (message.getCraneType()) {
                     case "DockingCraneSeaShip":
                         DockingCrane dockingCrane = (DockingCrane) crane;
@@ -380,21 +368,17 @@ public class Simulation extends SimpleApplication {
                 }
             }
         }
-
-
     }
 
     /**
      * Checks the incoming MoveMessage which agv we are talking about with which
      * ID and sets the processingMessageId of that agv to the messageID and
      * moves the chosen agv to the provided location
-     *
-     * @param message the incoming MoveMessage object that is being analyzed
+     *     
+* @param message the incoming MoveMessage object that is being analyzed
      */
     private void handleMoveMessage(MoveMessage message) {
-
         moveMessages.add(message);
-
         Agv agv = findAGV(message.getAgvIdentifier());
         if (agv != null) {
             agv.setProcessingMessageId(message.getId());
@@ -413,8 +397,8 @@ public class Simulation extends SimpleApplication {
 
     /**
      * Tries to find a Crane by the given input
-     *
-     * @param id An ID of the Crane we are going to search for
+     *     
+* @param id An ID of the Crane we are going to search for
      * @param craneName An name of the CraneType we are going to search for
      * @return returns null if the agv is not found
      */
@@ -429,12 +413,11 @@ public class Simulation extends SimpleApplication {
 
     /**
      * Tries to find a AGV by the given input
-     *
-     * @param id An ID of the AGV we are going to search for
+     *     
+* @param id An ID of the AGV we are going to search for
      * @return returns null if the agv is not found
      */
     private Agv findAGV(int id) {
-
         for (Agv AGV : agvList) {
             if (AGV.getId() == id) {
                 return AGV;
@@ -445,14 +428,13 @@ public class Simulation extends SimpleApplication {
 
     /**
      * Tries to find a transporter by the given input
-     *
-     * @param transporterType A transporter type where we are going to search
+     *     
+* @param transporterType A transporter type where we are going to search
      * for
      * @param id An ID of the tranposporter we are going to search for
      * @return
      */
     private Transporter findTransporter(String transporterType, int id) {
-
         for (Transporter transporter : transporters) {
             if (transporter.getId() == id) {
                 switch (transporterType) {
@@ -479,13 +461,12 @@ public class Simulation extends SimpleApplication {
 
     /**
      * Tries to find a container by the given input
-     *
-     * @param containerNumber A number of the container we are going to search
+     *     
+* @param containerNumber A number of the container we are going to search
      * for
      * @return returns null if nothing is found.
      */
     private Container findContainer(int containerNumber) {
-
         for (Container container : containerList) {
             if (container.getContainerID() == containerNumber) {
                 return container;
@@ -506,8 +487,7 @@ public class Simulation extends SimpleApplication {
      * back an OK-message to the backend system.
      */
     private void handleProcessingMessage() {
-
-        //Loop through all transporters and send an OK message when a transporter has arrived to its destination
+//Loop through all transporters and send an OK message when a transporter has arrived to its destination
         if (!arriveMessages.isEmpty()) {
             Iterator<Transporter> itrTransporter = transporterPool.iterator();
             while (itrTransporter.hasNext()) {
@@ -526,8 +506,7 @@ public class Simulation extends SimpleApplication {
                 }
             }
         }
-
-        //Loop through all transporters and send an OK message when a transporter has departed
+//Loop through all transporters and send an OK message when a transporter has departed
         if (!departMessages.isEmpty()) {
             Iterator<Transporter> itrDepartingTransporter = transporters.iterator();
             while (itrDepartingTransporter.hasNext()) {
@@ -546,8 +525,7 @@ public class Simulation extends SimpleApplication {
                 }
             }
         }
-
-        //Loop through all cranes and send an OK message when a crane is ready
+//Loop through all cranes and send an OK message when a crane is ready
         if (!craneMessages.isEmpty()) {
             Iterator<Crane> itrCrane = craneList.iterator();
             while (itrCrane.hasNext()) {
@@ -564,15 +542,14 @@ public class Simulation extends SimpleApplication {
                 }
             }
         }
-
     }
 
     /**
      * Sends an OK-type message to the controller of the object that is ready
      * for a new task -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE
      * FUTURE!-
-     *
-     * @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
+     *     
+* @param veh -SUBJECT TO CHANGE, MAYBE SUPERCLASS OBJECT IN THE FUTURE!-
      */
     private void sendOkMessage(Message message) {
         client.writeMessage("<Ok><id>" + message.getId() + "</id></Ok>");
@@ -581,8 +558,8 @@ public class Simulation extends SimpleApplication {
     /**
      * Reads the message object and creates and returns a Transporter from its
      * information.
-     *
-     * @param message Create message.
+     *     
+* @param message Create message.
      * @return Transporter as described in the message.
      */
     private Transporter createTransporterFromMessage(Message message) {
@@ -631,7 +608,6 @@ public class Simulation extends SimpleApplication {
         cal.add(Calendar.MILLISECOND, deltaTime * (int) timeMultiplier);
         currentDate = cal.getTime();
         lastTime = curTime;
-
         HUD.updateDateText(currentDate);
     }
 
@@ -643,10 +619,10 @@ public class Simulation extends SimpleApplication {
         cam.setLocation(new Vector3f(-240, 5, 220));
         flyCam.setMoveSpeed(50);
     }
-
     /*
      * Method for initializing the scene.
      */
+
     private void initScene() {
         initLighting();
         initSky();
@@ -657,7 +633,7 @@ public class Simulation extends SimpleApplication {
         initAgvParkingLorry();
         placeAgv();
         initAgvIdle();
-        //testMethodCranes();
+//testMethodCranes();
     }
 
     private void initSky() {
@@ -665,13 +641,12 @@ public class Simulation extends SimpleApplication {
     }
 
     private void initLighting() {
-        // Light pointing diagonal from the top right to the bottom left.
+// Light pointing diagonal from the top right to the bottom left.
         DirectionalLight light = new DirectionalLight();
         light.setDirection((new Vector3f(-0.5f, -0.5f, -0.5f)).normalizeLocal());
         light.setColor(ColorRGBA.White);
         rootNode.addLight(light);
-
-        // A second light pointing diagonal from the bottom left to the top right.
+// A second light pointing diagonal from the bottom left to the top right.
         DirectionalLight secondLight = new DirectionalLight();
         secondLight.setDirection((new Vector3f(0.5f, 0.5f, 0.5f)).normalizeLocal());
         secondLight.setColor(ColorRGBA.White);
@@ -679,42 +654,35 @@ public class Simulation extends SimpleApplication {
     }
 
     private void initAreas() {
-        // Add lorry area.
+// Add lorry area.
         lorryArea = new LorryArea(assetManager, 20);
         lorryArea.setLocalTranslation(300, 0, 170);
         rootNode.attachChild(lorryArea);
-
-        // Add the TrainArea.
+// Add the TrainArea.
         trainArea = new TrainArea(assetManager, 4);
         trainArea.setLocalTranslation(-160, 0, -180);
         rootNode.attachChild(trainArea);
-
-        // Add the BoatArea (Sea).
+// Add the BoatArea (Sea).
         boatArea = new BoatArea(assetManager, BoatArea.AreaType.SEASHIP, 10, 28);
         boatArea.setLocalTranslation(-325, 0, -100);
         rootNode.attachChild(boatArea);
-
-        // Add the inlandBoatArea.
+// Add the inlandBoatArea.
         inlandBoatArea = new BoatArea(assetManager, BoatArea.AreaType.INLANDSHIP, 8, 40);
         inlandBoatArea.setLocalTranslation(-240, 0, 220);
         rootNode.attachChild(inlandBoatArea);
-
-        // Add the StorageArea for boat containers.
+// Add the StorageArea for boat containers.
         boatStorageArea = new StorageArea(assetManager, 4);
         boatStorageArea.setLocalTranslation(-150, 0, -120);
         rootNode.attachChild(boatStorageArea);
-
-        // Add the StorageArea for train containers.
+// Add the StorageArea for train containers.
         trainStorageArea = new StorageArea(assetManager, 4);
         trainStorageArea.setLocalTranslation(130, 0, -120);
         rootNode.attachChild(trainStorageArea);
-
-        // Add the StorageArea for lorry containers.
+// Add the StorageArea for lorry containers.
         lorryStorageArea = new StorageArea(assetManager, 4);
         lorryStorageArea.setLocalTranslation(380, 0, -120);
         rootNode.attachChild(lorryStorageArea);
-
-        //Add all the cranes to a list for easier accesability
+//Add all the cranes to a list for easier accesability
         craneList.addAll(lorryArea.getTruckCranes());
         craneList.addAll(trainArea.getTrainCranes());
         craneList.addAll(boatArea.getDockingCranes());
@@ -725,15 +693,15 @@ public class Simulation extends SimpleApplication {
     }
 
     private void initPlatform() {
-        // Platform for the scene.
+// Platform for the scene.
         Spatial platform = assetManager.loadModel("Models/platform/platform.j3o");
-        //vergroot platform
+//vergroot platform
         platform.scale(30, 45, 20);
-        //schuif platform op
+//schuif platform op
         platform.setLocalTranslation(150, -9, 0);
         rootNode.attachChild(platform);
-        //create water
-        //water
+//create water
+//water
         Box waterplatform = new Box(1000f, 1f, 1000f);
         Geometry waterGeo = new Geometry("", waterplatform);
         Material boxMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -743,111 +711,105 @@ public class Simulation extends SimpleApplication {
         waterGeo.setMaterial(boxMat);
         rootNode.attachChild(waterGeo);
     }
-
-  /*  private void initUserInput() {
-        inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
-        inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
-        ActionListener acl = new ActionListener() {
-            @Override
-            public void onAction(String name, boolean keyPressed, float tpf) {
-                if (name.equals("debugmode") && keyPressed) {
-
-
-/*                  if (!debug) {
-                        debug = !debug;
-//                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(test);
-//                        test.arrive(0);
-//                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(test2);
-//                        test2.arrive(0);
-//                        Train traintest = new Train(assetManager, 0, new ArrayList());
-//                        rootNode.attachChild(traintest);
-//                        traintest.arrive(0);
-                        ship1 = new Inlandship(assetManager, 0, new ArrayList());
-                        ship2 = new Inlandship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(ship1);
-                        rootNode.attachChild(ship2);
-                        ship1.arrive(0);
-                        Agv agvtest = new Agv(assetManager, 0);
-                        rootNode.attachChild(agvtest);
-                        //char[] testarr = {'D', 'F', 'E', 'I'};
-                        String testarr = "PQA";
-                        agvtest.move(testarr);
-                        //
-                        ship2.arrive(1);
-                        debug = false;
-                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(test);
-                        test.multiplySpeed(speedMultiplier);
-                        test.arrive(0);
-                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(test2);
-                        test2.multiplySpeed(speedMultiplier);
-                        test2.arrive(0);
-                        Train traintest = new Train(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(traintest);
-                        traintest.multiplySpeed(speedMultiplier);
-                        traintest.arrive(0);
-
-                    } else {
-                        //System.out.println(ship1.getLocalTranslation());
-                        debug = !debug;
-                        ship1.depart();
-                        ship2.depart();
-                    }             
-                    agvtest = new Agv(assetManager, 0);
-                    ship1 = new Inlandship(assetManager, 0, new ArrayList());
-                    ship2 = new Inlandship(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(ship1);
-                    rootNode.attachChild(ship2);
-                    ship1.arrive(0);
-                    rootNode.attachChild(agvtest);
-                    String testarr = "F, N";
-                    agvtest.move(testarr);
-                    Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
-                    rootNode.attachChild(l);
-                    l.arrive(i);
-                    agvtest.parkAtLorryPlatform(i);
-                    i -= 1;
-                    ship2.arrive(1);
-                    debug = false;
-                    Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(test);
-                    test.multiplySpeed(speedMultiplier);
-                    test.arrive(0);
-                    Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(test2);
-                    test2.multiplySpeed(speedMultiplier);
-                    test2.arrive(0);
-                    Train traintest = new Train(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(traintest);
-                    traintest.multiplySpeed(speedMultiplier);
-                    traintest.arrive(0);
-
-                    
-                } else if (name.equals("debugmode2") && keyPressed) {
-                    //System.out.println(ship1.getLocalTranslation());
-                    ship1.depart();
-                    ship2.depart();
-                    agvtest.leaveLorryPlatform();
-                }
-            }
-        };
-        inputManager.addListener(acl, "debugmode");
-        inputManager.addListener(acl, "debugmode2");
-    }*/
+    /* private void initUserInput() {
+     inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
+     inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
+     ActionListener acl = new ActionListener() {
+     @Override
+     public void onAction(String name, boolean keyPressed, float tpf) {
+     if (name.equals("debugmode") && keyPressed) {
+     /* if (!debug) {
+     debug = !debug;
+     // Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+     // rootNode.attachChild(test);
+     // test.arrive(0);
+     // Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+     // rootNode.attachChild(test2);
+     // test2.arrive(0);
+     // Train traintest = new Train(assetManager, 0, new ArrayList());
+     // rootNode.attachChild(traintest);
+     // traintest.arrive(0);
+     ship1 = new Inlandship(assetManager, 0, new ArrayList());
+     ship2 = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(ship1);
+     rootNode.attachChild(ship2);
+     ship1.arrive(0);
+     Agv agvtest = new Agv(assetManager, 0);
+     rootNode.attachChild(agvtest);
+     //char[] testarr = {'D', 'F', 'E', 'I'};
+     String testarr = "PQA";
+     agvtest.move(testarr);
+     //
+     ship2.arrive(1);
+     debug = false;
+     Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test);
+     test.multiplySpeed(speedMultiplier);
+     test.arrive(0);
+     Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test2);
+     test2.multiplySpeed(speedMultiplier);
+     test2.arrive(0);
+     Train traintest = new Train(assetManager, 0, new ArrayList());
+     rootNode.attachChild(traintest);
+     traintest.multiplySpeed(speedMultiplier);
+     traintest.arrive(0);
+     } else {
+     //System.out.println(ship1.getLocalTranslation());
+     debug = !debug;
+     ship1.depart();
+     ship2.depart();
+     }
+     agvtest = new Agv(assetManager, 0);
+     ship1 = new Inlandship(assetManager, 0, new ArrayList());
+     ship2 = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(ship1);
+     rootNode.attachChild(ship2);
+     ship1.arrive(0);
+     rootNode.attachChild(agvtest);
+     String testarr = "F, N";
+     agvtest.move(testarr);
+     Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
+     rootNode.attachChild(l);
+     l.arrive(i);
+     agvtest.parkAtLorryPlatform(i);
+     i -= 1;
+     ship2.arrive(1);
+     debug = false;
+     Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test);
+     test.multiplySpeed(speedMultiplier);
+     test.arrive(0);
+     Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test2);
+     test2.multiplySpeed(speedMultiplier);
+     test2.arrive(0);
+     Train traintest = new Train(assetManager, 0, new ArrayList());
+     rootNode.attachChild(traintest);
+     traintest.multiplySpeed(speedMultiplier);
+     traintest.arrive(0);
+     } else if (name.equals("debugmode2") && keyPressed) {
+     //System.out.println(ship1.getLocalTranslation());
+     ship1.depart();
+     ship2.depart();
+     agvtest.leaveLorryPlatform();
+     }
+     }
+     };
+     inputManager.addListener(acl, "debugmode");
+     inputManager.addListener(acl, "debugmode2");
+     }*/
 
     /**
      * Initializes the agv parking on the ship storage platform. The X and Y
      * locations are storred in an ArrayList. To trigger the 6th parking spot,
      * pull the 6th element from both array's agvParkingX.pull(5);
      * agvParkingY.pull(5);
-     *
-     * 144 parking places
+     *     
+* 144 parking places
      */
     private void initAgvParkingShip() {
-        // Parking id 0 till 23
+// Parking id 0 till 23
         int agvStartPoint = -167;
         for (int p = 1; p < 29; p++) {
             if (p % 7 != 0) {
@@ -857,9 +819,8 @@ public class Simulation extends SimpleApplication {
                 agvStartPoint += 17;
             }
         }
-
-        // Parking on the opposite side
-        // Parking id 24 till 47
+// Parking on the opposite side
+// Parking id 24 till 47
         int agvOpositeStartPoint = -298;
         for (int j = 29; j < 57; j++) {
             if (j % 7 != 0) {
@@ -875,7 +836,7 @@ public class Simulation extends SimpleApplication {
      * Initializes the agv parking on the train storage platform.
      */
     private void initAgvParkingTrain() {
-        // Parking id 48 till 71
+// Parking id 48 till 71
         int agvStartPoint = -149;
         for (int p = 57; p < 85; p++) {
             if (p % 7 != 0) {
@@ -885,9 +846,8 @@ public class Simulation extends SimpleApplication {
                 agvStartPoint += 17;
             }
         }
-
-        // Parking on the opposite side
-        // Parking id 72 till 95
+// Parking on the opposite side
+// Parking id 72 till 95
         int agvOpositeStartPoint = -281;
         for (int j = 85; j < 113; j++) {
             if (j % 7 != 0) {
@@ -897,14 +857,13 @@ public class Simulation extends SimpleApplication {
                 agvOpositeStartPoint += 17;
             }
         }
-
     }
 
     /**
      * Initializes the agv parking on the lorry storage platform.
      */
     private void initAgvParkingLorry() {
-        // Parking id 96 till 119
+// Parking id 96 till 119
         int agvStartPoint = -163;
         for (int p = 113; p < 141; p++) {
             if (p % 7 != 0) {
@@ -914,9 +873,8 @@ public class Simulation extends SimpleApplication {
                 agvStartPoint += 17;
             }
         }
-
-        // Parking on the opposite side
-        // Parking id 120 till 143
+// Parking on the opposite side
+// Parking id 120 till 143
         int agvOpositeStartPoint = -295;
         for (int j = 141; j < 169; j++) {
             if (j % 7 != 0) {
@@ -930,8 +888,8 @@ public class Simulation extends SimpleApplication {
 
     /**
      * Spawn agv on given parkingspace and add it to agv list
-     *
-     * @param id used to place agv on the given parkingspace
+     *     
+* @param id used to place agv on the given parkingspace
      */
     private void agvToParking(int id) {
         try {
@@ -941,7 +899,7 @@ public class Simulation extends SimpleApplication {
             agv.setLocalTranslation(agvX, 0, agvY);
             rootNode.attachChild(agv);
             agvList.add(agv);
-            //System.out.println(agv.getWorldTranslation());
+//System.out.println(agv.getWorldTranslation());
         } catch (IndexOutOfBoundsException e) {
             System.out.println("Error: Max parking id is 143, you used " + id);
         }
@@ -957,21 +915,21 @@ public class Simulation extends SimpleApplication {
      * Method to see cranes in action!
      */
     private void testMethodCranes() {
-        //TC test
+//TC test
         List<Container> containers = new ArrayList<>();
         for (int p = 0; p < 15; p++) {
             containers.add(new Container(assetManager, "TEST CONTAINER", 1, 0, 0, 0));
         }
         Train t = new Train(assetManager, -1, containers);
         t.setLocalTranslation(-180, 0, -180);
-        //t.rotate(0, (float) Math.PI / -2f, 0);
+//t.rotate(0, (float) Math.PI / -2f, 0);
         rootNode.attachChild(t);
         Agv agv1 = new Agv(assetManager, -1);
         agv1.rotate(0, (float) Math.PI / 2, 0);
         agv1.setLocalTranslation(-169, 0, -174);
         rootNode.attachChild(agv1);
         trainArea.getTrainCranes().get(3).trainToAgv(containers.get(0), agv1, train);
-        //SC
+//SC
         Agv agv2 = new Agv(assetManager, -1);
         agv2.rotate(0, 0, 0);
         agv2.setLocalTranslation(140, 0, -125);
@@ -980,12 +938,11 @@ public class Simulation extends SimpleApplication {
         container1.setLocalTranslation(0, 1, 0);
         agv2.attachChild(container1);
         trainStorageArea.getStorageCranes().get(0).agvToStorage(container1, new Vector3f(120, 0, 15));
-        //trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
+//trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
         container1 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
         container1.setLocalTranslation(120, 0, 0);
         rootNode.attachChild(container1);
-
-        //TruckCrane
+//TruckCrane
         Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0));
         lorry1.setLocalTranslation(300, 0, 170);
         rootNode.attachChild(lorry1);
@@ -994,7 +951,7 @@ public class Simulation extends SimpleApplication {
         agv4.setLocalTranslation(300, 0, 150);
         rootNode.attachChild(agv4);
         lorryArea.getTruckCranes().get(0).truckToAgv(lorry1, agv4);
-        //DC test
+//DC test
         Container container2 = new Container(assetManager, "TEST CONTAINER", 4, 0, 0, 0);
         container2.setLocalTranslation(-325, 0, 0);
         rootNode.attachChild(container2);
@@ -1003,19 +960,17 @@ public class Simulation extends SimpleApplication {
         agv3.setLocalTranslation(-285, 0, 20);
         rootNode.attachChild(agv3);
         boatArea.getDockingCranes().get(0).boatToAgv(container2, agv3);
-
-        //DC
+//DC
         Container container5 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
         container5.setLocalTranslation(0, 1, 0);
-        //container5.rotate(0, (float) Math.PI / 2, 0);
-        //rootNode.attachChild(container5);
+//container5.rotate(0, (float) Math.PI / 2, 0);
+//rootNode.attachChild(container5);
         Inlandship testBoat = new Inlandship(assetManager, 34, new ArrayList());
         testBoat.setLocalTranslation(-190, 0, 220);
         rootNode.attachChild(testBoat);
         container5 = new Container(assetManager, "TEST CONTAINER", 5, 0, 0, 0);
         container5.setLocalTranslation(0, 1, 0);
         rootNode.attachChild(container5);
-
         Agv agv5 = new Agv(assetManager, -1);
         agv5.rotate(0, (float) Math.PI / 2, 0);
         agv5.setLocalTranslation(-180, 0, 180);
@@ -1026,7 +981,6 @@ public class Simulation extends SimpleApplication {
 
     private void initAgvIdle() {
         int agvIdleStartPoint = 72;
-
         for (int p = 1; p < MAX_IDLE_AGV + 1; p++) {
             agvIdleParkingX.add((agvIdleStartPoint + (4.7f * p)));
             agvIdleParkingY.add(-160f);
