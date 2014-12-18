@@ -6,6 +6,8 @@ import org.nhl.containing.cranes.DockingCrane;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.nhl.containing.cranes.DockingCraneInlandShip;
+import org.nhl.containing.cranes.DockingCraneSeaShip;
 
 /**
  * @author Jeroen
@@ -37,9 +39,10 @@ public class BoatArea extends Area {
             case SEASHIP:
                 // Add docking cranes to the list and scene.
                 for (int i = 0; i < cranes; i++) {
-                    dockingCranes.add(new DockingCrane(assetManager, this.type));
+                    dockingCranes.add(new DockingCraneSeaShip(assetManager, this.type));
                     dockingCranes.get(i).setLocalTranslation(0, 0, craneAxis);
                     dockingCranes.get(i).setId(i);
+                    dockingCranes.get(i).setName("DockingCraneSeaShip");
                     this.attachChild(dockingCranes.get(i));
                     craneAxis += 18;
                 }
@@ -57,10 +60,11 @@ public class BoatArea extends Area {
             case INLANDSHIP:
                 // Add docking cranes to the list and scene.
                 for (int i = 0; i < cranes; i++) {
-                    dockingCranes.add(new DockingCrane(assetManager, this.type));
+                    dockingCranes.add(new DockingCraneInlandShip(assetManager, this.type));
                     dockingCranes.get(i).setLocalTranslation(craneAxis, 0, 0);
                     dockingCranes.get(i).rotate(0, (float) Math.PI / 2, 0);
                     dockingCranes.get(i).setId(i);
+                    dockingCranes.get(i).setName("DockingCraneInlandShip");
                     this.attachChild(dockingCranes.get(i));
                     craneAxis += 18;
                 }
