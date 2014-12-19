@@ -200,7 +200,7 @@ public class DockingCrane extends Crane {
         cranePath.addWayPoint(getLocalTranslation());
         cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
 
-        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 0, 0));
+        containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, container.getWorldTranslation().y, 0));
         containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - getWorldTranslation().x, 22, 0));
         containerPathUp.addWayPoint(new Vector3f((agv.getWorldTranslation().x - getWorldTranslation().x) + 0.01f, 22, 0));
 
@@ -229,7 +229,7 @@ public class DockingCrane extends Crane {
         newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (boat.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + nextContainerSpot.z + 0.01f));
 
         containerPathDown.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x) + nextContainerSpot.x, 22, 0));
-        containerPathDown.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x) + nextContainerSpot.x, 0, 0));
+        containerPathDown.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x) + nextContainerSpot.x, nextContainerSpot.y, 0));
 
         cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (boat.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + nextContainerSpot.z + 0.01f));
         cranePathBack.addWayPoint(getLocalTranslation());
@@ -243,7 +243,7 @@ public class DockingCrane extends Crane {
         cranePath.addWayPoint(getLocalTranslation());
         cranePath.addWayPoint(new Vector3f((container.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x + 0.01f, 0, getLocalTranslation().z));
 
-        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 0, 0));
+        containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), container.getWorldTranslation().y, 0));
         containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - container.getWorldTranslation().z), 22, 0));
         containerPathUp.addWayPoint(new Vector3f((getWorldTranslation().z - agv.getWorldTranslation().z) + 0.01f, 22, 0));
 
@@ -272,7 +272,7 @@ public class DockingCrane extends Crane {
         newCranePath.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x - nextContainerSpot.z + 0.01f, 0, getLocalTranslation().z));
 
         containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - boat.getWorldTranslation().z) - nextContainerSpot.x, 22, 0));
-        containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - boat.getWorldTranslation().z) - nextContainerSpot.x, 0, 0));
+        containerPathDown.addWayPoint(new Vector3f((getWorldTranslation().z - boat.getWorldTranslation().z) - nextContainerSpot.x, nextContainerSpot.y, 0));
 
         cranePathBack.addWayPoint(new Vector3f((boat.getWorldTranslation().x - getWorldTranslation().x) + getLocalTranslation().x - nextContainerSpot.z + 0.009f, 0, getLocalTranslation().z));
         cranePathBack.addWayPoint(getLocalTranslation());
