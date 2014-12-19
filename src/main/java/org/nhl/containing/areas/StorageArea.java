@@ -19,7 +19,7 @@ public class StorageArea extends Area {
     private float craneRailsXAxis = 2.5f;
     private int craneRailsZAxis = 0;
     private int cranes;
-    private float loc = -12;
+    private float loc = -8;
     private float x;
     private float y = 0;
     private float z = 20;
@@ -64,7 +64,7 @@ public class StorageArea extends Area {
             n = i;
             List<Vector3f> containerSpots = new ArrayList();
             x = getStorageCranes().get(i).getLocalTranslation().x - 2.5f + loc;
-            for (int j = 0; j < 900; j++) {
+            for (int j = 0; j < 540; j++) {
                 containerSpots.add(getNextSpot());
             }
             storageLanes.add(containerSpots);
@@ -75,9 +75,9 @@ public class StorageArea extends Area {
     }
 
     // Get next location for the containers.
-    public Vector3f getNextSpot() {
+    private Vector3f getNextSpot() {
         x += 2.5f;
-        if (x >= getStorageCranes().get(n).getLocalTranslation().x + 25f + loc) { 
+        if (x >= getStorageCranes().get(n).getLocalTranslation().x + 15f + loc) { 
             x = getStorageCranes().get(n).getLocalTranslation().x + loc;
             z += 13.5f;
         }
