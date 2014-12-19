@@ -140,7 +140,7 @@ public class Agv extends Vehicle {
      * which platform to park at is recognized by the location/waypoint it is standing on
      * @param location 
      */
-    public void parkAtStorageArea(int location) {
+    public void parkAtStoragePlatform(int location) {
         location += 1;
         int temp = location;
         int xStartPoint;
