@@ -157,10 +157,10 @@ public class Agv extends Vehicle {
         //path.addWayPoint(this.getWorldTranslation());
         depotPath.clearWayPoints();
         depotPath.addWayPoint(new Vector3f(30, 0, -171));
-        depotPath.addWayPoint(new Vector3f(-175 + (20 * location), 0, -172));
+        depotPath.addWayPoint(new Vector3f(-178 + (20 * location), 0, -172));
         depotPath.addWayPoint(new Vector3f(-188 + (20 * location), 0, -176));
         depotPath.addWayPoint(new Vector3f(-190 + (20 * location), 0, -176));
-        depotPath.setCurveTension(0.3f);
+        depotPath.setCurveTension(0.1f);
         depotPath.addListener(this);
         atDepot = false;
         motionControl.setPath(depotPath);
@@ -176,9 +176,10 @@ public class Agv extends Vehicle {
     public void parkAtSeashipPlatform(int location) {
         depotPath.clearWayPoints();
         depotPath.addWayPoint(new Vector3f(-284, 0, -146));
-        depotPath.addWayPoint(new Vector3f(-284, 0, 80 - (20 * location)));
+        depotPath.addWayPoint(new Vector3f(-284, 0, 123 - (20 * location)));
+        depotPath.addWayPoint(new Vector3f(-289, 0, 132 - (20 * location)));
         depotPath.addWayPoint(new Vector3f(-289, 0, 135 - (20 * location)));
-        depotPath.setCurveTension(0.3f);
+        depotPath.setCurveTension(0.1f);
         depotPath.addListener(this);
         atDepot = false;
         motionControl.setPath(depotPath);
@@ -194,7 +195,7 @@ public class Agv extends Vehicle {
         depotPath.clearWayPoints();
         depotPath.addWayPoint(new Vector3f(-285, 0, 177));
         depotPath.addWayPoint(new Vector3f(130 - (20 * location), 0, 177));
-        depotPath.addWayPoint(new Vector3f(145 - (20 * location), 0, 183));
+        depotPath.addWayPoint(new Vector3f(143 - (20 * location), 0, 183));
         depotPath.addWayPoint(new Vector3f(147 - (20 * location), 0, 183));
         depotPath.setCurveTension(0.1f);
         depotPath.addListener(this);
