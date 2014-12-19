@@ -15,6 +15,9 @@ import com.jme3.scene.shape.Box;
 import com.jme3.texture.Texture;
 import com.jme3.util.SkyFactory;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import org.nhl.containing.areas.*;
 import org.nhl.containing.communication.Client;
 import org.nhl.containing.vehicles.*;
@@ -23,6 +26,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import javax.xml.parsers.ParserConfigurationException;
 import org.nhl.containing.communication.messages.ArriveMessage;
 import org.nhl.containing.communication.ContainerBean;
@@ -70,7 +74,6 @@ public class Simulation extends SimpleApplication {
     private Date currentDate;
     private long lastTime;
     private float speedMultiplier;
-    private float timeMultiplier = 1;
     private final int MAX_IDLE_AGV = 111;
     private final int MAXAGV = 144;
     private List<Float> agvIdleParkingX;
@@ -153,12 +156,10 @@ public class Simulation extends SimpleApplication {
                         Crane crane = findCrane(moveMsg.getEndLocationId(), moveMsg.getEndLocationType());
                         if (crane != null) {
                             //if the agv is parked at the storage
-                            if (agv.getParkingSpot() != -1)
-                            {
+                            if (agv.getParkingSpot() != -1) {
                                 agv.leaveStoragePlatform();
                                 agv.setParkingSpot(-1);
-                            }
-                                //If the agv is ready to leave the platform
+                            } //If the agv is ready to leave the platform
                             else if (agv.isReadyToLeave()) {
                                 switch (crane.getName()) {
                                     case "DockingCraneSeaShip":
@@ -511,10 +512,22 @@ public class Simulation extends SimpleApplication {
         return null;
     }
 
+    /**
+     * Analyzes the incoming speedMessage and sets the speed and the date of the frontend by the given input
+     * @param message 
+     */
     private void handleSpeedMessage(SpeedMessage message) {
         speedMultiplier = message.getSpeed();
-        timeMultiplier = message.getSpeed();
         changeCraneSpeed();
+
+        String dateString = message.getDateString();
+        DateFormat format = new SimpleDateFormat("EEE MMM FF HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        try {
+            Date newDate = format.parse(dateString);
+            currentDate = newDate;
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
         sendOkMessage(message);
     }
 
@@ -641,7 +654,7 @@ public class Simulation extends SimpleApplication {
     private void updateDate() {
         long curTime = System.currentTimeMillis();
         int deltaTime = (int) (curTime - lastTime);
-        cal.add(Calendar.MILLISECOND, deltaTime * (int) timeMultiplier);
+        cal.add(Calendar.MILLISECOND, deltaTime * (int) speedMultiplier);
         currentDate = cal.getTime();
         lastTime = curTime;
         HUD.updateDateText(currentDate);

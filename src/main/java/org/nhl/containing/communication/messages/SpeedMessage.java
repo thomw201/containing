@@ -1,22 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.nhl.containing.communication.messages;
-
-import org.nhl.containing.communication.messages.Message;
 
 /**
  *
  */
 public class SpeedMessage extends Message {
     private float speed;
+    private String dateString;
 
-    public SpeedMessage(int id, float speed) {
+    public SpeedMessage(int id, float speed, String dateString) {
         super(id, Message.SPEED);
         this.speed = speed;
+        this.dateString = dateString;
     }
 
+    public String getDateString() {
+        return dateString;
+    }
+    
     public float getSpeed() {
         return speed;
     }

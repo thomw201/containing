@@ -74,7 +74,7 @@ public class Xml {
             return parseDepartMessage(messageTypeNodes.item(0), id);
         }
 
-        messageTypeNodes = doc.getElementsByTagName("Speed");
+        messageTypeNodes = doc.getElementsByTagName("SpeedMessage");
         if (messageTypeNodes.getLength() > 0) {
             return parseSpeedMessage(messageTypeNodes.item(0), id);
         }
@@ -202,7 +202,28 @@ public class Xml {
     }
 
     private static SpeedMessage parseSpeedMessage(Node speedNode, int id) {
-        return new SpeedMessage(id, Float.parseFloat(speedNode.getTextContent()));
+        float speed = 0;
+        String dateString = "";
+        NodeList speedNodes = speedNode.getChildNodes();
+
+        for (int i = 0; i < speedNodes.getLength(); i++) {
+            Node node = speedNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String content = node.getTextContent();
+                switch (node.getNodeName()) {
+                    case "Speed":
+                        speed = Float.parseFloat(content);
+                        break;
+                    case "DateString":
+                        dateString = content;
+                        break;
+                    default:
+                        throw new IllegalArgumentException(node.getNodeName()
+                                + " is not a legal node name");
+                }
+            }
+        }
+        return new SpeedMessage(id, speed, dateString);
     }
 
     private static CraneMessage parseCraneMessage(Node craneNode, int id) {
