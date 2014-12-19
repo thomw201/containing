@@ -104,7 +104,7 @@ public class Simulation extends SimpleApplication {
     public void simpleInitApp() {
         guiFont = assetManager.loadFont("Interface/Fonts/TimesNewRoman.fnt");
         initCam();
-        initUserInput();
+//        initUserInput();
         initScene();
         initDate();
         HUD = new HUD(this.guiNode, guiFont);
@@ -267,7 +267,7 @@ public class Simulation extends SimpleApplication {
         for (ContainerBean containerBean : message.getContainerBeans()) {
             Container container = new Container(assetManager, containerBean.getOwner(),
                     containerBean.getContainerNr(), containerBean.getxLoc(),
-                    containerBean.getyLoc(), containerBean.getzLoc());
+                    containerBean.getyLoc(), containerBean.getzLoc(), containerBean.getDepartureDate());
             containers.add(container);
         }
         switch (message.getTransporterType()) {
@@ -761,7 +761,7 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(waterGeo);
     }
 
-    private void initUserInput() {
+/*    private void initUserInput() {
 
         inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
         inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
@@ -852,7 +852,7 @@ public class Simulation extends SimpleApplication {
         };
         inputManager.addListener(acl, "debugmode");
         inputManager.addListener(acl, "debugmode2");
-    }
+    }*/
 
     /**
      * Initializes the agv parking on the ship storage platform. The X and Y
@@ -964,74 +964,6 @@ public class Simulation extends SimpleApplication {
         for (int p = 0; p < MAXAGV; p++) {
             agvToParking(p);
         }
-    }
-
-    /**
-     * Method to see cranes in action!
-     */
-    private void testMethodCranes() {
-//TC test
-        List<Container> containers = new ArrayList<>();
-        for (int p = 0; p < 15; p++) {
-            containers.add(new Container(assetManager, "TEST CONTAINER", 1, 0, 0, 0));
-        }
-        Train t = new Train(assetManager, -1, containers);
-        t.setLocalTranslation(-180, 0, -180);
-//t.rotate(0, (float) Math.PI / -2f, 0);
-        rootNode.attachChild(t);
-        Agv agv1 = new Agv(assetManager, -1);
-        agv1.rotate(0, (float) Math.PI / 2, 0);
-        agv1.setLocalTranslation(-169, 0, -174);
-        rootNode.attachChild(agv1);
-        trainArea.getTrainCranes().get(3).trainToAgv(containers.get(0), agv1, train);
-//SC
-        Agv agv2 = new Agv(assetManager, -1);
-        agv2.rotate(0, 0, 0);
-        agv2.setLocalTranslation(140, 0, -125);
-        rootNode.attachChild(agv2);
-        Container container1 = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-        container1.setLocalTranslation(0, 1, 0);
-        agv2.attachChild(container1);
-        trainStorageArea.getStorageCranes().get(0).agvToStorage(container1, new Vector3f(120, 0, 15));
-//trainStorageArea.getStorageCranes().get(0).storageToAgv(container1, agv2);
-        container1 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
-        container1.setLocalTranslation(120, 0, 0);
-        rootNode.attachChild(container1);
-//TruckCrane
-        Lorry lorry1 = new Lorry(assetManager, -1, new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0));
-        lorry1.setLocalTranslation(300, 0, 170);
-        rootNode.attachChild(lorry1);
-        Agv agv4 = new Agv(assetManager, -1);
-        agv4.rotate(0, 0, 0);
-        agv4.setLocalTranslation(300, 0, 150);
-        rootNode.attachChild(agv4);
-        lorryArea.getTruckCranes().get(0).truckToAgv(lorry1, agv4);
-//DC test
-        Container container2 = new Container(assetManager, "TEST CONTAINER", 4, 0, 0, 0);
-        container2.setLocalTranslation(-325, 0, 0);
-        rootNode.attachChild(container2);
-        Agv agv3 = new Agv(assetManager, -1);
-        agv3.rotate(0, 0, 0);
-        agv3.setLocalTranslation(-285, 0, 20);
-        rootNode.attachChild(agv3);
-        boatArea.getDockingCranes().get(0).boatToAgv(container2, agv3);
-//DC
-        Container container5 = new Container(assetManager, "TEST CONTAINER", 3, 0, 0, 0);
-        container5.setLocalTranslation(0, 1, 0);
-//container5.rotate(0, (float) Math.PI / 2, 0);
-//rootNode.attachChild(container5);
-        Inlandship testBoat = new Inlandship(assetManager, 34, new ArrayList());
-        testBoat.setLocalTranslation(-190, 0, 220);
-        rootNode.attachChild(testBoat);
-        container5 = new Container(assetManager, "TEST CONTAINER", 5, 0, 0, 0);
-        container5.setLocalTranslation(0, 1, 0);
-        rootNode.attachChild(container5);
-        Agv agv5 = new Agv(assetManager, -1);
-        agv5.rotate(0, (float) Math.PI / 2, 0);
-        agv5.setLocalTranslation(-180, 0, 180);
-        rootNode.attachChild(agv5);
-        agv5.attachChild(container5);
-        inlandBoatArea.getDockingCranes().get(0).agvToBoat(container5, testBoat);
     }
 
     private void initAgvIdle() {

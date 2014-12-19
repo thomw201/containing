@@ -142,6 +142,9 @@ public class Xml {
                     case "zLoc":
                         containerBean.setzLoc(Integer.parseInt(content));
                         break;
+                    case "date":
+                        containerBean.setDepartureDate(content);
+                        break;
                     default:
                         throw new IllegalArgumentException(node.getNodeName()
                                 + " is not a legal node name");
