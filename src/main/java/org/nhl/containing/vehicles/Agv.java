@@ -298,34 +298,34 @@ public class Agv extends Vehicle {
      * nearby waypoint
      */
     public void leaveStoragePlatform() {
-        String gotowaypoint;
+        depotPath.clearWayPoints();
         int west = -122;
         int east = 113;
+        depotPath.addWayPoint(this.getWorldTranslation());
         //western ship platform -> goto waypoint P
         if ((int)this.getWorldTranslation().x < 12 && (int)this.getWorldTranslation().z == west) {
-            gotowaypoint = "P";
+            depotPath.addWayPoint(new Vector3f(-70, 0, -140));
         } //eastern ship platform -> goto waypoint Q
         else if ((int)this.getWorldTranslation().x < 12 && (int)this.getWorldTranslation().z == east) {
-            gotowaypoint = "Q";
+            depotPath.addWayPoint(new Vector3f(-70, 0, 135));
         } //western train platform -> goto waypoint O
         else if ((int)this.getWorldTranslation().x > 110f && (int)this.getWorldTranslation().x < 300 && (int)this.getWorldTranslation().z == west) {
-            gotowaypoint = "O";
+            depotPath.addWayPoint(new Vector3f(200, 0, -140));
         } //eastern train platform -> goto waypoint N
         else if ((int)this.getWorldTranslation().x > 110f && (int)this.getWorldTranslation().x < 300 && (int)this.getWorldTranslation().z == east) {
-            gotowaypoint = "N";
+            depotPath.addWayPoint(new Vector3f(200, 0, 135));
         } //western lorry platform -> goto waypoint L
         else if ((int)this.getWorldTranslation().x > 365f && (int)this.getWorldTranslation().x < 550 && (int)this.getWorldTranslation().z == west) {
-            gotowaypoint = "L";
+            depotPath.addWayPoint(new Vector3f(455, 0, -140));
         } else if ((int)this.getWorldTranslation().x > 365f && (int)this.getWorldTranslation().x < 550 && (int)this.getWorldTranslation().z == east) {
-            gotowaypoint = "M";
+            depotPath.addWayPoint(new Vector3f(455, 0, 135));
         } //AGV is not in any of the storage area's, send a msg and add 0
         else {
             System.out.println("AGV at location " + this.getWorldTranslation() + " cannot leave storage area because this AGV is not in any storage area.");
-            gotowaypoint = null;
         }
-        //only call move method when there's a valid waypoint in the char[] to avoid exception
-        if (gotowaypoint != null) {
-            move(gotowaypoint);
+        //only call move method when there's more than 1 waypoint to avoid exception
+        if (depotPath.getLength() != 1) {
+            motionControl.play();
         }
     }
 
