@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.nhl.containing.communication.messages.CraneMessage;
 import org.nhl.containing.communication.messages.DepartMessage;
+import org.nhl.containing.communication.messages.MoveMessage;
 
 /**
  * Parses provided XML files and returns Containers.
@@ -81,6 +82,11 @@ public class Xml {
         messageTypeNodes = doc.getElementsByTagName("Crane");
         if (messageTypeNodes.getLength() > 0) {
             return parseCraneMessage(messageTypeNodes.item(0), id);
+        }
+
+        messageTypeNodes = doc.getElementsByTagName("Move");
+        if (messageTypeNodes.getLength() > 0) {
+            return parseMoveMessage(messageTypeNodes.item(0), id);
         }
 
         // etc etc etc. TODO
@@ -244,6 +250,49 @@ public class Xml {
             }
         }
         return new CraneMessage(id, craneType, craneIdentifier, transporterType, transporterIdentifier, agvIdentifier, storageIdentifier, containerNumber);
+    }
+
+    private static MoveMessage parseMoveMessage(Node moveNode, int id) {
+        int agvIdentifier = -1;
+        float currentX = -1;
+        float currentY = -1;
+        String dijkstra = "";
+        String endLocationType = "";
+        int endLocationId = -1;
+
+
+        NodeList moveNodes = moveNode.getChildNodes();
+
+        for (int i = 0; i < moveNodes.getLength(); i++) {
+            Node node = moveNodes.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                String content = node.getTextContent();
+                switch (node.getNodeName()) {
+                    case "AgvId":
+                        agvIdentifier = Integer.parseInt(content);
+                        break;
+                    case "CurrentX":
+                        currentX = Float.parseFloat(content);
+                        break;
+                    case "CurrentY":
+                        currentY = Float.parseFloat(content);
+                        break;
+                    case "Dijkstra":
+                        dijkstra = content;
+                        break;
+                    case "EndLocationType":
+                        endLocationType = content;
+                        break;
+                    case "EndLocationId":
+                        endLocationId = Integer.parseInt(content);
+                        break;
+                    default:
+                        throw new IllegalArgumentException(node.getNodeName()
+                                + " is not a legal node name");
+                }
+            }
+        }
+        return new MoveMessage(id, agvIdentifier, currentX, currentY, dijkstra, endLocationType, endLocationId);
     }
 
     /**

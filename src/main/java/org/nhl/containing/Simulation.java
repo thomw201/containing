@@ -740,7 +740,7 @@ public class Simulation extends SimpleApplication {
                     rootNode.attachChild(ship2);
                     ship1.arrive(0);
                     rootNode.attachChild(agvtest);
-                    char[] testarr = {'F', 'N'};
+                    String testarr = "F, N";
                     agvtest.move(testarr);
                     Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
                     rootNode.attachChild(l);
