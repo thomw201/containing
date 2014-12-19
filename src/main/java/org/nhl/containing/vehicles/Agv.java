@@ -12,7 +12,9 @@ public class Agv extends Vehicle {
 
     private AssetManager assetManager;
     private Container container;
-    private MotionPath path;
+    private MotionPath dijkstraPath;
+    private MotionPath depotPath;
+    private boolean atDepot;
     MotionEvent motionControl;
 
     public Agv(AssetManager assetManager, int id) {
@@ -21,6 +23,10 @@ public class Agv extends Vehicle {
         speed = 0.5f;
         initAgv();
         initMotionPaths();
+    }
+
+    public boolean isAtDepot() {
+        return atDepot;
     }
 
     /**
@@ -36,8 +42,9 @@ public class Agv extends Vehicle {
      * Initialize motionpath and motionevent
      */
     private void initMotionPaths() {
-        path = new MotionPath();
-        motionControl = new MotionEvent(this, path);
+        dijkstraPath = new MotionPath();
+        depotPath = new MotionPath();
+        motionControl = new MotionEvent(this, dijkstraPath);
         motionControl.setSpeed(speed);
         // set the speed and direction of the AGV using motioncontrol
         motionControl.setDirectionType(MotionEvent.Direction.PathAndRotation);
@@ -50,75 +57,76 @@ public class Agv extends Vehicle {
      * @param path character arraylist filled with the waypoints
      */
     public void move(String route) {
-        path.clearWayPoints();
+        dijkstraPath.clearWayPoints();
         //make the first waypoint it's current location
-        path.addWayPoint(this.getWorldTranslation());
+        dijkstraPath.addWayPoint(this.getWorldTranslation());
       for (char waypoint : route.toCharArray()) {
             switch (waypoint) {
                 case 'A':
-                    path.addWayPoint(new Vector3f(580, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(580, 0, -140));
                     break;
                 case 'B':
-                    path.addWayPoint(new Vector3f(580, 0, 135));
+                    dijkstraPath.addWayPoint(new Vector3f(580, 0, 135));
                     break;
                 case 'C':
-                    path.addWayPoint(new Vector3f(330, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(330, 0, -140));
                     break;
                 case 'D':
-                    path.addWayPoint(new Vector3f(330, 0, 136));
+                    dijkstraPath.addWayPoint(new Vector3f(330, 0, 136));
                     break;
                 case 'E':
-                    path.addWayPoint(new Vector3f(70, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(70, 0, -140));
                     break;
                 case 'F':
-                    path.addWayPoint(new Vector3f(70, 0, 135));
+                    dijkstraPath.addWayPoint(new Vector3f(70, 0, 135));
                     break;
                 case 'G':
-                    path.addWayPoint(new Vector3f(-210, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(-210, 0, -140));
                     break;
                 case 'H':
-                    path.addWayPoint(new Vector3f(-210, 0, 135));
+                    dijkstraPath.addWayPoint(new Vector3f(-210, 0, 135));
                     break;
                 //Enter trainplatform path
                 case 'I':
-                    path.addWayPoint(new Vector3f(60, 0, -171));
-                    path.addWayPoint(new Vector3f(30, 0, -171));
+                    dijkstraPath.addWayPoint(new Vector3f(60, 0, -171));
+                    dijkstraPath.addWayPoint(new Vector3f(30, 0, -171));
                     break;
                 //Enter seaship path
                 case 'J':
-                    path.addWayPoint(new Vector3f(-240, 0, -150));
-                    path.addWayPoint(new Vector3f(-283, 0, -150));
+                    dijkstraPath.addWayPoint(new Vector3f(-240, 0, -150));
+                    dijkstraPath.addWayPoint(new Vector3f(-283, 0, -150));
                     break;
                 //Enter inlandship path
                 case 'K':
-                    path.addWayPoint(new Vector3f(-230, 0, 162));
-                    path.addWayPoint(new Vector3f(-285, 0, 162));
-                    path.addWayPoint(new Vector3f(-285, 0, 177));
+                    dijkstraPath.addWayPoint(new Vector3f(-230, 0, 162));
+                    dijkstraPath.addWayPoint(new Vector3f(-285, 0, 162));
+                    dijkstraPath.addWayPoint(new Vector3f(-285, 0, 177));
                     break;
                 case 'L':
-                    path.addWayPoint(new Vector3f(455, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(455, 0, -140));
                     break;
                 case 'M':
-                    path.addWayPoint(new Vector3f(455, 0, 135));
+                    dijkstraPath.addWayPoint(new Vector3f(455, 0, 135));
                     break;
                 case 'N':
-                    path.addWayPoint(new Vector3f(200, 0, 135));
+                    dijkstraPath.addWayPoint(new Vector3f(200, 0, 135));
                     break;
                 case 'O':
-                    path.addWayPoint(new Vector3f(200, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(200, 0, -140));
                     break;
                 case 'P':
-                    path.addWayPoint(new Vector3f(-70, 0, -140));
+                    dijkstraPath.addWayPoint(new Vector3f(-70, 0, -140));
                     break;
                 case 'Q':
-                    path.addWayPoint(new Vector3f(-70, 0, 135));
+                    dijkstraPath.addWayPoint(new Vector3f(-70, 0, 135));
                     break;
             }
         }
-        path.setCurveTension(0.1f);
-        path.addListener(this);
-       motionControl.play();
-       setArrived(false);
+        dijkstraPath.setCurveTension(0.1f);
+        dijkstraPath.addListener(this);
+        setArrived(false);
+        motionControl.setPath(dijkstraPath);
+        motionControl.play();
     }
 
     /**
@@ -129,12 +137,17 @@ public class Agv extends Vehicle {
     public void parkAtTrainPlatform(int location) {
         //make the first waypoint it's current location
         //path.addWayPoint(this.getWorldTranslation());
-        path.addWayPoint(new Vector3f(30, 0, -171));
-        path.addWayPoint(new Vector3f(-175 + (20 * location), 0, -172));
-        path.addWayPoint(new Vector3f(-188 + (20 * location), 0, -176));
-        path.addWayPoint(new Vector3f(-190 + (20 * location), 0, -176));
-        path.setCurveTension(0.3f);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(30, 0, -171));
+        depotPath.addWayPoint(new Vector3f(-175 + (20 * location), 0, -172));
+        depotPath.addWayPoint(new Vector3f(-188 + (20 * location), 0, -176));
+        depotPath.addWayPoint(new Vector3f(-190 + (20 * location), 0, -176));
+        depotPath.setCurveTension(0.3f);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
+        
     }
 
     /**
@@ -143,11 +156,14 @@ public class Agv extends Vehicle {
      * @param location the parking place
      */
     public void parkAtSeashipPlatform(int location) {
-        path.clearWayPoints();
-        path.addWayPoint(new Vector3f(-284, 0, -184));
-        path.addWayPoint(new Vector3f(-284, 0, 80 - (20 * location)));
-        path.addWayPoint(new Vector3f(-289, 0, 135 - (20 * location)));
-        path.setCurveTension(0.3f);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(-284, 0, -184));
+        depotPath.addWayPoint(new Vector3f(-284, 0, 80 - (20 * location)));
+        depotPath.addWayPoint(new Vector3f(-289, 0, 135 - (20 * location)));
+        depotPath.setCurveTension(0.3f);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
     }
 
@@ -157,12 +173,15 @@ public class Agv extends Vehicle {
      * @param location the parking place
      */
     public void parkAtInlandshipPlatform(int location) {
-        path.clearWayPoints();
-        path.addWayPoint(new Vector3f(-285, 0, 177));
-        path.addWayPoint(new Vector3f(130 - (20 * location), 0, 177));
-        path.addWayPoint(new Vector3f(145 - (20 * location), 0, 183));
-        path.addWayPoint(new Vector3f(147 - (20 * location), 0, 183));
-        path.setCurveTension(0.1f);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(-285, 0, 177));
+        depotPath.addWayPoint(new Vector3f(130 - (20 * location), 0, 177));
+        depotPath.addWayPoint(new Vector3f(145 - (20 * location), 0, 183));
+        depotPath.addWayPoint(new Vector3f(147 - (20 * location), 0, 183));
+        depotPath.setCurveTension(0.1f);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
     }
 
@@ -174,21 +193,29 @@ public class Agv extends Vehicle {
      * @param location the crane and parking spot
      */
     public void parkAtLorryPlatform(int location) {
-        path.addWayPoint(new Vector3f(566 - (14 * location), 0, 135));
-        path.addWayPoint(new Vector3f(566 - (14 * location), 0, 145));
-        path.addWayPoint(new Vector3f(566 - (14 * location), 0, 156));
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(566 - (14 * location), 0, 135));
+        depotPath.addWayPoint(new Vector3f(566 - (14 * location), 0, 145));
+        depotPath.addWayPoint(new Vector3f(566 - (14 * location), 0, 156));
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
+        motionControl.play();
     }
 
     /**
      * Method for making a parked AGV leave the Seashipplatform
      */
     public void leaveSeashipPlatform() {
-        path.clearWayPoints();
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x + 7, 0, this.getWorldTranslation().z + 5));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x + 7, 0, 156));
-        path.addWayPoint(new Vector3f(-205, 0, 156));
-        path.setCurveTension(0.3f);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x + 7, 0, this.getWorldTranslation().z + 5));
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x + 7, 0, 156));
+        depotPath.addWayPoint(new Vector3f(-205, 0, 156));
+        depotPath.setCurveTension(0.3f);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
     }
 
@@ -196,12 +223,15 @@ public class Agv extends Vehicle {
      * Method for making a parked AGV leave the inlandship platform
      */
     public void leaveLorryPlatform() {
-        path.clearWayPoints();
-        path.addWayPoint(new Vector3f(this.getWorldTranslation()));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-20));
-        path.addWayPoint(new Vector3f(330, 0, 136));
-        path.setCurveTension(0.1f);
-        path.addListener(this);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation()));
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-20));
+        depotPath.addWayPoint(new Vector3f(330, 0, 136));
+        depotPath.setCurveTension(0.1f);
+        depotPath.addListener(this);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
     }
     public void leaveStoragePlatform(){
@@ -214,12 +244,15 @@ public class Agv extends Vehicle {
      * Method for making a parked AGV leave the inlandship platform
      */
     public void leaveInlandshipPlatform() {
-        path.clearWayPoints();
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x + 15, 0, this.getWorldTranslation().z - 7));
-        path.addWayPoint(new Vector3f(180, 0, 177));
-        path.addWayPoint(new Vector3f(180, 0, 140));
-        path.setCurveTension(0.1f);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x + 15, 0, this.getWorldTranslation().z - 7));
+        depotPath.addWayPoint(new Vector3f(180, 0, 177));
+        depotPath.addWayPoint(new Vector3f(180, 0, 140));
+        depotPath.setCurveTension(0.1f);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
     }
 
@@ -227,12 +260,15 @@ public class Agv extends Vehicle {
      * Method for making a parked AGV leave the trainplatform
      */
     public void leaveTrainPlatform() {
-        path.clearWayPoints();
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
-        path.addWayPoint(new Vector3f(this.getWorldTranslation().x - 5, this.getWorldTranslation().y, this.getWorldTranslation().z + 5));
-        path.addWayPoint(new Vector3f(-210, 0, -171));
-        path.addWayPoint(new Vector3f(-210, 0, -140));
-        path.setCurveTension(0.3f);
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, this.getWorldTranslation().y, this.getWorldTranslation().z));
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x - 5, this.getWorldTranslation().y, this.getWorldTranslation().z + 5));
+        depotPath.addWayPoint(new Vector3f(-210, 0, -171));
+        depotPath.addWayPoint(new Vector3f(-210, 0, -140));
+        depotPath.setCurveTension(0.3f);
+        depotPath.addListener(this);
+        atDepot = false;
+        motionControl.setPath(depotPath);
         motionControl.play();
     }
 
@@ -278,16 +314,20 @@ public class Agv extends Vehicle {
      */
     public String getWaypoints() {
         String info = "\nAGV Waypoints: ";
-        for (int j = 0; j < path.getNbWayPoints(); j++) {
-            info += "Waypoint " + (j + 1) + ": " + path.getWayPoint(j) + " ";
+        for (int j = 0; j < dijkstraPath.getNbWayPoints(); j++) {
+            info += "Waypoint " + (j + 1) + ": " + dijkstraPath.getWayPoint(j) + " ";
         }
         return info + "\n";
     }
 
     @Override
     public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
-        if (wayPointIndex + 1 == path.getNbWayPoints()) {
+        if (wayPointIndex + 1 == dijkstraPath.getNbWayPoints()) {
             setArrived(true);
         }
+        if (wayPointIndex + 1 == depotPath.getNbWayPoints()) {
+            atDepot = true; 
+        }
+        return;
     }
 }

@@ -139,35 +139,40 @@ public class Simulation extends SimpleApplication {
     private void handleAgv() {
         if (!moveMessages.isEmpty()) {
             Iterator<MoveMessage> itrMoveMessage = moveMessages.iterator();
-            while (itrMoveMessage.hasNext()) {
+            while (itrMoveMessage.hasNext()) { 
                 MoveMessage moveMsg = itrMoveMessage.next();
                 Agv agv = findAGV(moveMsg.getAgvIdentifier());
 //If we have found an Agv & it's at the end of his Dijkstra path
-                if (agv != null && agv.isArrived()) {
-                    Crane crane = findCrane(moveMsg.getEndLocationId(), moveMsg.getEndLocationType());
-                    if (crane != null) {
-                        switch (crane.getName()) {
-                            case "DockingCraneSeaShip":
-                                agv.parkAtSeashipPlatform(moveMsg.getEndLocationId());
-                                itrMoveMessage.remove();
-                                break;
-                            case "DockingCraneInlandShip":
-                                agv.parkAtInlandshipPlatform(moveMsg.getEndLocationId());
-                                itrMoveMessage.remove();
-                                break;
-                            case "StorageCrane":
-                                itrMoveMessage.remove();
-                                break;
-                            case "TrainCrane":
-                                agv.parkAtTrainPlatform(moveMsg.getEndLocationId());
-                                itrMoveMessage.remove();
-                                break;
-                            case "TruckCrane":
-                                agv.parkAtLorryPlatform(moveMsg.getEndLocationId());
-                                itrMoveMessage.remove();
-                                break;
+                if (agv != null) {
+                    
+                    if (agv.isAtDepot()) {
+                            sendOkMessage(moveMsg);
+                            itrMoveMessage.remove();
+                            break;
+                        }
+                    
+                    if (agv.isArrived()) {
+                        Crane crane = findCrane(moveMsg.getEndLocationId(), moveMsg.getEndLocationType());
+                        if (crane != null) {
+                            switch (crane.getName()) {
+                                case "DockingCraneSeaShip":
+                                    agv.parkAtSeashipPlatform(moveMsg.getEndLocationId());
+                                    break;
+                                case "DockingCraneInlandShip":
+                                    agv.parkAtInlandshipPlatform(moveMsg.getEndLocationId());
+                                    break;
+                                case "StorageCrane":
+                                    break;
+                                case "TrainCrane":
+                                    agv.parkAtTrainPlatform(moveMsg.getEndLocationId());
+                                    break;
+                                case "TruckCrane":
+                                    agv.parkAtLorryPlatform(moveMsg.getEndLocationId());
+                                    break;
+                            }
                         }
                     }
+
                 }
             }
         }
