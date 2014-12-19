@@ -513,8 +513,10 @@ public class Simulation extends SimpleApplication {
     }
 
     /**
-     * Analyzes the incoming speedMessage and sets the speed and the date of the frontend by the given input
-     * @param message 
+     * Analyzes the incoming speedMessage and sets the speed and the date of the
+     * frontend by the given input
+     *
+     * @param message
      */
     private void handleSpeedMessage(SpeedMessage message) {
         speedMultiplier = message.getSpeed();
@@ -761,99 +763,122 @@ public class Simulation extends SimpleApplication {
         rootNode.attachChild(waterGeo);
     }
 
-/*    private void initUserInput() {
+    /*    private void initUserInput() {
 
-        inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
-        inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
-        ActionListener acl = new ActionListener() {
-            @Override
-            public void onAction(String name, boolean keyPressed, float tpf) {
-                boolean debug = false;
-                Inlandship ship1 = null;
-                Inlandship ship2 = null;
-                if (name.equals("debugmode") && keyPressed) {
-                    if (!debug) {
-                        debug = !debug;
-                        // Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-                        // rootNode.attachChild(test);
-                        // test.arrive(0);
-                        // Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-                        // rootNode.attachChild(test2);
-                        // test2.arrive(0);
-                        // Train traintest = new Train(assetManager, 0, new ArrayList());
-                        // rootNode.attachChild(traintest);
-                        // traintest.arrive(0);
-                        ship1 = new Inlandship(assetManager, 0, new ArrayList());
-                        ship2 = new Inlandship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(ship1);
-                        rootNode.attachChild(ship2);
-                        ship1.arrive(0);
-                        Agv agvtest = new Agv(assetManager, 0);
-                        rootNode.attachChild(agvtest);
-                        //char[] testarr = {'D', 'F', 'E', 'I'};
-                        String testarr = "PQA";
-                        agvtest.move(testarr);
-                        //
-                        ship2.arrive(1);
-                        debug = false;
-                        Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(test);
-                        test.multiplySpeed(speedMultiplier);
-                        test.arrive(0);
-                        Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(test2);
-                        test2.multiplySpeed(speedMultiplier);
-                        test2.arrive(0);
-                        Train traintest = new Train(assetManager, 0, new ArrayList());
-                        rootNode.attachChild(traintest);
-                        traintest.multiplySpeed(speedMultiplier);
-                        traintest.arrive(0);
-                    } else {
-                        //System.out.println(ship1.getLocalTranslation());
-                        debug = !debug;
-                        ship1.depart();
-                        ship2.depart();
-                    }
-                    agvtest = new Agv(assetManager, 0);
-                    ship1 = new Inlandship(assetManager, 0, new ArrayList());
-                    ship2 = new Inlandship(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(ship1);
-                    rootNode.attachChild(ship2);
-                    ship1.arrive(0);
-                    rootNode.attachChild(agvtest);
-                    String testarr = "F, N";
-                    agvtest.move(testarr);
-                    Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
-                    rootNode.attachChild(l);
-                    l.arrive(i);
-                    agvtest.parkAtLorryPlatform(i);
-                    i -= 1;
-                    ship2.arrive(1);
-                    debug = false;
-                    Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(test);
-                    test.multiplySpeed(speedMultiplier);
-                    test.arrive(0);
-                    Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(test2);
-                    test2.multiplySpeed(speedMultiplier);
-                    test2.arrive(0);
-                    Train traintest = new Train(assetManager, 0, new ArrayList());
-                    rootNode.attachChild(traintest);
-                    traintest.multiplySpeed(speedMultiplier);
-                    traintest.arrive(0);
-                } else if (name.equals("debugmode2") && keyPressed) {
-                    //System.out.println(ship1.getLocalTranslation());
-                    ship1.depart();
-                    ship2.depart();
-                    agvtest.leaveLorryPlatform();
-                }
-            }
-        };
-        inputManager.addListener(acl, "debugmode");
-        inputManager.addListener(acl, "debugmode2");
-    }*/
-
+     inputManager.addMapping("debugmode", new KeyTrigger(KeyInput.KEY_P));
+     inputManager.addMapping("debugmode2", new KeyTrigger(KeyInput.KEY_O));
+     ActionListener acl = new ActionListener() {
+     @Override
+     public void onAction(String name, boolean keyPressed, float tpf) {
+     boolean debug = false;
+     Inlandship ship1 = null;
+     Inlandship ship2 = null;
+     if (name.equals("debugmode") && keyPressed) {
+     if (!debug) {
+     debug = !debug;
+     for (int i = 0; i < 144; i++) {
+     agvList.get(i).leaveStoragePlatform();
+     }
+     // Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+     // rootNode.attachChild(test);
+     // test.arrive(0);
+     // Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+     // rootNode.attachChild(test2);
+     // test2.arrive(0);
+     // Train traintest = new Train(assetManager, 0, new ArrayList());
+     // rootNode.attachChild(traintest);
+     // traintest.arrive(0);
+     ship1 = new Inlandship(assetManager, 0, new ArrayList());
+     ship2 = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(ship1);
+     rootNode.attachChild(ship2);
+     ship1.arrive(0);
+     Agv agvtest = new Agv(assetManager, 0);
+     rootNode.attachChild(agvtest);
+     //char[] testarr = {'D', 'F', 'E', 'I'};
+     String testarr = "PQA";
+     agvtest.move(testarr);
+     //
+     ship2.arrive(1);
+     debug = false;
+     Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test);
+     test.multiplySpeed(speedMultiplier);
+     test.arrive(0);
+     Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test2);
+     test2.multiplySpeed(speedMultiplier);
+     test2.arrive(0);
+     Train traintest = new Train(assetManager, 0, new ArrayList());
+     rootNode.attachChild(traintest);
+     traintest.multiplySpeed(speedMultiplier);
+     traintest.arrive(0);
+     } else {
+     //System.out.println(ship1.getLocalTranslation());
+     debug = !debug;
+     ship1.depart();
+     ship2.depart();
+     }
+     agvtest = new Agv(assetManager, 0);
+     ship1 = new Inlandship(assetManager, 0, new ArrayList());
+     ship2 = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(ship1);
+     rootNode.attachChild(ship2);
+     ship1.arrive(0);
+     rootNode.attachChild(agvtest);
+     String testarr = "F, N";
+     agvtest.move(testarr);
+     Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
+     rootNode.attachChild(l);
+     l.arrive(i);
+     agvtest.parkAtLorryPlatform(i);
+     i -= 1;
+     ship2.arrive(1);
+     debug = false;
+     Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test);
+     test.multiplySpeed(speedMultiplier);
+     test.arrive(0);
+     Seaship test2 = new Seaship(assetManager, 0, new ArrayList());
+     rootNode.attachChild(test2);
+     test2.multiplySpeed(speedMultiplier);
+     test2.arrive(0);
+     Train traintest = new Train(assetManager, 0, new ArrayList());
+     rootNode.attachChild(traintest);
+     traintest.multiplySpeed(speedMultiplier);
+     traintest.arrive(0);
+     } else if (name.equals("debugmode2") && keyPressed) {
+     //shipplatform agv testing
+     for (int i = 0; i < 24; i++) {
+     agvList.get(i).parkAtStoragePlatform(i);
+     }
+     for (int i = 24; i < 48; i++) {
+     agvList.get(i).parkAtStoragePlatform(i - 24);
+     }
+     //trainplatform agv testing
+     for (int i = 48; i < 72; i++) {
+     agvList.get(i).parkAtStoragePlatform(i - 48);
+     }
+     for (int i = 72; i < 96; i++) {
+     agvList.get(i).parkAtStoragePlatform(i - 72);
+     }
+     //lorryplatform agv testing
+     for (int i = 96; i < 120; i++) {
+     agvList.get(i).parkAtStoragePlatform(i - 96);
+     }
+     for (int i = 120; i < 144; i++) {
+     agvList.get(i).parkAtStoragePlatform(i - 120);
+     }
+     //System.out.println(ship1.getLocalTranslation());
+     ship1.depart();
+     ship2.depart();
+     agvtest.leaveLorryPlatform();
+     }
+     }
+     };
+     inputManager.addListener(acl, "debugmode");
+     inputManager.addListener(acl, "debugmode2");
+     }*/
     /**
      * Initializes the agv parking on the ship storage platform. The X and Y
      * locations are storred in an ArrayList. To trigger the 6th parking spot,

@@ -34,7 +34,7 @@ public class Agv extends Vehicle {
     public void setParkingSpot(int parked) {
         this.parkingSpot = parked;
     }
-    
+
     public boolean isReadyToLeave() {
         return readyToLeave;
     }
@@ -78,7 +78,7 @@ public class Agv extends Vehicle {
         dijkstraPath.clearWayPoints();
         //make the first waypoint it's current location
         dijkstraPath.addWayPoint(this.getWorldTranslation());
-      for (char waypoint : route.toCharArray()) {
+        for (char waypoint : route.toCharArray()) {
             switch (waypoint) {
                 case 'A':
                     dijkstraPath.addWayPoint(new Vector3f(580, 0, -140));
@@ -165,7 +165,7 @@ public class Agv extends Vehicle {
         atDepot = false;
         motionControl.setPath(depotPath);
         motionControl.play();
-        
+
     }
 
     /**
@@ -205,8 +205,7 @@ public class Agv extends Vehicle {
 
     /**
      * Makes AGV park under a crane on the lorryplatform The given location
-     * determines which crane it will park under
-     * AGV should be at location N
+     * determines which crane it will park under AGV should be at location N
      *
      * @param location the crane and parking spot
      */
@@ -218,6 +217,46 @@ public class Agv extends Vehicle {
         depotPath.addListener(this);
         atDepot = false;
         motionControl.setPath(depotPath);
+        motionControl.play();
+    }
+
+    /**
+     * Makes the AGV park on the storage platform Side to park is recognized
+     * automatically by using the z axis which platform to park at is recognized
+     * by the location/waypoint it is standing on
+     *
+     * @param location
+     */
+    public void parkAtStoragePlatform(int location) {
+        location += 1;
+        int temp = location;
+        int xStartPoint;
+        float eastorwest;
+        //determine which side the AGV is at
+        if (this.getWorldTranslation().z < 0) {
+            eastorwest = -122f;
+        } else {
+            eastorwest = 113f;
+        }
+        //if the agv is lower than x=70 its at ship platform
+        if (this.getWorldTranslation().x < 70) {
+            xStartPoint = -167;
+        } //if lower than 330 train platform
+        else if (this.getWorldTranslation().x < 330) {
+            xStartPoint = 113;
+        } //else it's at the lorry platform
+        else {
+            xStartPoint = 363;
+        }
+        //AGVs spawn in groups of 6, after 6 a extra distance is added
+        while (temp > 6) {
+            temp -= 6;
+            xStartPoint += 22;
+        }
+        depotPath.clearWayPoints();
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation()));
+        depotPath.addWayPoint(new Vector3f(xStartPoint + (4.7f * location), 0, this.getWorldTranslation().z));
+        depotPath.addWayPoint(new Vector3f(xStartPoint + (4.7f * location), 0, eastorwest));
         motionControl.play();
     }
 
@@ -243,7 +282,7 @@ public class Agv extends Vehicle {
     public void leaveLorryPlatform() {
         depotPath.clearWayPoints();
         depotPath.addWayPoint(new Vector3f(this.getWorldTranslation()));
-        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-20));
+        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z - 20));
         depotPath.addWayPoint(new Vector3f(330, 0, 136));
         depotPath.setCurveTension(0.1f);
         depotPath.addListener(this);
@@ -252,9 +291,40 @@ public class Agv extends Vehicle {
         motionControl.setPath(depotPath);
         motionControl.play();
     }
-    public void leaveStoragePlatform(){
-        if (this.getLocalTranslation().x < 0 && this.getLocalTranslation().z == 122f) {
-            
+
+/**
+     * Determine in which storagearea this AGV is parked and send the AGV to the
+     * nearby waypoint
+     */
+    public void leaveStoragePlatform() {
+        String gotowaypoint;
+        int west = -122;
+        int east = 113;
+        //western ship platform -> goto waypoint P
+        if ((int)this.getWorldTranslation().x < 12 && (int)this.getWorldTranslation().z == west) {
+            gotowaypoint = "P";
+        } //eastern ship platform -> goto waypoint Q
+        else if ((int)this.getWorldTranslation().x < 12 && (int)this.getWorldTranslation().z == east) {
+            gotowaypoint = "Q";
+        } //western train platform -> goto waypoint O
+        else if ((int)this.getWorldTranslation().x > 110f && (int)this.getWorldTranslation().x < 300 && (int)this.getWorldTranslation().z == west) {
+            gotowaypoint = "O";
+        } //eastern train platform -> goto waypoint N
+        else if ((int)this.getWorldTranslation().x > 110f && (int)this.getWorldTranslation().x < 300 && (int)this.getWorldTranslation().z == east) {
+            gotowaypoint = "N";
+        } //western lorry platform -> goto waypoint L
+        else if ((int)this.getWorldTranslation().x > 365f && (int)this.getWorldTranslation().x < 550 && (int)this.getWorldTranslation().z == west) {
+            gotowaypoint = "L";
+        } else if ((int)this.getWorldTranslation().x > 365f && (int)this.getWorldTranslation().x < 550 && (int)this.getWorldTranslation().z == east) {
+            gotowaypoint = "M";
+        } //AGV is not in any of the storage area's, send a msg and add 0
+        else {
+            System.out.println("AGV at location " + this.getWorldTranslation() + " cannot leave storage area because this AGV is not in any storage area.");
+            gotowaypoint = null;
+        }
+        //only call move method when there's a valid waypoint in the char[] to avoid exception
+        if (gotowaypoint != null) {
+            move(gotowaypoint);
         }
     }
 
@@ -290,14 +360,14 @@ public class Agv extends Vehicle {
         motionControl.play();
     }
 
-    public void addContainer(Container container){
+    public void addContainer(Container container) {
         this.container = container;
     }
-    
-    public void removeContainer(){
+
+    public void removeContainer() {
         this.container = null;
     }
-    
+
     /**
      * path.addListener(this); // set the speed and direction of the AGV using
      * motioncontrol
@@ -344,7 +414,7 @@ public class Agv extends Vehicle {
             setArrived(true);
         }
         if (wayPointIndex + 1 == depotPath.getNbWayPoints()) {
-            atDepot = true; 
+            atDepot = true;
         }
     }
 }
