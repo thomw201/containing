@@ -15,6 +15,8 @@ public class Agv extends Vehicle {
     private MotionPath dijkstraPath;
     private MotionPath depotPath;
     private boolean atDepot;
+    private boolean readyToLeave;
+    private int parkingSpot;
     MotionEvent motionControl;
 
     public Agv(AssetManager assetManager, int id) {
@@ -23,6 +25,22 @@ public class Agv extends Vehicle {
         speed = 0.5f;
         initAgv();
         initMotionPaths();
+    }
+
+    public int getParkingSpot() {
+        return parkingSpot;
+    }
+
+    public void setParkingSpot(int parked) {
+        this.parkingSpot = parked;
+    }
+    
+    public boolean isReadyToLeave() {
+        return readyToLeave;
+    }
+
+    public void setReadyToLeave(boolean readyToLeave) {
+        this.readyToLeave = readyToLeave;
     }
 
     public boolean isAtDepot() {
@@ -157,7 +175,7 @@ public class Agv extends Vehicle {
      */
     public void parkAtSeashipPlatform(int location) {
         depotPath.clearWayPoints();
-        depotPath.addWayPoint(new Vector3f(-284, 0, -184));
+        depotPath.addWayPoint(new Vector3f(-284, 0, -146));
         depotPath.addWayPoint(new Vector3f(-284, 0, 80 - (20 * location)));
         depotPath.addWayPoint(new Vector3f(-289, 0, 135 - (20 * location)));
         depotPath.setCurveTension(0.3f);
@@ -328,6 +346,5 @@ public class Agv extends Vehicle {
         if (wayPointIndex + 1 == depotPath.getNbWayPoints()) {
             atDepot = true; 
         }
-        return;
     }
 }
