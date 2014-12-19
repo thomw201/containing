@@ -12,6 +12,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.Date;
 
 public class Container extends Node {
 
@@ -22,14 +23,16 @@ public class Container extends Node {
     private int spawnY;
     private int spawnZ;
     private BoundingBox boundingBox;
+    private Date departureDate;
 
-    public Container(AssetManager assetManager, String owner, int containerID, int spawnX, int spawnY, int spawnZ) {
+    public Container(AssetManager assetManager, String owner, int containerID, int spawnX, int spawnY, int spawnZ, Date departureDate) {
         this.assetManager = assetManager;
         this.owner = owner;
         this.containerID = containerID;
         this.spawnX = spawnX;
         this.spawnY = spawnY;
         this.spawnZ = spawnZ;
+        this.departureDate = departureDate;
         initContainer();
     }
 

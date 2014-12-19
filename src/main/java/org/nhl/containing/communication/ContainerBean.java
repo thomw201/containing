@@ -1,5 +1,11 @@
 package org.nhl.containing.communication;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 /**
  * Small data Java bean class that holds information about containers.
  * </p>
@@ -18,6 +24,7 @@ public class ContainerBean {
     private int xLoc;
     private int yLoc;
     private int zLoc;
+    private Date departureDate;
 
     public ContainerBean() {
     }
@@ -60,5 +67,19 @@ public class ContainerBean {
 
     public void setzLoc(int zLoc) {
         this.zLoc = zLoc;
+    }
+
+    public Date getDepartureDate() {
+        return departureDate;
+    }
+
+    public void setDepartureDate(String departureDate) {
+        DateFormat format = new SimpleDateFormat("EEE MMM FF HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        try {
+            Date newDate = format.parse(departureDate);
+            this.departureDate = newDate;
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
     }
 }
