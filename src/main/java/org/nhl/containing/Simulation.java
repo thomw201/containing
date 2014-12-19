@@ -80,7 +80,6 @@ public class Simulation extends SimpleApplication {
     private List<Float> agvIdleParkingY;
     private List<Float> agvParkingX;
     private List<Float> agvParkingY;
-    int i = 19;
     Agv agvtest;
 
     public Simulation() {
@@ -662,77 +661,80 @@ public class Simulation extends SimpleApplication {
         ActionListener acl = new ActionListener() {
             public void onAction(String name, boolean keyPressed, float tpf) {
                 if (name.equals("debugmode") && keyPressed) {
-                    for (Vector3f item : boatStorageArea.getStorageLanes().get(0)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        boatStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : boatStorageArea.getStorageLanes().get(1)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        boatStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : boatStorageArea.getStorageLanes().get(2)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        boatStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : boatStorageArea.getStorageLanes().get(3)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        boatStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : trainStorageArea.getStorageLanes().get(0)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        trainStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : trainStorageArea.getStorageLanes().get(1)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        trainStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : trainStorageArea.getStorageLanes().get(2)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        trainStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : trainStorageArea.getStorageLanes().get(3)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        trainStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(0)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        lorryStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(1)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        lorryStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(2)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        lorryStorageArea.attachChild(containertje);
-                    }
-
-                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(3)) {
-                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
-                        containertje.setLocalTranslation(item);
-                        lorryStorageArea.attachChild(containertje);
-                    }
+//                    for (int j = 0; j < 144; j++) {
+//                        agvList.get(j).leaveStoragePlatform();
+//                    }
+//                    for (Vector3f item : boatStorageArea.getStorageLanes().get(0)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        boatStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : boatStorageArea.getStorageLanes().get(1)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        boatStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : boatStorageArea.getStorageLanes().get(2)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        boatStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : boatStorageArea.getStorageLanes().get(3)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        boatStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : trainStorageArea.getStorageLanes().get(0)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        trainStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : trainStorageArea.getStorageLanes().get(1)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        trainStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : trainStorageArea.getStorageLanes().get(2)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        trainStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : trainStorageArea.getStorageLanes().get(3)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        trainStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(0)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        lorryStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(1)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        lorryStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(2)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        lorryStorageArea.attachChild(containertje);
+//                    }
+//
+//                    for (Vector3f item : lorryStorageArea.getStorageLanes().get(3)) {
+//                        Container containertje = new Container(assetManager, "TEST CONTAINER", 2, 0, 0, 0);
+//                        containertje.setLocalTranslation(item);
+//                        lorryStorageArea.attachChild(containertje);
+//                    }
                     agvtest = new Agv(assetManager, 0);
                     ship1 = new Inlandship(assetManager, 0, new ArrayList());
                     ship2 = new Inlandship(assetManager, 0, new ArrayList());
@@ -744,9 +746,6 @@ public class Simulation extends SimpleApplication {
                     agvtest.move(testarr);
                     Lorry l = new Lorry(assetManager, 0, new Container(assetManager, "test", 0, 0, 0, 0));
                     rootNode.attachChild(l);
-                    l.arrive(i);
-                    agvtest.parkAtLorryPlatform(i);
-                    i -= 1;
                     ship2.arrive(1);
                     debug = false;
                     Inlandship test = new Inlandship(assetManager, 0, new ArrayList());
@@ -761,6 +760,10 @@ public class Simulation extends SimpleApplication {
                     rootNode.attachChild(traintest);
                     traintest.multiplySpeed(speedMultiplier);
                     traintest.arrive(0);
+                    for (int i = 0; i < 144; i++) {
+                        agvList.get(i).leaveStoragePlatform();
+                    }
+
 
 
                 } else if (name.equals("debugmode2") && keyPressed) {
@@ -768,6 +771,27 @@ public class Simulation extends SimpleApplication {
                     ship1.depart();
                     ship2.depart();
                     agvtest.leaveLorryPlatform();
+                    //shipplatform agv testing
+                    for (int i = 0; i < 24; i++) {
+                        agvList.get(i).parkAtStorageArea(i);
+                    }
+                    for (int i = 24; i < 48; i++) {
+                        agvList.get(i).parkAtStorageArea(i - 24);
+                    }
+                    //trainplatform agv testing
+                    for (int i = 48; i < 72; i++) {
+                        agvList.get(i).parkAtStorageArea(i - 48);
+                    }
+                    for (int i = 72; i < 96; i++) {
+                        agvList.get(i).parkAtStorageArea(i - 72);
+                    }
+                    //lorryplatform agv testing
+                    for (int i = 96; i < 120; i++) {
+                        agvList.get(i).parkAtStorageArea(i - 96);
+                    }
+                    for (int i = 120; i < 144; i++) {
+                        agvList.get(i).parkAtStorageArea(i - 120);
+                    }
                 }
             }
         };
