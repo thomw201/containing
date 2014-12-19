@@ -80,7 +80,6 @@ public class Simulation extends SimpleApplication {
     private List<Float> agvIdleParkingY;
     private List<Float> agvParkingX;
     private List<Float> agvParkingY;
-    int i = 19;
     Agv agvtest;
 
     public Simulation() {
