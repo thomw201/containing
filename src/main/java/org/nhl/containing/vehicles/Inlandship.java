@@ -16,8 +16,6 @@ public class Inlandship extends Transporter {
     public int containerCounter = 0;
     private AssetManager assetManager;
     private List<Container> containerList;
-    private BoundingBox boundingBox;
-    private Spatial boat;
     private MotionPath path;
     private MotionEvent motionControl;
     private float x = -11.5f;
@@ -38,9 +36,9 @@ public class Inlandship extends Transporter {
     private void initInlandship() {
         try {
             // Load a model.
-            boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
+            Spatial boat = assetManager.loadModel("Models/medium/ship/seaship.j3o");
             boat.scale(0.4f, 1, 0.37f);
-            boundingBox = (BoundingBox) boat.getWorldBound();
+            BoundingBox boundingBox = (BoundingBox) boat.getWorldBound();
             speed = 0.5f;
             float inxAs = boundingBox.getXExtent();
             float inyAs = boundingBox.getZExtent() - 7;
@@ -81,15 +79,15 @@ public class Inlandship extends Transporter {
         path.clearWayPoints();
         switch (location) {
             case 0:
-                path.addWayPoint(new Vector3f(-500, 0, 260));
-                path.addWayPoint(new Vector3f(-200, 0, 220));
-                path.addWayPoint(new Vector3f(-190, 0, 220));
-                break;
-            case 1:
                 path.addWayPoint(new Vector3f(-400, 0, 320));
                 path.addWayPoint(new Vector3f(-50, 0, 280));
                 path.addWayPoint(new Vector3f(40, 0, 240));
                 path.addWayPoint(new Vector3f(80, 0, 220));
+                break;
+            case 1:
+                path.addWayPoint(new Vector3f(-500, 0, 260));
+                path.addWayPoint(new Vector3f(-200, 0, 220));
+                path.addWayPoint(new Vector3f(-190, 0, 220));
                 break;
             default:
                 throw new IllegalArgumentException(location + " is an invalid location");
