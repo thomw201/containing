@@ -11,6 +11,7 @@ public abstract class Message {
     public static final int SPEED = 3;
     public static final int CRANE = 4;
     public static final int DEPART = 5;
+    public static final int MOVE = 6;
     private final int messageType;
     private int id;
 

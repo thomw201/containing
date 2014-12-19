@@ -35,7 +35,6 @@ public class DockingCrane extends Crane {
     public DockingCrane(AssetManager assetManager, BoatArea.AreaType type) {
         this.assetManager = assetManager;
         this.type = type;
-        this.name = "DockingCrane";
         initDockingCrane();
     }
 
