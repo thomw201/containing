@@ -92,6 +92,12 @@ public class Container extends Node {
     public int getSpawnZ() {
         return spawnZ;
     }
+
+    public Date getDepartureDate() {
+        return departureDate;
+    }
+    
+    
      /**
      * Debug method, displays object name,owner, container ID, transporttype and location.
      * @return information about this object
