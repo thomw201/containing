@@ -5,6 +5,7 @@ import com.jme3.cinematic.MotionPath;
 import com.jme3.cinematic.events.MotionEvent;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
+import java.util.List;
 import org.nhl.containing.Container;
 import org.nhl.containing.areas.StorageArea;
 import org.nhl.containing.vehicles.Agv;
@@ -15,7 +16,6 @@ public class StorageCrane extends Crane {
     private Agv agv;
     private Container container;
     private StorageArea storageArea;
-    private Vector3f containerLocation;
     private MotionPath containerPathUp = new MotionPath();
     private MotionPath containerPathDown = new MotionPath();
     private MotionPath cranePath = new MotionPath();
@@ -28,7 +28,6 @@ public class StorageCrane extends Crane {
     private int cranePathBackCounter;
     private CraneDirection direction;
 
-    
     public StorageCrane(AssetManager assetManager, StorageArea storageArea) {
         this.assetManager = assetManager;
         this.storageArea = storageArea;
@@ -60,15 +59,16 @@ public class StorageCrane extends Crane {
         initWaypoints();
         moveToContainer();
     }
-    
+
     /**
-     * Let the crane move to the container's position. And place the container on the given location.
+     * Let the crane move to the container's position. And place the container
+     * on the given location.
+     *
      * @param container Request a container
      * @param containerLocation Location to place the container.
      */
-    public void agvToStorage(Container container, Vector3f containerLocation) {
+    public void agvToStorage(Container container) {
         this.container = container;
-        this.containerLocation = containerLocation;
         this.direction = CraneDirection.AGVTOSTORAGE;
         initWaypoints();
         moveToContainer();
@@ -77,7 +77,7 @@ public class StorageCrane extends Crane {
     /**
      * Move the crane to the container.
      */
-    private void moveToContainer(){
+    private void moveToContainer() {
         cranePathCounter = cranePath.getNbWayPoints();
         cranePath.setCurveTension(0.0f);
         cranePath.enableDebugShape(assetManager, this);
@@ -89,7 +89,7 @@ public class StorageCrane extends Crane {
         motionControl.play();
         motionControl.dispose();
     }
-    
+
     /**
      * Put the container on the crane.
      */
@@ -147,22 +147,25 @@ public class StorageCrane extends Crane {
     private void initWaypoints() {
         switch (direction) {
             case AGVTOSTORAGE:
+
+                Vector3f spot = storageArea.getPosition(container);
+
                 cranePath.addWayPoint(getLocalTranslation());
                 cranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z + 0.01f));
 
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, container.getWorldTranslation().y, 0));
                 containerPathUp.addWayPoint(new Vector3f(container.getWorldTranslation().x - this.getWorldTranslation().x, 24, 0));
-                containerPathUp.addWayPoint(new Vector3f((storageArea.getWorldTranslation().x - getWorldTranslation().x) + containerLocation.x + 0.01f, 24, 0));
+                containerPathUp.addWayPoint(new Vector3f((storageArea.getWorldTranslation().x - getWorldTranslation().x) + spot.x + 0.01f, 24, 0));
 
                 newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (container.getWorldTranslation().z - getWorldTranslation().z) + getLocalTranslation().z));
-                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, getLocalTranslation().z + containerLocation.z + 0.01f));
+                newCranePath.addWayPoint(new Vector3f(getLocalTranslation().x, 0, getLocalTranslation().z + spot.z + 0.01f));
 
-                containerPathDown.addWayPoint(new Vector3f((storageArea.getWorldTranslation().x - getWorldTranslation().x) + containerLocation.x + 0.01f, 24, 0));
-                containerPathDown.addWayPoint(new Vector3f((storageArea.getWorldTranslation().x - getWorldTranslation().x) + containerLocation.x + 0.01f, containerLocation.y, 0));
+                containerPathDown.addWayPoint(new Vector3f((storageArea.getWorldTranslation().x - getWorldTranslation().x) + spot.x + 0.01f, 24, 0));
+                containerPathDown.addWayPoint(new Vector3f((storageArea.getWorldTranslation().x - getWorldTranslation().x) + spot.x + 0.01f, spot.y, 0));
 
-                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, (containerLocation.z - getWorldTranslation().z) + getLocalTranslation().z + 0.009f));
+                cranePathBack.addWayPoint(new Vector3f(getLocalTranslation().x, 0, getLocalTranslation().z + spot.z + 0.009f));
                 cranePathBack.addWayPoint(getLocalTranslation());
-                
+
                 break;
             case STORAGETOAGV:
                 cranePath.addWayPoint(getLocalTranslation());
@@ -197,28 +200,28 @@ public class StorageCrane extends Crane {
         motionControl.play();
         motionControl.dispose();
     }
-    
+
     /**
      * Completely reset the crane.
      */
     private void resetCrane() {
-            containerPathUp.clearWayPoints();
-            containerPathDown.clearWayPoints();
-            cranePath.clearWayPoints();
-            newCranePath.clearWayPoints();
-            cranePathBack.clearWayPoints();
-            cranePathCounter = 0;
-            newCranePathCounter = 0;
-            containerPathUpCounter = 0;
-            containerPathDownCounter = 0;
-            cranePathBackCounter = 0;
-            containerPathUp = new MotionPath();
-            containerPathDown = new MotionPath();
-            cranePath = new MotionPath();
-            newCranePath = new MotionPath();
-            cranePathBack = new MotionPath();
+        containerPathUp.clearWayPoints();
+        containerPathDown.clearWayPoints();
+        cranePath.clearWayPoints();
+        newCranePath.clearWayPoints();
+        cranePathBack.clearWayPoints();
+        cranePathCounter = 0;
+        newCranePathCounter = 0;
+        containerPathUpCounter = 0;
+        containerPathDownCounter = 0;
+        cranePathBackCounter = 0;
+        containerPathUp = new MotionPath();
+        containerPathDown = new MotionPath();
+        cranePath = new MotionPath();
+        newCranePath = new MotionPath();
+        cranePathBack = new MotionPath();
     }
-    
+
     /**
      * Method gets automatically called everytime a waypoint is reached.
      *
@@ -254,6 +257,9 @@ public class StorageCrane extends Crane {
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
                     storageArea.removeContainer(container);
+                    for (List<Container> element : storageArea.getFilledPositions()) {
+                        element.remove(container);
+                    }
                     agv.addContainer(container);
                     break;
                 case AGVTOSTORAGE:
@@ -269,13 +275,13 @@ public class StorageCrane extends Crane {
             wayPointIndex = 0;
             returnToStart();
         }
-        
-        if (cranePathBackCounter == wayPointIndex + 1){
+
+        if (cranePathBackCounter == wayPointIndex + 1) {
             cranePathBackCounter = 0;
             wayPointIndex = 0;
             resetCrane();
             setArrived(true);
-     }
+        }
     }
 
     private enum CraneDirection {
