@@ -229,6 +229,7 @@ public class Agv extends Vehicle {
      * @param location
      */
     public void parkAtStoragePlatform(int location) {
+        motionControl.setPath(depotPath);
         location += 1;
         int temp = location;
         int xStartPoint;
@@ -298,6 +299,7 @@ public class Agv extends Vehicle {
      * nearby waypoint
      */
     public void leaveStoragePlatform() {
+        motionControl.setPath(depotPath);
         depotPath.clearWayPoints();
         int west = -122;
         int east = 113;
@@ -324,7 +326,7 @@ public class Agv extends Vehicle {
             System.out.println("AGV at location " + this.getWorldTranslation() + " cannot leave storage area because this AGV is not in any storage area.");
         }
         //only call move method when there's more than 1 waypoint to avoid exception
-        if (depotPath.getLength() != 1) {
+        if (depotPath.getLength() > 1) {
             motionControl.play();
         }
     }
@@ -411,10 +413,10 @@ public class Agv extends Vehicle {
 
     @Override
     public void onWayPointReach(MotionEvent motionControl, int wayPointIndex) {
-        if (wayPointIndex + 1 == dijkstraPath.getNbWayPoints()) {
+        if (dijkstraPath != null && wayPointIndex + 1 == dijkstraPath.getNbWayPoints()) {
             setArrived(true);
         }
-        if (wayPointIndex + 1 == depotPath.getNbWayPoints()) {
+        if (depotPath != null && wayPointIndex + 1 == depotPath.getNbWayPoints()) {
             atDepot = true;
         }
     }
