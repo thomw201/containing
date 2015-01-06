@@ -27,14 +27,12 @@ public class LorryArea extends Area {
      */
     private void initLorryArea() {
         // Add truck cranes to the list and scene.
-        int craneCount = cranes - 1;
         for (int i = 0; i < cranes; i++) {
             truckCranes.add(new TruckCrane(assetManager));
             truckCranes.get(i).setLocalTranslation(craneXAxis, 0, 0);
-            truckCranes.get(i).setId(craneCount);
+            truckCranes.get(i).setId(i);
             this.attachChild(truckCranes.get(i));
             craneXAxis += 14;
-            craneCount--;
         }
     }
     

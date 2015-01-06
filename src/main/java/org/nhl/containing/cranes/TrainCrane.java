@@ -254,7 +254,7 @@ public class TrainCrane extends Crane {
                     detachChild(container);
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
-                    //train.removeContainer((Container) container);
+                    train.removeContainer((Container) container);
                     agv.addContainer((Container) container);
                     
                     break;
@@ -263,7 +263,7 @@ public class TrainCrane extends Crane {
                     wagon.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
                     agv.removeContainer();
-                    //train.addContainer((Container) container);
+                    train.addContainer((Container) container);
                     break;
             }
 
