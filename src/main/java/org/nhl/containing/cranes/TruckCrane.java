@@ -247,7 +247,7 @@ public class TruckCrane extends Crane {
                     detachChild(container);
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
-                    lorry.removeContainer();
+                    //lorry.removeContainer();
                     agv.addContainer((Container)container);
                     break;
                 case AGVTOLORRY:

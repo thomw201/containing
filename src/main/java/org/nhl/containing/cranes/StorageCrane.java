@@ -256,10 +256,14 @@ public class StorageCrane extends Crane {
                     detachChild(container);
                     agv.attachChild(container);
                     container.setLocalTranslation(0, 1, 0);
+<<<<<<< HEAD
                     storageArea.removeContainer(container);
                     for (List<Container> element : storageArea.getFilledPositions()) {
                         element.remove(container);
                     }
+=======
+                    //storageArea.removeContainer(container);
+>>>>>>> bf6e9f7a84a7abee59a3d346ba01a687add051ca
                     agv.addContainer(container);
                     break;
                 case AGVTOSTORAGE:

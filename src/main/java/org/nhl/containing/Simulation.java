@@ -171,6 +171,7 @@ public class Simulation extends SimpleApplication {
                                         break;
                                     case "StorageCrane":
                                         agv.leaveStoragePlatform();
+                                        agv.setParkingSpot(-1);
                                         agv.setReadyToLeave(false);
                                         break;
                                     case "TrainCrane":
@@ -192,6 +193,7 @@ public class Simulation extends SimpleApplication {
                                         agv.parkAtInlandshipPlatform(moveMsg.getEndLocationId());
                                         break;
                                     case "StorageCrane":
+                                        agv.parkAtStoragePlatform(moveMsg.getEndLocationId());
                                         break;
                                     case "TrainCrane":
                                         agv.parkAtTrainPlatform(moveMsg.getEndLocationId());
