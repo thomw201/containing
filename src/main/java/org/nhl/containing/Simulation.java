@@ -102,6 +102,7 @@ public class Simulation extends SimpleApplication {
     @Override
     public void simpleInitApp() {
         guiFont = assetManager.loadFont("Interface/Fonts/TimesNewRoman.fnt");
+        setPauseOnLostFocus(false);
         initCam();
 //        initUserInput();
         initScene();

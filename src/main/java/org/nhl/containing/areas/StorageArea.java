@@ -142,7 +142,6 @@ public class StorageArea extends Area {
         }
         checkLane(lane);
         if (!bottomContainers.isEmpty()) {
-            System.out.println(bottomContainers.get(0));
             index = filledPositions.get(lane).indexOf(bottomContainers.get(0));
             getHeight(container, 0, lane, index);
         } else {
@@ -165,9 +164,13 @@ public class StorageArea extends Area {
             if (filledPositions.get(lane).get(i) != null) {
                 calOld.setTime(filledPositions.get(lane).get(i).getDepartureDate());
                 calOld.set(Calendar.MILLISECOND, 0);
-                System.out.println(calOld.equals(calNew));
             }
             if (filledPositions.get(lane).get(i) != null && calOld.equals(calNew)) {
+                bottomContainers.add(filledPositions.get(lane).get(i));
+            }
+        }
+        for (int i = 0; i < 89; i++){
+                if(filledPositions.get(lane).get(i) != null && calOld.after(calNew)){
                 bottomContainers.add(filledPositions.get(lane).get(i));
             }
         }
@@ -183,16 +186,20 @@ public class StorageArea extends Area {
      * @param location Location of the container with the same departureTime.
      */
     private void getHeight(Container container, int heightMod, int lane, int location) {
-
+        
         if (!bottomContainers.isEmpty()) {
             beginLocation = filledPositions.get(lane).indexOf(bottomContainers.get(0));
+            if(filledPositions.get(lane).get(beginLocation + heightMod) != null) {
+                calOld.setTime(filledPositions.get(lane).get(beginLocation + heightMod).getDepartureDate());
+                calOld.set(Calendar.MILLISECOND, 0);
+            }
         }
         if (filledPositions.get(lane).get(beginLocation + heightMod) == null) {
             filledPositions.get(lane).set(beginLocation + heightMod, container);
             this.position = storageLanes.get(lane).get(beginLocation + heightMod);
-        } else if (filledPositions.get(lane).get(beginLocation + heightMod) != null && heightMod <= beginLocation + 360) {
+        } else if (filledPositions.get(lane).get(beginLocation + heightMod) != null && heightMod <= beginLocation + 360 && (calOld.equals(calNew) || calOld.after(calNew))) {
             getHeight(container, heightMod + 90, lane, beginLocation);
-        } else if (bottomContainers.size() > 1 && beginLocation + heightMod > 360) {
+        } else if (bottomContainers.size() > 1 && beginLocation + heightMod > 360 || bottomContainers.size() > 1 && !(calOld.equals(calNew) || calOld.after(calNew))) {
             bottomContainers.remove(0);
             getHeight(container, 0, lane, filledPositions.get(lane).indexOf(bottomContainers.get(0)));
         } else {
