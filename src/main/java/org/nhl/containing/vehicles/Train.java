@@ -50,6 +50,20 @@ public class Train extends Transporter {
             this.attachChild(trainWagons.get(i));
             wagonZAxis -= 15;
         }
+        
+        while(trainWagons.size() < 20){
+            Node nextWagon = (Node) wagon.clone();
+            nextWagon.setLocalTranslation(0, 0, wagonZAxis);
+            this.attachChild(nextWagon);
+            trainWagons.add(nextWagon);
+            wagonZAxis -= 15;
+        }
+        
+        Node reverseTrain = (Node) train.clone();
+        reverseTrain.rotate(0, (float) Math.PI, 0);
+        reverseTrain.setLocalTranslation(0, 0, wagonZAxis + 4);
+        this.attachChild(reverseTrain);
+        
     }
 
     /**
