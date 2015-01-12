@@ -686,7 +686,6 @@ public class Simulation extends SimpleApplication {
         initAgvParkingLorry();
         placeAgv();
         initAgvIdle();
-//testMethodCranes();
     }
 
     private void initSky() {
