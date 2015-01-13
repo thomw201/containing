@@ -328,32 +328,12 @@ public class Agv extends Vehicle {
             motionControl.setPath(depotPath);
             depotPath.clearWayPoints();
             depotPath.addWayPoint(this.getWorldTranslation());
+            if ((int)this.getWorldTranslation().x == -122) { //east
+                dijkstraPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-18));
+            }
+            else
+                dijkstraPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z+22));
         }
-        
-//        int west = -122;
-//        int east = 113;
-//        depotPath.addWayPoint(this.getWorldTranslation());
-//        //western ship platform -> goto waypoint P
-//        if ((int)this.getWorldTranslation().x < 12 && (int)this.getWorldTranslation().z == west) {
-//            depotPath.addWayPoint(new Vector3f(-70, 0, -140));
-//        } //eastern ship platform -> goto waypoint Q
-//        else if ((int)this.getWorldTranslation().x < 12 && (int)this.getWorldTranslation().z == east) {
-//            depotPath.addWayPoint(new Vector3f(-70, 0, 135));
-//        } //western train platform -> goto waypoint O
-//        else if ((int)this.getWorldTranslation().x > 110f && (int)this.getWorldTranslation().x < 300 && (int)this.getWorldTranslation().z == west) {
-//            depotPath.addWayPoint(new Vector3f(200, 0, -140));
-//        } //eastern train platform -> goto waypoint N
-//        else if ((int)this.getWorldTranslation().x > 110f && (int)this.getWorldTranslation().x < 300 && (int)this.getWorldTranslation().z == east) {
-//            depotPath.addWayPoint(new Vector3f(200, 0, 135));
-//        } //western lorry platform -> goto waypoint L
-//        else if ((int)this.getWorldTranslation().x > 365f && (int)this.getWorldTranslation().x < 550 && (int)this.getWorldTranslation().z == west) {
-//            depotPath.addWayPoint(new Vector3f(455, 0, -140));
-//        } else if ((int)this.getWorldTranslation().x > 365f && (int)this.getWorldTranslation().x < 550 && (int)this.getWorldTranslation().z == east) {
-//            depotPath.addWayPoint(new Vector3f(455, 0, 135));
-//        } //AGV is not in any of the storage area's, send a msg and add 0
-//        else {
-//            System.out.println("AGV at location " + this.getWorldTranslation() + " cannot leave storage area because this AGV is not in any storage area.");
-//        }
         //only call move method when there's more than 1 waypoint to avoid exception
         if (depotPath.getLength() > 1) {
             motionControl.play();
