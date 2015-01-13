@@ -973,7 +973,7 @@ public class Simulation extends SimpleApplication {
      */
     private void agvToParking(int id) {
         try {
-            Agv agv = new Agv(assetManager, id);
+            Agv agv = new Agv(assetManager, id, agvParkingX.get(id), agvParkingY.get(id));
             float agvX = agvParkingX.get(id);
             float agvY = agvParkingY.get(id);
             agv.setLocalTranslation(agvX, 0, agvY);
