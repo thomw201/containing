@@ -329,10 +329,10 @@ public class Agv extends Vehicle {
             depotPath.clearWayPoints();
             depotPath.addWayPoint(this.getWorldTranslation());
             if ((int)this.getWorldTranslation().x == -122) { //east
-                dijkstraPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-18));
+                depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z-18));
             }
             else
-                dijkstraPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z+22));
+                depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z+22));
         }
         //only call move method when there's more than 1 waypoint to avoid exception
         if (depotPath.getLength() > 1) {
