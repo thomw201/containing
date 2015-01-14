@@ -96,6 +96,7 @@ public class Train extends Transporter {
     public void depart() {
         motionControl.setSpeed(speed);
         path.clearWayPoints();
+        path.addWayPoint(this.getWorldTranslation());
         path.addWayPoint(new Vector3f(-200, 0, -180));
         path.addWayPoint(new Vector3f(250, 0, -180));
         path.addListener(this);

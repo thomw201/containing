@@ -66,6 +66,7 @@ public class Lorry extends Transporter {
     public void depart() {
         motionControl.setSpeed(speed);
         path.clearWayPoints();
+        path.addWayPoint(this.getWorldTranslation());
         path.addWayPoint(new Vector3f(this.getLocalTranslation().x, 0, 159));
         path.addWayPoint(new Vector3f(this.getLocalTranslation().x, 0, 185));
         path.addListener(this);
