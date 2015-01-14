@@ -20,7 +20,8 @@ public class Agv extends Vehicle {
     MotionEvent motionControl;
     private float agvparkX;
     private float agvparkZ;
-    boolean locInit;
+    boolean locInit = false;
+    boolean parkedAtLorry = false;
     
     public Agv(AssetManager assetManager, int id, float X, float Z) {
         super(id);
@@ -30,7 +31,6 @@ public class Agv extends Vehicle {
         initMotionPaths();
         agvparkX = X;
         agvparkZ = Z;
-        locInit = false;
     }
 
     public int getParkingSpot() {
@@ -52,7 +52,10 @@ public class Agv extends Vehicle {
     public boolean isAtDepot() {
         return atDepot;
     }
-
+    public void setparkedAtLorry(boolean parkedatlorry){
+        parkedAtLorry = parkedatlorry;
+    }
+    
     /**
      * Initialize an Agv.
      */
@@ -85,10 +88,15 @@ public class Agv extends Vehicle {
         if (!locInit) { // if location of the agv isnt initialized, its in beginstate and location needs to be set and agv needs to leave storage platform
             leaveStoragePlatform();
         }
+        else if(parkedAtLorry) {
+            leaveLorryPlatform();
+            parkedAtLorry = false;
+        }
         else{
         //make the first waypoint it's current location
         dijkstraPath.addWayPoint(this.getWorldTranslation());
         }
+        
         for (char waypoint : route.toCharArray()) {
             switch (waypoint) {
                 case 'A':
@@ -229,6 +237,8 @@ public class Agv extends Vehicle {
         depotPath.addWayPoint(new Vector3f(566 - (14 * location), 0, 135));
         depotPath.addWayPoint(new Vector3f(566 - (14 * location), 0, 145));
         depotPath.addWayPoint(new Vector3f(566 - (14 * location), 0, 156));
+        agvparkX = (566 - (14 * location));
+        agvparkZ = 156;
         depotPath.addListener(this);
         atDepot = false;
         motionControl.setPath(depotPath);
@@ -297,16 +307,15 @@ public class Agv extends Vehicle {
      * Method for making a parked AGV leave the inlandship platform
      */
     public void leaveLorryPlatform() {
-        depotPath.clearWayPoints();
-        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation()));
-        depotPath.addWayPoint(new Vector3f(this.getWorldTranslation().x, 0, this.getWorldTranslation().z - 20));
-        depotPath.addWayPoint(new Vector3f(330, 0, 136));
-        depotPath.setCurveTension(0.1f);
-        depotPath.addListener(this);
-        depotPath.addListener(this);
-        atDepot = false;
-        motionControl.setPath(depotPath);
-        motionControl.play();
+        //depotPath.clearWayPoints();
+        dijkstraPath.addWayPoint(new Vector3f(agvparkX, 0, agvparkZ));
+        dijkstraPath.addWayPoint(new Vector3f(agvparkX, 0, agvparkZ - 20));
+        dijkstraPath.addWayPoint(new Vector3f(330, 0, 136));
+//        depotPath.setCurveTension(0.1f);
+//        depotPath.addListener(this);
+//        atDepot = false;
+//        motionControl.setPath(depotPath);
+//        motionControl.play();
     }
 
 /**
