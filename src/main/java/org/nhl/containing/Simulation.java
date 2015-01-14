@@ -201,6 +201,7 @@ public class Simulation extends SimpleApplication {
                                         break;
                                     case "TruckCrane":
                                         agv.parkAtLorryPlatform(moveMsg.getEndLocationId());
+                                        agv.setparkedAtLorry(true);
                                         break;
                                 }
                             }
