@@ -80,7 +80,7 @@ public class TruckCrane extends Crane {
     private void moveToContainer() {
         cranePathCounter = cranePath.getNbWayPoints();
         cranePath.setCurveTension(0.0f);
-        cranePath.enableDebugShape(assetManager, this);
+//        cranePath.enableDebugShape(assetManager, this);
         cranePath.addListener(this);
 
         MotionEvent motionControl = new MotionEvent(this, cranePath);
@@ -98,7 +98,7 @@ public class TruckCrane extends Crane {
 
         containerPathUpCounter = containerPathUp.getNbWayPoints();
         containerPathUp.setCurveTension(0.0f);
-        containerPathUp.enableDebugShape(assetManager, this);
+//        containerPathUp.enableDebugShape(assetManager, this);
         containerPathUp.addListener(this);
 
         MotionEvent motionControl = new MotionEvent(container, containerPathUp);
@@ -114,7 +114,7 @@ public class TruckCrane extends Crane {
     private void createPathToVehicle() {
         newCranePathCounter = newCranePath.getNbWayPoints();
         newCranePath.setCurveTension(0.0f);
-        newCranePath.enableDebugShape(assetManager, this);
+//        newCranePath.enableDebugShape(assetManager, this);
         newCranePath.addListener(this);
         MotionEvent motionControl = new MotionEvent(this, newCranePath);
         motionControl.setDirectionType(MotionEvent.Direction.None);
@@ -131,7 +131,7 @@ public class TruckCrane extends Crane {
 
         containerPathDownCounter = containerPathDown.getNbWayPoints();
         containerPathDown.setCurveTension(0.0f);
-        containerPathDown.enableDebugShape(assetManager, this);
+//        containerPathDown.enableDebugShape(assetManager, this);
         containerPathDown.addListener(this);
 
         MotionEvent motionControl = new MotionEvent(container, containerPathDown);
@@ -181,7 +181,7 @@ public class TruckCrane extends Crane {
     private void returnToStart() {
         cranePathBackCounter = cranePathBack.getNbWayPoints();
         cranePathBack.setCurveTension(0.0f);
-        cranePathBack.enableDebugShape(assetManager, this);
+//        cranePathBack.enableDebugShape(assetManager, this);
         cranePathBack.addListener(this);
         MotionEvent motionControl = new MotionEvent(this, cranePathBack);
         motionControl.setDirectionType(MotionEvent.Direction.None);
